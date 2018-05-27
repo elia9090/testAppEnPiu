@@ -1,0 +1,23 @@
+{
+  "name": "piuenergiaapp",
+  "version": "1.0.0",
+  "description": "app appuntamenti",
+  "main": "nodejs/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elia9090/testAppEnPiu.git"
+  },
+  "author": "elia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elia9090/testAppEnPiu/issues"
+  },
+  "homepage": "https://github.com/elia9090/testAppEnPiu#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "helmet": "^3.12.1"
+  }
+}
