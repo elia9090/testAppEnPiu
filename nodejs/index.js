@@ -21,6 +21,7 @@ app.configure(function () {
     app.use(express.session({ secret: 'secretTest' }));
     app.use(express.bodyParser());
     app.use(checkAuth);
+    app.use(express.static(__dirname + '/views'));
 });
 
 require('service.js')(app);
