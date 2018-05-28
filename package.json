@@ -2,7 +2,7 @@
   "name": "piuenergiaapp",
   "version": "1.0.0",
   "description": "app appuntamenti",
-  "main": "nodejs/index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,7 +17,11 @@
   },
   "homepage": "https://github.com/elia9090/testAppEnPiu#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
-    "helmet": "^3.12.1"
+    "express-session": "^1.15.6",
+    "helmet": "^3.12.1",
+    "log4js": "^2.7.0",
+    "mysql": "^2.15.0"
   }
 }
