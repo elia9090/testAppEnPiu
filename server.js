@@ -14,10 +14,10 @@ var log = log4js.getLogger("server");
 app.use(express.static('public'));
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); // Body parser use JSON data
-
+app.use(bodyParser.urlencoded({ extended: true }));
 /*MY SQL Connection Info*/
 var pool = mysql.createPool({
-	connectionLimit : 25,
+	connectionLimit : config.connLimit,
 	host     : config.DbHost,
 	user     : config.DbUser,
 	password : config.DbPassword,
@@ -27,48 +27,41 @@ var pool = mysql.createPool({
 
 log.debug('Server is starting....');
 
-//TEST CONNECTION
-pool.getConnection(function (err, connection) {
-	if (!err) {
-		console.log("Database is connected ... ");
-		log.info('Database is connected ... ');
-		connection.release();
-	} else {
-		console.log("Error connecting database ... ");
-		log.error('Error connecting database ... ');
-	}
-	console.log("releasing connection ... ");
-});
 
 // ROOT - Loads Angular App
-app.get('/pippo', function (req, res) {
+app.get('/', function (req, res) {
 	res.sendFile( __dirname + "/public/" + "index.html" );
 });
+app.get('/dashboard', function (req, res) {
+	res.send( __dirname + "/public/" + "dashboard.html" );
+});
 
-// This responds a GET request for the /list page.
-app.get('/api/list', function (req, res) {
-	console.log("GET Request :: /list");
-	log.info('GET Request :: /list');
+// This responds a POST request for the /LOGIN page.
+app.post('/login', function (req, res) {
+	
+	console.log("post :: /login");
+	log.info('post Request :: /login');
 	var data = {
         "error": 1,
-        "products": ""
+        "utenteOk": ""
     };
-	
+	var username = req.body.username;
+    var password = req.body.password;
 	pool.getConnection(function (err, connection) {
-		connection.query('SELECT * from products', function (err, rows, fields) {
+		connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = ?', [username,  password], function (err, rows, fields) {
 			connection.release();
 
 			if (rows.length !== 0 && !err) {
 				data["error"] = 0;
-				data["products"] = rows;
-				res.json(data);
+				data["utenteOk"] = rows;
+				res.redirect('/dashboard');
 			} else if (rows.length === 0) {
 				//Error code 2 = no rows in db.
 				data["error"] = 2;
-				data["products"] = 'No products Found..';
+				data["utenteOk"] = 'No products Found..';
 				res.json(data);
 			} else {
-				data["products"] = 'error while performing query';
+				data["utenti"] = 'error while performing query';
 				res.json(data);
 				console.log('Error while performing Query: ' + err);
 				log.error('Error while performing Query: ' + err);
