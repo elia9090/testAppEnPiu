@@ -3,10 +3,13 @@ var app = angular.module('gestionaleApp', ["ngRoute"]);
 app.config(['$routeProvider','$locationProvider', function ($routeProvider, $locationProvider) {
 
     $routeProvider
-        .when('/pippo', {
-            templateUrl : "./pippo.html",
+        .when('/', {
+            templateUrl : "../login.html",
             
-        });
+        }).when('/pippo', {
+			templateUrl: '../pippo.html',
+		});
+
 		
 		
     

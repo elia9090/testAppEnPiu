@@ -35,6 +35,9 @@ log.debug('Server is starting....');
 // This responds a POST request for the /LOGIN page.
 app.post('/login', function (req, res) {
 	
+	app.all("/*", function(req, res, next) {
+        res.sendfile("index.html", { root: __dirname + "/public" });
+    });
 	console.log("post :: /login");
 	log.info('post Request :: /login');
 	var data = {
