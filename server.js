@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require("body-parser");
-
+var router = express.Router();
 var config = require('./config');
 //LOGGER
 var log4js = require('log4js');
@@ -11,7 +11,9 @@ var log = log4js.getLogger("server");
 
 
 //STATIC FILES
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
+
+
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); // Body parser use JSON data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,13 +30,7 @@ var pool = mysql.createPool({
 log.debug('Server is starting....');
 
 
-// ROOT - Loads Angular App
-app.get('/', function (req, res) {
-	res.sendFile( __dirname + "/public/" + "index.html" );
-});
-app.get('/dashboard', function (req, res) {
-	res.send( __dirname + "/public/" + "dashboard.html" );
-});
+
 
 // This responds a POST request for the /LOGIN page.
 app.post('/login', function (req, res) {
@@ -54,7 +50,7 @@ app.post('/login', function (req, res) {
 			if (rows.length !== 0 && !err) {
 				data["error"] = 0;
 				data["utenteOk"] = rows;
-				res.redirect('/dashboard');
+				res.json(data);
 			} else if (rows.length === 0) {
 				//Error code 2 = no rows in db.
 				data["error"] = 2;
