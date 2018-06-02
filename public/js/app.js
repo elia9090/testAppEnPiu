@@ -1,11 +1,23 @@
 
 var app = angular.module('gestionaleApp', ["ngRoute"]);
 
+app.run(['$rootScope', '$location',  function($rootScope, $location) {
+    $rootScope.$on('$routeChangeStart', function(event, currRoute, prevRoute){
+        $rootScope.userRoot = "";
+        if(!sessionStorage.user){
+            $location.path('/login');
+            return;
+        }else{
+            $rootScope.userRoot = "true";
+            $rootScope.userType = JSON.parse(sessionStorage.user).TYPE;
+        }
+    });
+}]);
 
 app.config(['$routeProvider','$locationProvider', function ($routeProvider, $locationProvider) {
     $routeProvider
         .when('/', {
-        templateUrl : "../partials/login.html",
+         templateUrl : "../partials/dashboard.html",
         
          }).when('/login', {
             templateUrl : "../partials/login.html",
@@ -22,7 +34,6 @@ app.controller('loginAppCtrl', function ($scope, $http, $location, $window) {
             'username' : $scope.username,
             'password' : $scope.password
         }).then((result) => {
-
             $scope.user = {};
             $scope.user.Id = result.data.utente.ID_UTENTE;
             $scope.user.NAME = result.data.utente.NOME;
@@ -38,16 +49,14 @@ app.controller('loginAppCtrl', function ($scope, $http, $location, $window) {
     };
 });
 app.controller('dashboardAppCtrl', function ( $scope, $http, $location, $window) {
-    if(!sessionStorage.user){
-        $location.path('/login');
-        return;
-    }
+
     $scope.user = JSON.parse(sessionStorage.user);
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
     $http.get('/userList').then((result) => {
         console.log(result);
     }).catch((err) => {
         if(err.status == 403){
+            sessionStorage.clear();
             $location.path('/login');
         }
 
