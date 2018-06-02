@@ -2,7 +2,8 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require("body-parser");
-var router = express.Router();
+
+var jwt = require('jsonwebtoken');
 var config = require('./config');
 //LOGGER
 var log4js = require('log4js');
@@ -34,10 +35,6 @@ log.debug('Server is starting....');
 
 // This responds a POST request for the /LOGIN page.
 app.post('/login', function (req, res) {
-	
-	app.all("/*", function(req, res, next) {
-        res.sendfile("index.html", { root: __dirname + "/public" });
-    });
 	console.log("post :: /login");
 	log.info('post Request :: /login');
 	var data = {
@@ -49,10 +46,12 @@ app.post('/login', function (req, res) {
 	pool.getConnection(function (err, connection) {
 		connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = ?', [username,  password], function (err, rows, fields) {
 			connection.release();
-
 			if (rows.length !== 0 && !err) {
 				data["error"] = 0;
-				data["utenteOk"] = rows;
+				data["utente"] = rows[0];
+				const user = rows[0];
+				const token = jwt.sign({ user: rows[0].ID_UTENTE }, config.secretKey,{expiresIn: "1h"});
+				data["token"] = token;
 				res.json(data);
 			} else if (rows.length === 0) {
 				//Error code 2 = no rows in db.
@@ -70,38 +69,18 @@ app.post('/login', function (req, res) {
 	});
 });
 
-//UPDATE Product
-app.put('/api/update', function (req, res) {
-    var id = req.body.id;
-    var name = req.body.name;
-    var description = req.body.description;
-    var price = req.body.price;
-    var data = {
-        "error": 1,
-        "product": ""
-    };
-	console.log('PUT Request :: /update: ' + id);
-	log.info('PUT Request :: /update: ' + id);
-    if (!!id && !!name && !!description && !!price) {
-		pool.getConnection(function (err, connection) {
-			connection.query("UPDATE products SET name = ?, description = ?, price = ? WHERE id=?",[name,  description, price, id], function (err, rows, fields) {
-				if (!!err) {
-					data["product"] = "Error Updating data";
-					console.log(err);
-					log.error(err);
-				} else {
-					data["error"] = 0;
-					data["product"] = "Updated Book Successfully";
-					console.log("Updated: " + [id, name, description, price]);
-					log.info("Updated: " + [id, name, description, price]);
-				}
-				res.json(data);
-			});
-		});
-    } else {
-        data["product"] = "Please provide all required data (i.e : id, name, desc, price)";
-        res.json(data);
-    }
+//Create user
+app.get('/userList', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+		  res.sendStatus(403);
+		  
+		} else {
+		  res.json({
+			description: 'Protected information. Congrats!'
+		  });
+		}
+	});
 });
 
 //LIST Product by ID
@@ -195,6 +174,23 @@ app.post('/api/delete', function (req, res) {
         res.json(data);
     }
 });
+app.all("/*", function(req, res, next) {
+	res.sendfile("index.html", { root: __dirname + "/public" });
+});
+
+
+function ensureToken(req, res, next) {
+	const bearerHeader = req.headers["authorization"];
+	if (typeof bearerHeader !== 'undefined') {
+	  const bearer = bearerHeader.split(" ");
+	  const bearerToken = bearer[1];
+	  req.token = bearerToken;
+	  next();
+	} else {
+	  res.sendStatus(403);
+	}
+  }
+
 
 var server = app.listen(8081, function () {
 
