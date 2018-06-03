@@ -17,7 +17,12 @@ app.controller('loginAppCtrl', function ($scope, $http, $location, $window) {
             sessionStorage.user = JSON.stringify($scope.user);
             $location.path('/dashboard');
         }).catch((err) => {
-            
+            if(err.status === 404){
+                alert("Nome utente o password errati!");
+            }
+            if(err.status === 500){
+                alert("Servizio di login non disponibile");
+            }
         });
     };
 });

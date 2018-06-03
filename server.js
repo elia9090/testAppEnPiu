@@ -37,17 +37,15 @@ log.debug('Server is starting....');
 app.post('/login', function (req, res) {
 	console.log("post :: /login");
 	log.info('post Request :: /login');
-	var data = {
-        "error": 1,
-        "utenteOk": ""
-    };
+
+	var data = {};
+	
 	var username = req.body.username;
     var password = req.body.password;
 	pool.getConnection(function (err, connection) {
 		connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = ?', [username,  password], function (err, rows, fields) {
 			connection.release();
 			if (rows.length !== 0 && !err) {
-				data["error"] = 0;
 				data["utente"] = rows[0];
 				const user = rows[0];
 				const token = jwt.sign({ user: rows[0].ID_UTENTE }, config.secretKey,{expiresIn: "1h"});
@@ -56,13 +54,13 @@ app.post('/login', function (req, res) {
 			} else if (rows.length === 0) {
 				//Error code 2 = no rows in db.
 				data["error"] = 2;
-				data["utenteOk"] = 'No products Found..';
-				res.json(data);
+				data["utente"] = 'Nome utente o password errati';
+				res.status(404).json(data);
 			} else {
-				data["utenti"] = 'error while performing query';
-				res.json(data);
-				console.log('Error while performing Query: ' + err);
-				log.error('Error while performing Query: ' + err);
+				data["utenti"] = 'Errore in fase di login';
+				res.status(500).json(data);
+				console.log('Errore in fase di login: ' + err);
+				log.error('Errore in fase di login: ' + err);
 			}
 		});
 	
