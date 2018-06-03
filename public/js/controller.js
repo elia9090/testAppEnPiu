@@ -21,7 +21,7 @@ app.controller('loginAppCtrl', function ($scope, $http, $location, $window) {
                 alert("Nome utente o password errati!");
             }
             if(err.status === 500){
-                alert("Servizio di login non disponibile");
+                alert("Servizio di login non è disponibile");
             }
         });
     };
@@ -30,16 +30,31 @@ app.controller('dashboardAppCtrl', function ( $scope, $http, $location, $window)
 
     $scope.user = JSON.parse(sessionStorage.user);
     // $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
-    // $http.get('/userList').then((result) => {
-    //     console.log(result);
-    // }).catch((err) => {
-    //     if(err.status == 403){
-    //         sessionStorage.clear();
-    //         $location.path('/login');
-    //     }
+    
+    
 
-    // });
+});
 
+app.controller('nuovoAppuntamentoAppCtrl', function ( $scope, $http, $location, $window) {
+
+    $scope.user = JSON.parse(sessionStorage.user);
+    // $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
+    $http.get('../utility/province_comuni.json').then((result) => {
+        $scope.provinciaSelected = "";
+        $scope.province = result.data.province;
+    }).catch((err) => {
+        alert("Impossibile reperire la lista dei comuni");
+    });
+    $scope.comuniPerProvincia = "";
+    $scope.disabledComuni = true;
+    $scope.showComuni = function(){
+        var newArray = $scope.province.filter(function (el) {
+            return el.nome ===  $scope.provinciaSelected;
+          });
+        $scope.comuniPerProvincia = newArray[0].comuni;
+        $scope.disabledComuni = false;
+    }
+    
 
 });
 app.controller('logoutCtrl', function ( $scope, $http, $location, $window) {

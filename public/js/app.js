@@ -28,7 +28,10 @@ app.config(['$routeProvider','$locationProvider', function ($routeProvider, $loc
 		}).when('/logout', {
             template: '',
             controller:'logoutCtrl'
-        })
+        }) .when('/nuovoAppuntamento', {
+            templateUrl : "../partials/nuovoAppuntamento.html",
+            controller:'nuovoAppuntamentoAppCtrl'
+         })
         .otherwise({redirectTo:'/'});
 
 }]);

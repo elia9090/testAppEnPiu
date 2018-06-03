@@ -1,0 +1,8 @@
+<div class="container-fluid pt-5" ></div>
+<select name="provinceSelect" id="provinceSelect" ng-change="showComuni()" ng-model="provinciaSelected">
+        <option ng-repeat="option in province" value="{{option.nome}}">{{option.nome}}</option>
+    </select>
+    <select name="comuniSelect" id="comuniSelect" ng-disabled="disabledComuni" ng-model="comuneSelected">
+            <option ng-repeat="option in comuniPerProvincia" value="{{option.nome}}">{{option.nome}}</option>
+        </select>
+    </div>
