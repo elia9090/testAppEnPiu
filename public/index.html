@@ -8,30 +8,50 @@
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
-    <script src="js/jquery-3.3.1.slim.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/angular.min.js"></script>
-    <script src="js/angular-route.min.js"></script>
-    <script src="js/popper.min.js"></script>
+    <script src="js/librerieJs/jquery-3.3.1.slim.min.js"></script>
+    <script src="js/librerieJs/bootstrap.min.js"></script>
+    <script src="js/librerieJs/angular.min.js"></script>
+    <script src="js/librerieJs/angular-route.min.js"></script>
+    <script src="js/librerieJs/popper.min.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/controller.js"></script>
 </head>
 
 <body ng-app="gestionaleApp" >
-        <div class="pos-f-t" ng-show="userRoot">
-                <nav class="navbar navbar-dark bg-dark">
-                        <a class="navbar-brand" href="#">Navbar</a>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                          <span class="navbar-toggler-icon"></span>
+        <div class="pos-f-t">
+                <nav class="navbar menuHomepage navbar-dark bg-dark">
+                        <p class="navbar-brand" href="#">Gestionale appuntamenti</p>
+                        <button id="btnMenuHome"  ng-show="userRoot" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <div id="nav-icon1">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                              </div>
                         </button>
                       </nav>
                 <div class="collapse" id="navbarToggleExternalContent">
-                  <div class="bg-dark p-4">
+                  <div class="bg-dark  px-4 pb-2">
                         <ul class="navbar-nav mr-auto">
-                                <li class="nav-item active">
+                                <li class="nav-item">
                                   <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                                 </li>
+                                <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'OPERATORE' ">
+                                  <a class="nav-link" href="#nuovoAppuntamento">Nuovo appuntamento</a>
+                                </li>
                                 <li class="nav-item">
-                                  <a class="nav-link" href="#">Link</a>
+                                    <a class="nav-link" href="#listaAppuntamenti">Lista appuntamenti</a>
+                                </li>
+                                <li class="nav-item"  ng-show="userType === 'RESPONSABILE_AGENTI' ">
+                                    <a class="nav-link" href="#listaAppuntamentiGruppoVendita">Lista appuntamenti gruppo vendita</a>
+                                </li>
+                                <li class="nav-item" >
+                                    <a class="nav-link" href="#statisticheAppuntamenti">Statistiche appuntamenti</a>
+                                </li>
+                                <li class="nav-item" ng-show="userType === 'ADMIN'">
+                                    <a class="nav-link" href="#rendimento">Gestione utenti</a>
+                                </li>
+                                <li class="nav-item" >
+                                    <a class="nav-link"  href="#logout">Logout</a>
                                 </li>
                                
                                
@@ -43,4 +63,13 @@
     
 <div ng-view></div>	
 </body>
+<!-- <footer class="footer fixed-bottom">
+  <div class="container center">
+    <div class="row justify-content-center">
+      <img src="./img/logoEnergia.jpg" class=" float-left" alt="...">
+      <a class="nav-link js-scroll-trigger" href="">Copyright &copy; 2018</a>
+      <img src="./img/logoElettra.jpg" class=" float-right" alt="...">
+    </div>
+  </div>
+</footer> -->
 </html>
