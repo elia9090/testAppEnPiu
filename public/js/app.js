@@ -19,12 +19,15 @@ app.config(['$routeProvider','$locationProvider', function ($routeProvider, $loc
     $routeProvider
         .when('/', {
             templateUrl : "../partials/dashboard.html",
+            controller:'dashboardAppCtrl'
             
          }).when('/login', {
             templateUrl : "../partials/login.html",
+            controller:'logoutCtrl'
             
         }).when('/dashboard', {
-			templateUrl: '../partials/dashboard.html',
+            templateUrl: '../partials/dashboard.html',
+            controller:'dashboardAppCtrl'
 		}).when('/logout', {
             template: '',
             controller:'logoutCtrl'

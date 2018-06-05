@@ -36,7 +36,7 @@ app.controller('dashboardAppCtrl', function ( $scope, $http, $location, $window)
 });
 
 app.controller('nuovoAppuntamentoAppCtrl', function ( $scope, $http, $location, $window) {
-
+    
     $scope.user = JSON.parse(sessionStorage.user);
     // $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
     $http.get('../utility/province_comuni.json').then((result) => {
