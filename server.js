@@ -68,15 +68,63 @@ app.post('/login', function (req, res) {
 });
 
 //Create user
-app.get('/userList', ensureToken, function (req, res) {
+app.get('/listaOperatoriWS', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
-		  res.sendStatus(403);
-		  
+			res.sendStatus(403); 
 		} else {
-		  res.json({
-			description: 'Protected information. Congrats!'
-		  });
+			var data = {};
+			pool.getConnection(function (err, connection) {
+				connection.query('SELECT * from UTENTI where TIPO = "OPERATORE" ' , function (err, rows, fields) {
+					connection.release();
+					if (rows.length !== 0 && !err) {
+						data["operatori"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["operatori"] = 'Nessun operatore trovato';
+						res.status(404).json(data);
+					} else {
+						data["operatori"] = 'Errore in fase di reperimento operatori';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento operatori: ' + err);
+						log.error('Errore in fase di reperimento operatori: ' + err);
+					}
+				});
+			
+			});
+		  
+		}
+	});
+});
+app.get('/listaResponsabiliAgentiWS', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+		} else {
+			var data = {};
+			pool.getConnection(function (err, connection) {
+				connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE_AGENTI" ' , function (err, rows, fields) {
+					connection.release();
+					if (rows.length !== 0 && !err) {
+						data["responsabili"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["responsabili"] = 'Nessun responsabile trovato';
+						res.status(404).json(data);
+					} else {
+						data["responsabili"] = 'Errore in fase di reperimento responsabili';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento responsabili: ' + err);
+						log.error('Errore in fase di reperimento responsabili: ' + err);
+					}
+				});
+			
+			});
+		  
 		}
 	});
 });

@@ -32,7 +32,10 @@ app.config(['$routeProvider','$locationProvider', function ($routeProvider, $loc
         }) .when('/nuovoAppuntamento', {
             templateUrl : "../partials/nuovoAppuntamento.html",
             controller:'nuovoAppuntamentoAppCtrl'
-         })
+         }).when('/aggiuntiUtente', {
+            templateUrl: '../partials/aggiuntiUtente.html',
+            controller:'addUser'
+		})
         .otherwise({redirectTo:'/'});
 
 }]);
