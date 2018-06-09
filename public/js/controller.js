@@ -28,8 +28,14 @@ app.controller('loginAppCtrl', function ($scope, $http, $location, $window) {
 app.controller('dashboardAppCtrl', function ( $scope, $http, $location, $window) {
 
     $scope.user = JSON.parse(sessionStorage.user);
-    // $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
-    
+    $scope.labels = ["OK", "KO", "In attesa"];
+    $scope.data = [70, 20, 10];
+    $scope.colors = ["rgb(159,204,0)","rgb(250,109,33)","rgb(154,154,154)"];
+    $scope.options = {
+        segmentShowStroke : true,
+        animationSteps : 1,
+        animationEasing : "linear"
+    };  
 
 });
 

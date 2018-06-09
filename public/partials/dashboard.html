@@ -1,34 +1,15 @@
-<div class="container-fluid pt-5" >
-        
-   <H2>Ciao {{user.NAME}}!</H2>
+<div class="container-fluid pt-3" >
+  <div class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+      
+   <h2>Ciao {{user.NAME}}!</h2>
   
-    
-   <div class="col-md-12">
-    <canvas id="myChart" width="400" height="400"></canvas>
+  
+   <div class="col-md-6 mx-auto">
+    <canvas id="doughnut" class="chart chart-doughnut"
+        chart-data="data" chart-labels="labels" chart-options="options" chart-colors="colors">
+    </canvas> 
 
    </div>
    
+  </div>
 </div>
-
-<script>
-
-var myChart = new Chart(document.getElementById("myChart"), {
-    type: 'doughnut',
-    data: {
-      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
-      datasets: [
-        {
-          label: "Population (millions)",
-          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-          data: [2478,5267,734,784,433]
-        }
-      ]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Predicted world population (millions) in 2050'
-      }
-    }
-});
-</script>

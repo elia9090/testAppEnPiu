@@ -1,5 +1,5 @@
 
-var app = angular.module('gestionaleApp', ["ngRoute"]);
+var app = angular.module('gestionaleApp', ["ngRoute","chart.js"]);
 
 app.run(['$rootScope', '$location', function($rootScope, $location, ) {
     $rootScope.$on('$routeChangeStart', function(event, currRoute, prevRoute){
@@ -15,7 +15,7 @@ app.run(['$rootScope', '$location', function($rootScope, $location, ) {
 
 }]);
 
-app.config(['$routeProvider','$locationProvider', function ($routeProvider, $locationProvider) {
+app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($routeProvider, $locationProvider, ChartJsProvider) {
     $routeProvider
         .when('/', {
             templateUrl : "../partials/dashboard.html",
@@ -40,5 +40,11 @@ app.config(['$routeProvider','$locationProvider', function ($routeProvider, $loc
             controller:'usersList'
 		})
         .otherwise({redirectTo:'/'});
-
+        
+            // Configure all charts
+            ChartJsProvider.setOptions({
+            //  chartColors: ['green', '#FF8A80',"rgb(154,154,154)"],
+             colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'],
+              responsive: true
+            });
 }]);
