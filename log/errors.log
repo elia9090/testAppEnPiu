@@ -1,1 +1,6 @@
 [2018-06-09T10:20:03.682] [ERROR] server - Errore in fase di login: null
+[2018-06-09T11:39:32.096] [ERROR] server - ERRORE SQL INSERT UTENTE: Error: ER_NO_SUCH_TABLE: Table 'DB_GESTIONALE_APP.RESPONSABILi_AGENTI' doesn't exist
+[2018-06-09T11:42:29.350] [ERROR] server - ERRORE SQL INSERT UTENTE: Error: ER_DUP_ENTRY: Duplicate entry 'e@test.it' for key 'USERNAME'
+[2018-06-09T11:44:21.737] [ERROR] server - ERRORE SQL INSERT UTENTE: Error: ER_DUP_ENTRY: Duplicate entry 'e@test.it' for key 'USERNAME'
+[2018-06-09T11:44:28.022] [ERROR] server - ERRORE SQL INSERT UTENTE: Error: ER_DUP_ENTRY: Duplicate entry 'e@test.it' for key 'USERNAME'
+[2018-06-09T11:49:44.363] [ERROR] server - ERRORE SQL INSERT UTENTE: Error: ER_DUP_ENTRY: Duplicate entry 'el@test.it' for key 'USERNAME'

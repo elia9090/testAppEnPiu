@@ -90,8 +90,8 @@ app.post('/addUser', ensureToken, function (req, res) {
 			if (errTrans) {                  //Transaction Error (Rollback and release connection)
 				connection.rollback(function() {
 				connection.release();
-				res.sendStatus(500);
 				});
+				res.sendStatus(500);
 			}else{
 				connection.query('INSERT INTO UTENTI (ID_UTENTE, NOME, COGNOME, TIPO, USERNAME, PASSWORD)VALUES (NULL, ?, ?, ?, ?, SHA1(?))', [nome,cognome,userType,username, password], function (err, rows, fields) {
 					if(err){
@@ -117,6 +117,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 									connection.release();
 									//Failure
 									});
+									res.sendStatus(500);
 								} else {
 									connection.release();
 									data["RESULT"] = "OK";
@@ -148,6 +149,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 										connection.release();
 										//Failure
 										});
+										res.sendStatus(500);
 									} else {
 										connection.release();
 										data["RESULT"] = "OK";
@@ -177,7 +179,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 										
 								}
 							});
-							connection.query('INSERT INTO RESPONSABILi_AGENTI (ID_ASSOCIAZIONE, ID_RESPONSABILE, ID_AGENTE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [responsabileAssociato,insertedId], function (err, rows, fields) {
+							connection.query('INSERT INTO RESPONSABILI_AGENTI (ID_ASSOCIAZIONE, ID_RESPONSABILE, ID_AGENTE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [responsabileAssociato,insertedId], function (err, rows, fields) {
 								if(err){
 									connection.rollback(function() {
 									connection.release();
@@ -199,6 +201,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 									connection.rollback(function() {
 									connection.release();
 									res.sendStatus(500);
+									
 									});
 								} else {
 									connection.release();

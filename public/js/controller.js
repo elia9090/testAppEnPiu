@@ -63,7 +63,7 @@ app.controller('nuovoAppuntamentoAppCtrl', function ( $scope, $http, $location, 
 
 });
 
-app.controller('addUser', function ( $scope, $http, $location,) {
+app.controller('addUser', function ( $scope, $http, $location,$route) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -109,6 +109,7 @@ app.controller('addUser', function ( $scope, $http, $location,) {
             'responsabileAssociato' : $scope.responsabileAssociato
         }).then((result) => {
             alert('Utente creato correttamente');
+            $route.reload();
         }).catch((err) => {
             if(err.status === 500){
                 alert("Errore nella registrazione utente");
