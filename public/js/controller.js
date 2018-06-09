@@ -1,6 +1,5 @@
 
 app.controller('loginAppCtrl', function ($scope, $http, $location, $window) {
-    
 
     $scope.submitLogin = function () {
         $http.post('/login', {
@@ -30,7 +29,6 @@ app.controller('dashboardAppCtrl', function ( $scope, $http, $location, $window)
 
     $scope.user = JSON.parse(sessionStorage.user);
     // $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
-    
     
 
 });
@@ -123,9 +121,6 @@ app.controller('addUser', function ( $scope, $http, $location,$route) {
             }
         });
     };
-
-
- 
 });
 
 app.controller('logoutCtrl', function ( $scope, $http, $location, $window) {

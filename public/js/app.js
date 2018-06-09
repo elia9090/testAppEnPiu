@@ -35,6 +35,9 @@ app.config(['$routeProvider','$locationProvider', function ($routeProvider, $loc
          }).when('/aggiuntiUtente', {
             templateUrl: '../partials/aggiuntiUtente.html',
             controller:'addUser'
+		}).when('/listaUtenti', {
+            templateUrl: '../partials/usersList.html',
+            controller:'usersList'
 		})
         .otherwise({redirectTo:'/'});
 

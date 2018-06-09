@@ -125,7 +125,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 									//Success
 								}
 							});
-						}else if(userType === 'RESPONSABILE_AGENTI'){
+						}else if(userType === 'RESPONSABILE AGENTI'){
 							var insertedId = rows.insertId;
 							connection.query('INSERT INTO OPERATORI_VENDITORI (ID_ASSOCIAZIONE, ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [insertedId,operatoreAssociato], function (err, rows, fields) {
 								if(err){
@@ -200,8 +200,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 								}
 							});
 						}
-						
-							connection.commit(function(err) {
+						connection.commit(function(err) {
 								if (err) {
 									connection.rollback(function() {
 									connection.release();
@@ -264,6 +263,44 @@ app.get('/listaOperatoriWS', ensureToken, function (req, res) {
 		}
 	});
 });
+
+//lsita utenti
+app.get('/listaUtenti', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			var data = {};
+			pool.getConnection(function (err, connection) {
+				connection.query('SELECT * from UTENTI' , function (err, rows, fields) {
+					connection.release();
+					if (rows.length !== 0 && !err) {
+						data["utenti"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["utenti"] = 'Nessun utente trovato';
+						res.status(404).json(data);
+					} else {
+						data["utenti"] = 'Errore in fase di reperimento utente';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento utenti: ' + err);
+						log.error('Errore in fase di reperimento utenti: ' + err);
+					}
+				});
+			
+			});
+		  
+		}
+	});
+});
+
+
+
+
+
 app.get('/listaResponsabiliAgentiWS', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
@@ -271,7 +308,7 @@ app.get('/listaResponsabiliAgentiWS', ensureToken, function (req, res) {
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE_AGENTI" ' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE AGENTI" ' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["responsabili"] = rows;

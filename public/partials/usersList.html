@@ -1,0 +1,66 @@
+<div class="container" >
+ <div class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+  
+        <div class="col-md-12">
+            <h2>Lista utenti</h2>
+            <hr>
+        </div>
+        
+
+          <div class="input-group mb-3 col-md-4">
+            
+           
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id=""><i class="fas fa-search"></i></span>
+                  </div>
+                  <input  type="text" class="form-control" placeholder="Cerca" ng-model="test" >
+                 
+              
+
+
+
+          </div>
+
+        <table class="table table-striped table-bordered table-responsive">
+          <thead>
+            <tr>
+              
+                <th scope="col">Cognome</th>
+              <th scope="col">Nome</th>
+              <th scope="col">Username</th>
+              <th scope="col">Ruolo</th>
+              <th scope="col">Modifica</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr  ng-repeat="x in usersList | filter : test  | orderBy : 'COGNOME' ">
+                  <td>
+                     {{x.COGNOME}}
+                  </td> 
+                  
+                <td>
+                    {{x.NOME}}
+                </td>
+                <td>
+                    {{x.USERNAME}}
+                </td>
+                <td>
+                    {{x.TIPO}}
+                </td>
+                <td>
+                    <button  class="btn btn-orange btn-modifyUtente" ng-click="modifyUser(x.ID_UTENTE)">
+                        <i class="fas fa-user-edit"></i>
+                    </button>
+                  
+                </td>
+              </tr>
+          </tbody>
+        </table>
+    
+   
+  </div>
+</div>
+
+
+
+
