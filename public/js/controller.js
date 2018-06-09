@@ -35,13 +35,15 @@ app.controller('dashboardAppCtrl', function ( $scope, $http, $location, $window)
 
 app.controller('nuovoAppuntamentoAppCtrl', function ( $scope, $http, $location, $window) {
     
-    /*if(true){
-
-        $location.path('/dashboard');
-    }*/
-
     $scope.user = JSON.parse(sessionStorage.user);
-    // $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
+   
+    if($scope.user.TYPE !== "ADMIN" && $scope.user.TYPE !== "OPERATORE"){
+        $location.path('/dashboard');
+    }
+
+    $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
+
+
     $http.get('../utility/province_comuni.json').then((result) => {
         $scope.provinciaSelected = "";
         $scope.province = result.data.province;
@@ -50,6 +52,7 @@ app.controller('nuovoAppuntamentoAppCtrl', function ( $scope, $http, $location, 
     });
     $scope.comuniPerProvincia = "";
     $scope.disabledComuni = true;
+    
     $scope.showComuni = function(){
         var newArray = $scope.province.filter(function (el) {
             return el.nome ===  $scope.provinciaSelected;
