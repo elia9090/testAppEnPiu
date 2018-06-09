@@ -296,6 +296,40 @@ app.get('/listaUtenti', ensureToken, function (req, res) {
 		}
 	});
 });
+app.get('/listaUtentiForOperatore/:id', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+		} else {
+			var idOperatore = req.params.id;
+			var data = {};
+			pool.getConnection(function (err, connection) {
+				connection.query(  
+					'SELECT * FROM UTENTI AS UT '
+						+' RIGHT JOIN '
+						+' (SELECT * FROM OPERATORI_VENDITORI AS OP WHERE OP.ID_OPERATORE = ? AND OP.DATA_FINE_ASS IS NULL ) AS T ON UT.ID_UTENTE=T.ID_AGENTE' ,[idOperatore], function (err, rows, fields) {
+					connection.release();
+					if (rows.length !== 0 && !err) {
+						data["utenti"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["utenti"] = 'Nessun utente trovato';
+						res.status(404).json(data);
+					} else {
+						data["utenti"] = 'Errore in fase di reperimento utente';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento utenti: ' + err);
+						log.error('Errore in fase di reperimento utenti: ' + err);
+					}
+				});
+			
+			});
+		  
+		}
+	});
+});
 
 
 
