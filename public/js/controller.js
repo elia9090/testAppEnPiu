@@ -63,7 +63,7 @@ app.controller('nuovoAppuntamentoAppCtrl', function ( $scope, $http, $location, 
 
 });
 
-app.controller('addUser', function ( $scope, $http, $location,$rootScope) {
+app.controller('addUser', function ( $scope, $http, $location,) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -72,7 +72,8 @@ app.controller('addUser', function ( $scope, $http, $location,$rootScope) {
     }
 
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
-   
+
+    
     $scope.nome = "";
     $scope.cognome = "";
     $scope.username = "";
@@ -96,6 +97,31 @@ app.controller('addUser', function ( $scope, $http, $location,$rootScope) {
     }).catch((err) => {
         alert("Impossibile reperire la lista degli operatori");
     });
+
+    $scope.submitAddUser = function () {
+        $http.post('/addUser', {
+            'username' : $scope.username,
+            'password' : $scope.password,
+            'nome': $scope.nome,
+            'cognome':$scope.cognome,
+            'userType': $scope.userType,
+            'operatoreAssociato' : $scope.operatoreAssociato,
+            'responsabileAssociato' : $scope.responsabileAssociato
+        }).then((result) => {
+            alert('Utente creato correttamente');
+        }).catch((err) => {
+            if(err.status === 500){
+                alert("Errore nella registrazione utente");
+            }
+            if(err.status === 400){
+                alert("Utente già presente: "+ $scope.username);
+            }
+            if(err.status === 403){
+                alert("Utente non autorizzato");
+                $location.path('/logout');
+            }
+        });
+    };
 
 
  
