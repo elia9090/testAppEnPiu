@@ -150,7 +150,7 @@ app.controller('usersList', function ( $scope, $http, $location,$route) {
   
 
     $scope.modifyUser = function (id) {
-        console.log(id);
+        
     };
 });
 
