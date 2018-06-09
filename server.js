@@ -161,6 +161,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 							});
 						}
 						else if(userType === 'AGENTE'){
+							if(operatoreAssociato){
 							var insertedId = rows.insertId;
 							connection.query('INSERT INTO OPERATORI_VENDITORI (ID_ASSOCIAZIONE, ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [insertedId,operatoreAssociato], function (err, rows, fields) {
 								if(err){
@@ -179,6 +180,8 @@ app.post('/addUser', ensureToken, function (req, res) {
 										
 								}
 							});
+						}
+						if(responsabileAssociato){
 							connection.query('INSERT INTO RESPONSABILI_AGENTI (ID_ASSOCIAZIONE, ID_RESPONSABILE, ID_AGENTE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [responsabileAssociato,insertedId], function (err, rows, fields) {
 								if(err){
 									connection.rollback(function() {
@@ -196,6 +199,8 @@ app.post('/addUser', ensureToken, function (req, res) {
 										
 								}
 							});
+						}
+						
 							connection.commit(function(err) {
 								if (err) {
 									connection.rollback(function() {

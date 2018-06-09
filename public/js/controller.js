@@ -78,7 +78,7 @@ app.controller('addUser', function ( $scope, $http, $location,$route) {
     $scope.cognome = "";
     $scope.username = "";
     $scope.password = "";
-    $scope.userType = "";
+    $scope.userType = "AGENTE";
     $scope.operatoreAssociato = "";
     $scope.responsabileAssociato = "";
     $scope.operatori = "";

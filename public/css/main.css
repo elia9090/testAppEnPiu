@@ -116,4 +116,9 @@ a:hover{
   }
   
 
- 
+  button.btn.btn-addUtente.btn-orange {
+    width: 100%;
+    max-width: 150px;
+    margin: 50px 0 20px 0;
+    /* float: right; */
+}
