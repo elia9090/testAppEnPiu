@@ -43,7 +43,21 @@ app.controller('nuovoAppuntamentoAppCtrl', function ( $scope, $http, $location, 
 
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
+    
 
+    $http.get('/listaUtentiForOperatore/'+$scope.user.Id).then((result) => {
+        
+        $scope.venditoriForOperatore = result.data.utenti;
+        }).catch((err) => {
+            if(err.status === 403){
+                alert("Utente non autorizzato");
+                $location.path('/logout');
+                return;
+            }
+            alert("Impossibile reperire la lista degli agenti associati");
+        });
+
+    
     $http.get('../utility/province_comuni.json').then((result) => {
         $scope.provinciaSelected = "";
         $scope.province = result.data.province;
@@ -145,6 +159,11 @@ app.controller('usersList', function ( $scope, $http, $location,$route) {
     $scope.usersList = result.data.utenti;
     
     }).catch((err) => {
+        if(err.status === 403){
+            alert("Utente non autorizzato");
+            $location.path('/logout');
+            return;
+        }
         alert("Impossibile reperire la lista degli utenti");
     });
   
