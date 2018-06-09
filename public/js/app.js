@@ -41,10 +41,10 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
 		})
         .otherwise({redirectTo:'/'});
         
-            // Configure all charts
-            ChartJsProvider.setOptions({
-            //  chartColors: ['green', '#FF8A80',"rgb(154,154,154)"],
-             colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'],
-              responsive: true
-            });
+        // Configure all charts
+        ChartJsProvider.setOptions({
+        //  chartColors: ['green', '#FF8A80',"rgb(154,154,154)"],
+            colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'],
+            responsive: true
+        });
 }]);
