@@ -1,15 +1,29 @@
 <div class="container-fluid pt-3" >
   <div class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
-      
-   <h2>Ciao {{user.NAME}}!</h2>
+      <div class="row mb-5">
+          <div class="col-md-12">
+              <h2>Ciao {{user.NAME}}!</h2>
+              <hr>
+          </div>
+      </div>
+   
   
-  
-   <div class="col-md-6 mx-auto">
+   
+   <div class="col-md-6 float-left">
+      <h3 class="text-center">Resoconto appuntamenti</h3>
     <canvas id="doughnut" class="chart chart-doughnut"
         chart-data="data" chart-labels="labels" chart-options="options" chart-colors="colors">
-    </canvas> 
+    </canvas>
+  </div>
+    <div class="col-md-6 float-left">
+        <h3 class="text-center">Andamento agenti</h3>
+        <canvas id="pie" class="chart chart-pie"
+        chart-data="data1" chart-labels="labels1" chart-options="options1" chart-colors="colors1">
+    </canvas>  
+    </div>
+    <div class="clearfix"></div>
 
-   </div>
+   
    
   </div>
 </div>

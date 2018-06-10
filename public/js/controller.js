@@ -34,7 +34,17 @@ app.controller('dashboardAppCtrl', function ( $scope, $http, $location, $window)
     $scope.options = {
         segmentShowStroke : true,
         animationSteps : 1,
-        animationEasing : "linear"
+        animationEasing : "linear",
+        legend: {display: true}
+    };  
+    $scope.labels1 = ["Emanuele", "Nicola", "Umberto"];
+    $scope.data1 = [70, 20, 10];
+    $scope.colors1 = ["rgb(159,204,0)","rgb(250,109,33)","rgb(154,154,154)"];
+    $scope.options1 = {
+        segmentShowStroke : true,
+        animationSteps : 1,
+        animationEasing : "linear",
+        legend: {display: true}
     };  
 
 });
