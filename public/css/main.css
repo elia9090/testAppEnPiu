@@ -22,7 +22,7 @@ button:focus{
 }
 .form-control:focus{
     border-color:  rgb(244, 115, 32, 0.1) !important;
-    box-shadow: 0 0 0 0.2rem rgb(244, 115, 32, 0.4);
+    box-shadow: 0 0 0 1px rgb(244, 115, 32, 0.4);
 }
 .btn-orange:hover{
     opacity: 0.7;
@@ -127,3 +127,25 @@ button.btn.btn-modifyUtente.btn-orange {
   max-width: 150px;
 }
 
+button.uib-datepicker-current { 
+  display: none !important;
+}
+
+.datepicker input:read-only{
+  background-color: #fff;
+}
+.btn.uib-close{
+  float: right;
+}
+
+
+.datepicker button.btn.btn-default.btn-sm {
+  background-color: #f5f5f5 !important;
+}
+.datepicker button.btn.btn-default.btn-sm.btn-info{
+  background-color: #f47320 !important;
+  border-color: #f47320 !important;
+}
+select{
+  width: 100% !important;
+}

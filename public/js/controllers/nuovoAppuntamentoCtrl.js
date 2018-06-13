@@ -7,8 +7,29 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
         $location.path('/dashboard');
     }
 
+
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
+    //DATEPICKER
+    $scope.dateOptions = {
+        minDate: new Date(),
+        startingDay: 1,
+        showWeeks:false,
+        placement:"auto bottom-right"
+      };
+      $scope.altInputFormats = ['M!/d!/yyyy'];
+    $scope.format="dd/MM/yyyy";
+
+    $scope.open = function() {
+        $scope.popup.opened = true;
+    };
+    $scope.popup = {
+        opened: false
+    };
+
+    //TIMEPICKER
+    $scope.hstep = 1;
+    $scope.mstep = 15;
     
     if($scope.user.TYPE == "OPERATORE"){
         //variabile utile per il submit START

@@ -1,5 +1,5 @@
 
-var app = angular.module('gestionaleApp', ["ngRoute","chart.js"]);
+var app = angular.module('gestionaleApp', ["ngRoute","chart.js",'ui.bootstrap']);
 
 app.run(['$rootScope', '$location', function($rootScope, $location, ) {
     $rootScope.$on('$routeChangeStart', function(event, currRoute, prevRoute){
@@ -48,3 +48,4 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
             responsive: true
         });
 }]);
+
