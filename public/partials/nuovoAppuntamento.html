@@ -21,11 +21,23 @@
         </select>
     </div>
     
-    <div class="form-group">
+    <div ng-if="userType === 'OPERATORE'" class="form-group">
         <label for="venditoreSelect">Agente</label>
         <select name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="venditoreSelected">
             <option ng-repeat="option in venditoriForOperatore" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
         </select>
+    </div>
+
+    <div ng-if="userType === 'ADMIN'" class="form-group">
+            <label for="operatoriSelect">OPERATORE</label>
+            <select name="operatoriSelect" class="form-control" id="operatoriSelect" ng-change="showAgentiForOperatore(operatoriSelected)"  ng-model="operatoriSelected">
+                <option ng-repeat="option in operatori" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
+            </select>    
+
+            <label for="venditoreSelect">Agente</label>
+            <select name="venditoreSelect" class="form-control" id="venditoreSelect" ng-disabled="disabledListaAgenti"  ng-model="venditoreSelected">
+                <option ng-repeat="option in venditoriForOperatore" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
+            </select>
     </div>
 
 </form>

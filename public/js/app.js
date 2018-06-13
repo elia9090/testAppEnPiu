@@ -19,25 +19,25 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
     $routeProvider
         .when('/', {
             templateUrl : "../partials/dashboard.html",
-            controller:'dashboardAppCtrl'
+            controller:'dashboardCtrl'
          }).when('/login', {
             templateUrl : "../partials/login.html",
-            controller:'loginAppCtrl'
+            controller:'loginCtrl'
         }).when('/dashboard', {
             templateUrl: '../partials/dashboard.html',
-            controller:'dashboardAppCtrl'
+            controller:'dashboardCtrl'
 		}).when('/logout', {
             template: '',
             controller:'logoutCtrl'
-        }) .when('/nuovoAppuntamento', {
+        }).when('/nuovoAppuntamento', {
             templateUrl : "../partials/nuovoAppuntamento.html",
-            controller:'nuovoAppuntamentoAppCtrl'
+            controller:'nuovoAppuntamentoCtrl'
          }).when('/aggiuntiUtente', {
             templateUrl: '../partials/aggiuntiUtente.html',
-            controller:'addUser'
+            controller:'addUserCtrl'
 		}).when('/listaUtenti', {
             templateUrl: '../partials/usersList.html',
-            controller:'usersList'
+            controller:'usersListCtrl'
 		})
         .otherwise({redirectTo:'/'});
         
