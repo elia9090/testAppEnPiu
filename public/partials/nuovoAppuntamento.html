@@ -19,49 +19,62 @@
                     </span>
                 </p>
         </div>
-        <div class="form-group  col-xs-12 col-sm-6 col-md-4">
+        <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
             <label for="oraAppuntamento">Ora appuntamento</label>
-            <div uib-timepicker ng-model="oraAppuntamento" id="oraAppuntamento" ng-change="changed()" show-meridian="false" hour-step="hstep" minute-step="mstep" ></div>
+            <div uib-timepicker ng-model="oraAppuntamento" id="oraAppuntamento" ng-required="true" ng-change="changed()" show-meridian="false" hour-step="hstep" minute-step="mstep" ></div>
         </div>
     </div>
  
    
-    <div class="form-group col-xs-12 col-sm-12 col-md-4 ">
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
         <label for="provinceSelect">Provincia</label>
-        <select name="provinceSelect" class="form-control" id="provinceSelect" ng-change="showComuni()" ng-model="provinciaSelected">
+        <select ng-required="true" name="provinceSelect" class="form-control" id="provinceSelect" ng-change="showComuni()" ng-model="provinciaSelected">
             <option ng-repeat="option in province" value="{{option.nome}}">{{option.nome}}</option>
         </select>
     </div>
-    <div class="form-group col-xs-12 col-sm-12 col-md-4 ">
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
         <label for="comuniSelect">Comune</label>
-        <select name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="disabledComuni" ng-model="comuneSelected">
+        <select ng-required="true" name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="disabledComuni" ng-model="comuneSelected">
                 <option ng-repeat="option in comuniPerProvincia" value="{{option.nome}}">{{option.nome}}</option>
         </select>
     </div>
-    <div class="form-group col-xs-12 col-sm-12 col-md-4 col-xl-4">
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
             <label for="indirizzo">Indirizzo</label>
-            <input type="text"name="indirizzo" class="form-control w-100" id="indirizzo" ng-disabled="disabledComuni" ng-model="indirizzo" />         
+            <input ng-required="true" type="text"name="indirizzo" class="form-control w-100" id="indirizzo" ng-disabled="disabledComuni" ng-model="indirizzo" />         
     </div>
     
-    <div ng-if="userType === 'OPERATORE'" class="form-group col-xs-12 col-sm-12 col-md-4">
+    <div ng-if="userType === 'OPERATORE'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
         <label for="venditoreSelect">Agente</label>
-        <select name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="venditoreSelected">
+        <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="venditoreSelected">
             <option ng-repeat="option in venditoriForOperatore" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
         </select>
     </div>
 
-    <div ng-if="userType === 'ADMIN'" class="form-group col-xs-12 col-sm-12 col-md-4">
-            <label for="operatoriSelect">OPERATORE</label>
-            <select name="operatoriSelect" class="form-control" id="operatoriSelect" ng-change="showAgentiForOperatore(operatoriSelected)"  ng-model="operatoriSelected">
+    <div ng-if="userType === 'ADMIN'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+            <label for="operatoriSelect">Operatore</label>
+            <select ng-required="true" name="operatoriSelect" class="form-control" id="operatoriSelect" ng-change="showAgentiForOperatore(operatoriSelected)"  ng-model="operatoriSelected">
                 <option ng-repeat="option in operatori" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
             </select>    
     </div>
-        <div ng-if="userType === 'ADMIN'" class="form-group col-xs-12 col-sm-12 col-md-4">
+        <div ng-if="userType === 'ADMIN'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="venditoreSelect">Agente</label>
-            <select name="venditoreSelect" class="form-control" id="venditoreSelect" ng-disabled="disabledListaAgenti"  ng-model="venditoreSelected">
+            <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect" ng-disabled="disabledListaAgenti"  ng-model="venditoreSelected">
                 <option ng-repeat="option in venditoriForOperatore" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
             </select>
         </div>
+    
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+            <label for="nomeAttivita">Nome azienda / persona fisica</label>
+            <input ng-required="true" type="text"name="nomeAttivita" class="form-control w-100" id="nomeAttivita"  ng-model="nomeAttivita" />         
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+        <label for="gestoreAttuale">Gestore attuale</label>
+        <select ng-required="true" ng-model="group.value" id="gestoreAttuale" name="gestoreAttuale"  class="form-control" ng-options="Group.Value as Group.Name  for Group in Groups"></select>
+        <div class=" form-control mt-2" ng-show="group.value == 'altro'">
+            <input class="text-box form-control " type="text" name="NewValue" ng-model="newValue" />
+            <button type="button" ng-click="inserisciNuovoGestore(newValue)">Aggiungi</button>
+        </div>       
+    </div>
 
 </form>
 </div>

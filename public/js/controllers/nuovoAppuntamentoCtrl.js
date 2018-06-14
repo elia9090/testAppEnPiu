@@ -30,7 +30,12 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
     //TIMEPICKER
     $scope.hstep = 1;
     $scope.mstep = 15;
+    //setto come default l'orario alle 14:00
+    var dateTime = new Date();
+    dateTime.setHours(14);
+    dateTime.setMinutes(00);
     
+    $scope.oraAppuntamento=dateTime;
     if($scope.user.TYPE == "OPERATORE"){
         //variabile utile per il submit START
         $scope.operatoriSelected = $scope.user.Id;
@@ -100,6 +105,31 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
         $scope.comuniPerProvincia = newArray[0].comuni;
         $scope.disabledComuni = false;
     }
-    
+
+    // ATTUALE GESTORE START
+    $scope.Groups = "";
+
+    $http.get('../../utility/gestori.json').then((result) => {
+       $scope.Groups = result.data.GESTORI;
+    }).catch((err) => {
+        alert("Impossibile reperire la lista dei gestori");
+    });
+
+    $scope.inserisciNuovoGestore = function (newValue) {
+        var obj = {};
+        obj.Name = newValue;
+        obj.Value = newValue;
+        $scope.Groups.push(obj);
+        $scope.group.value = obj.Value;
+        $scope.newValue = '';
+    }
+
+  
+    $scope.group = {
+        name: "",
+        value:""
+    }    
+// ATTUALE GESTORE END
+
 
 });

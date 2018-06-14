@@ -1,0 +1,32 @@
+{
+    "GESTORI":[{
+        "Name":" - NON DISPONIBILE - ",
+        "Value":"NON DISPONIBILE"
+    },
+    {
+        "Name":" - ALTRO (Inserisci il gestore) - ",
+        "Value":"altro"
+    },
+    
+    {
+        "Name":"ENEL ENERGIA",
+        "Value":"ENEL ENERGIA"
+    },
+    {
+        "Name":"SOLGENIA",
+        "Value":"SOLGENIA"
+    },
+    {
+        "Name":"ENI ENERGIA",
+        "Value":"ENI ENERGIA"
+    },
+    {
+        "Name":"OPTIMA",
+        "Value":"OPTIMA"
+    },
+    {
+        "Name":"EDISON ENERGIA",
+        "Value":"EDISON ENERGIA"
+    }
+    ]
+}

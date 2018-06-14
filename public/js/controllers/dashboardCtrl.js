@@ -15,6 +15,7 @@ app.controller('dashboardCtrl', function ( $scope, $http, $location, $window) {
         animationSteps : 1,
         animationEasing : "linear",
         legend: {display: true}
+        
     };  
     $scope.labels1 = ["Emanuele", "Nicola", "Umberto"];
     $scope.data1 = [50, 40, 10];

@@ -146,6 +146,14 @@ button.uib-datepicker-current {
   background-color: #f47320 !important;
   border-color: #f47320 !important;
 }
+.btn-link{
+  color: #f47320;
+}
 select{
   width: 100% !important;
+}
+
+.has-error input{
+  border-color: rgb(255, 5, 5, 0.747) !important;
+  box-shadow: 0 0 0 1px rgba(255, 5, 5, 0.747);
 }
