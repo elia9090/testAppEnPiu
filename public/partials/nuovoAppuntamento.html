@@ -75,6 +75,20 @@
             <button type="button" ng-click="inserisciNuovoGestore(newValue)">Aggiungi</button>
         </div>       
     </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+        <label for="recapiti">Recapiti</label>
+        <input ng-required="true" type="text"name="recapiti" class="form-control w-100" id="recapiti"  ng-model="recapiti" />         
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+        <label for="noteOperatore">Note operatore</label>
+        <textarea  rows="4" cols="50" maxlength="220"  type="text"name="noteOperatore" class="form-control w-100" id="noteOperatore"  ng-model="noteOperatore" ></textarea>         
+    </div>
+
+        <div class="col-md-12 col-xl-12 mt-3 ">
+            <button  type="submit" class="btn btn-orange ">Crea appuntamento</button>
+            
+        </div>
+    
 
 </form>
 </div>

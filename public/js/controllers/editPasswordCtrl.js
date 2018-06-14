@@ -8,7 +8,7 @@ app.controller('editPasswordCtrl', function ( $scope, $http, $location,$route) {
 
     $scope.password2 = "";
 
-    $scope.updatePassword = function () {
+    $scope.submitEditPassword = function () {
         $http.post('/editPassword', {
             'userId' : $scope.user.Id,
             'password' : $scope.password
