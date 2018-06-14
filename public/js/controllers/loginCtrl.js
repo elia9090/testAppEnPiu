@@ -13,8 +13,14 @@ app.controller('loginCtrl', function ($scope, $http, $location, $window) {
             $scope.user.TYPE = result.data.utente.TIPO;
             $scope.user.USERNAME = result.data.utente.USERNAME;
             $scope.user.TOKEN = result.data.token;
+            $scope.user.editPassword = result.data.editPassword;
             sessionStorage.user = JSON.stringify($scope.user);
-            $location.path('/dashboard');
+            if(result.data.editPassword === "0"){
+                $location.path('/dashboard');
+            }else{
+                $location.path('/editPassword');
+            }
+           
         }).catch((err) => {
             if(err.status === 404){
                 alert("Nome utente o password errati!");

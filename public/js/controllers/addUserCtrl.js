@@ -13,6 +13,7 @@ app.controller('addUserCtrl', function ( $scope, $http, $location,$route) {
     $scope.cognome = "";
     $scope.username = "";
     $scope.password = "";
+    //preseleziono lo usertype dai radio button
     $scope.userType = "AGENTE";
     $scope.operatoreAssociato = "";
     $scope.responsabileAssociato = "";

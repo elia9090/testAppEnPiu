@@ -10,6 +10,7 @@ app.run(['$rootScope', '$location', function($rootScope, $location, ) {
         }else{
             $rootScope.userRoot = "true";
             $rootScope.userType = JSON.parse(sessionStorage.user).TYPE;
+            $rootScope.userEditedPassword = JSON.parse(sessionStorage.user).editPassword === "0" ? true : false;
         }
     });
 
@@ -38,6 +39,10 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
 		}).when('/listaUtenti', {
             templateUrl: '../partials/usersList.html',
             controller:'usersListCtrl'
+        })
+        .when('/editPassword', {
+            templateUrl: '../partials/editPassword.html',
+            controller:'editPasswordCtrl'
 		})
         .otherwise({redirectTo:'/'});
         

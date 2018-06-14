@@ -26,6 +26,7 @@
     <script src="js/customDom.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers/loginCtrl.js"></script>
+    <script src="js/controllers/editPasswordCtrl.js"></script>
     <script src="js/controllers/dashboardCtrl.js"></script>
     <script src="js/controllers/logoutCtrl.js"></script>
     <script src="js/controllers/addUserCtrl.js"></script>
@@ -38,7 +39,7 @@
         <div class="pos-f-t">
                 <nav class="navbar menuHomepage navbar-dark bg-dark">
                         <p class="navbar-brand" href="#">Gestionale appuntamenti</p>
-                        <button id="btnMenuHome"  ng-show="userRoot" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <button id="btnMenuHome"  ng-show="userRoot && userEditedPassword" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
                             <div id="nav-icon1">
                                 <span></span>
                                 <span></span>

@@ -43,13 +43,18 @@ app.post('/login', function (req, res) {
 	var username = req.body.username;
     var password = req.body.password;
 	pool.getConnection(function (err, connection) {
-		connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = SHA1(?)', [username,  password], function (err, rows, fields) {
+		connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = SHA1(?) and UTENTE_ATTIVO = 1', [username,  password], function (err, rows, fields) {
 			connection.release();
 			if (rows.length !== 0 && !err) {
 				data["utente"] = rows[0];
 				const user = rows[0];
 				const token = jwt.sign({ user: rows[0].ID_UTENTE }, config.secretKey,{expiresIn: "8h"});
 				data["token"] = token;
+				if(rows[0].EDIT_PASSWORD == 1){
+					data["editPassword"] = "1";
+				}else{
+					data["editPassword"] = "0";
+				}
 				res.json(data);
 			} else if (rows.length === 0) {
 				//Error code 2 = no rows in db.
@@ -66,6 +71,67 @@ app.post('/login', function (req, res) {
 	
 	});
 });
+//UPDATE PASSWORD
+app.post('/editPassword', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+	} else {
+	console.log("post :: /editPassword");
+	log.info('post Request :: /editPassword');
+
+	var data = {};
+	
+	var id = parseInt(req.body.userId);
+	var password = req.body.password;
+
+	pool.getConnection(function (err, connection) {
+		connection.beginTransaction(function(errTrans) {
+			if (errTrans) {                  //Transaction Error (Rollback and release connection)
+				connection.rollback(function() {
+				connection.release();
+				});
+				res.sendStatus(500);
+			}else{
+				connection.query('UPDATE UTENTI SET PASSWORD=SHA1(?), EDIT_PASSWORD=0 WHERE ID_UTENTE= ?', [password, id ], function (err, rows, fields) {
+					if(err){
+						connection.rollback(function() {
+						connection.release();
+						//Failure
+						});
+						log.error('ERRORE SQL UPDATE password UTENTE: ' + err);
+						//errore username duplicato
+						
+							res.sendStatus(500);
+							
+					}else{
+						connection.commit(function(err) {
+							if (err) {
+								connection.rollback(function() {
+								connection.release();
+								//Failure
+								});
+								res.sendStatus(500);
+							} else {
+								connection.release();
+								data["RESULT"] = "OK";
+								res.json(data);
+								//Success
+							}
+						});
+					}
+					
+				});
+			}
+		});
+	
+		
+	});
+	}
+});
+});
+
+
 // INSERT USER
 app.post('/addUser', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
