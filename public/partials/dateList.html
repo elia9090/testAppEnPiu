@@ -1,0 +1,64 @@
+<div class="container" >
+ <div class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+        <div class="col-md-12">
+            <h2>Lista appuntamenti</h2>
+            <hr>
+        </div>
+        
+          <div class="input-group mb-3 col-md-4">
+
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id=""><i class="fas fa-search"></i></span>
+                  </div>
+                  <input  type="text" class="form-control" placeholder="Cerca" ng-model="filtraAppuntamenti" >
+         
+          </div>
+          <div class="table-responsive">
+        <table class="table  table-bordered">
+          <thead>
+            <tr>
+              
+              <th scope="col">Agente</th>
+              <th scope="col">Operatore</th>
+              <th scope="col">Data</th>
+              <th scope="col">Luogo</th>
+              <th scope="col">Esito</th>
+              <th scope="col">Modifica</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : 'cognome_venditore' " ng-class="rowClass(x.ESITO)">
+                  <td>
+                     {{x.COGNOME_VENDITORE}}  {{X.NOME_VENDITORE}}
+                  </td> 
+                  
+                <td>
+                    {{x.COGNOME_OPERATORE}} {{X.NOME_VENDITORE}}
+                </td>
+                <td ng-bind="x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'">
+                    {{x.DATA_APPUNTAMENTO}}
+                </td>
+                <td>
+                    {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                </td>
+                <td>
+                    {{x.ESITO}}
+                </td>
+                <td>
+                    <button  class="btn btn-orange btn-modifyUtente" ng-click="modifyDate(x.ID_APPUNTAMENTO)">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                  
+                </td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+    
+   
+  </div>
+</div>
+
+
+
+

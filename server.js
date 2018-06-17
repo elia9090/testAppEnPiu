@@ -362,6 +362,105 @@ app.get('/listaUtenti', ensureToken, function (req, res) {
 		}
 	});
 });
+
+// NUOVO APPUNTAMENTO
+app.post('/addNewDate', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+	} else {
+	console.log("post :: /addNewDate");
+	log.info('post Request :: /addNewDate');
+
+	var data = {};
+	
+	var id = parseInt(req.body.userId);
+	var password = req.body.password;
+
+	pool.getConnection(function (err, connection) {
+		connection.beginTransaction(function(errTrans) {
+			if (errTrans) {                  //Transaction Error (Rollback and release connection)
+				connection.rollback(function() {
+				connection.release();
+				});
+				res.sendStatus(500);
+			}else{
+				connection.query('', [password, id ], function (err, rows, fields) {
+					if(err){
+						connection.rollback(function() {
+						connection.release();
+						//Failure
+						});
+						log.error('ERRORE SQL INSERT APPUNTAMENTO ' + err);
+						res.sendStatus(500);
+							
+					}else{
+						connection.commit(function(err) {
+							if (err) {
+								connection.rollback(function() {
+								connection.release();
+								//Failure
+								});
+								res.sendStatus(500);
+							} else {
+								connection.release();
+								data["RESULT"] = "OK";
+								res.json(data);
+								//Success
+							}
+						});
+					}
+					
+				});
+			}
+		});
+	
+		
+	});
+	}
+});
+});
+
+//lsita appuntamenti
+app.get('/listaAppuntamenti', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			var data = {};
+			pool.getConnection(function (err, connection) {
+				connection.query(
+				'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
+				' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
+				' FROM APPUNTAMENTI'+
+				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
+				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_OPERATORE=VENDITORE.ID_UTENTE' , function (err, rows, fields) {
+					connection.release();
+					if (rows.length !== 0 && !err) {
+						data["appuntamenti"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["appuntamenti"] = 'Nessun appuntamento trovato';
+						res.status(404).json(data);
+					} else {
+						data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento appuntamenti: ' + err);
+						log.error('Errore in fase di reperimento appuntamenti: ' + err);
+					}
+				});
+			
+			});
+		  
+		}
+	});
+});
+
+
+
 app.get('/listaUtentiForOperatore/:id', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {

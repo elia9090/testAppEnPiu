@@ -1,91 +1,93 @@
 <div class="container" >
      
-<form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" ng-submit="submitNewDate()">
+<form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="formNewDate" ng-submit="newDate.submitNewDate()">
     
         <div class="row col-12">
                 <div class="col-md-12">
                     <h2>Nuovo appuntamento</h2>
                     <hr>
+                    <p class="orangeText">* Campi obbligatori</p>
                 </div>
             </div>
     
     <div class="row col-12">
         <div class="form-group  col-xs-12 col-sm-6 col-md-4 mr-2">
-            <label for="dataAppuntamento">Data appuntamento</label>
+            <label for="dataAppuntamento">Data appuntamento*</label>
             <p class="input-group datepicker">
-                    <input type="text" id="dataAppuntamento" ng-click="open()" class="form-control " readonly required="required" uib-datepicker-popup="{{format}}" ng-model="dataAppuntamento" is-open="popup.opened" datepicker-options="dateOptions" ng-required="true" clear-text="Rimuovi" close-text="Chiudi" />
+                    <input type="text" name="dataAppuntamento" id="dataAppuntamento" ng-click="newDate.open()" class="form-control " readonly required="required" uib-datepicker-popup="{{newDate.format}}" ng-model="newDate.dataAppuntamento" ng-required="true" is-open="newDate.popup.opened" datepicker-options="newDate.dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-orange" ng-click="open()"><i class="far fa-calendar-alt"></i></button>
+                        <button type="button" class="btn btn-orange" ng-click="newDate.open()"><i class="far fa-calendar-alt"></i></button>
                     </span>
                 </p>
         </div>
         <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
-            <label for="oraAppuntamento">Ora appuntamento</label>
-            <div uib-timepicker ng-model="oraAppuntamento" id="oraAppuntamento" ng-required="true" ng-change="changed()" show-meridian="false" hour-step="hstep" minute-step="mstep" ></div>
+            <label for="oraAppuntamento">Ora appuntamento*</label>
+            <div uib-timepicker ng-model="newDate.oraAppuntamento" id="oraAppuntamento" ng-required="true"  show-meridian="false" hour-step="newDate.hstep" minute-step="newDate.mstep" ></div>
         </div>
     </div>
  
    
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-        <label for="provinceSelect">Provincia</label>
-        <select ng-required="true" name="provinceSelect" class="form-control" id="provinceSelect" ng-change="showComuni()" ng-model="provinciaSelected">
-            <option ng-repeat="option in province" value="{{option.nome}}">{{option.nome}}</option>
+        <label for="provinceSelect">Provincia*</label>
+        <select ng-required="true" name="provinceSelect" class="form-control" id="provinceSelect" ng-change="newDate.showComuni()" ng-model="newDate.provinciaSelected">
+            <option ng-repeat="option in newDate.province" value="{{option.nome}}">{{option.nome}}</option>
         </select>
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-        <label for="comuniSelect">Comune</label>
-        <select ng-required="true" name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="disabledComuni" ng-model="comuneSelected">
-                <option ng-repeat="option in comuniPerProvincia" value="{{option.nome}}">{{option.nome}}</option>
+        <label for="comuniSelect">Comune*</label>
+        <select ng-required="true" name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="newDate.disabledComuni" ng-model="newDate.comuneSelected">
+                <option ng-repeat="option in newDate.comuniPerProvincia" value="{{option.nome}}">{{option.nome}}</option>
         </select>
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
-            <label for="indirizzo">Indirizzo</label>
-            <input ng-required="true" type="text"name="indirizzo" class="form-control w-100" id="indirizzo" ng-disabled="disabledComuni" ng-model="indirizzo" />         
+            <label for="indirizzo">Indirizzo*</label>
+            <input ng-required="true" type="text"name="indirizzo" class="form-control w-100" id="indirizzo" ng-disabled="newDate.disabledComuni" ng-model="newDate.indirizzo" />         
     </div>
     
     <div ng-if="userType === 'OPERATORE'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-        <label for="venditoreSelect">Agente</label>
-        <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="venditoreSelected">
-            <option ng-repeat="option in venditoriForOperatore" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
+        <label for="venditoreSelect">Agente*</label>
+        <select ng-model="newDate.venditoreSelected" ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect">
+            <option ng-repeat="option in newDate.venditoriForOperatore" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
         </select>
+    
     </div>
 
     <div ng-if="userType === 'ADMIN'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-            <label for="operatoriSelect">Operatore</label>
-            <select ng-required="true" name="operatoriSelect" class="form-control" id="operatoriSelect" ng-change="showAgentiForOperatore(operatoriSelected)"  ng-model="operatoriSelected">
-                <option ng-repeat="option in operatori" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
+            <label for="operatoriSelect">Operatore*</label>
+            <select ng-required="true" name="operatoriSelect" class="form-control" id="operatoriSelect" ng-change="newDate.showAgentiForOperatore(operatoriSelected)"  ng-model="newDate.operatoriSelected">
+                <option ng-repeat="option in newDate.operatori" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
             </select>    
     </div>
         <div ng-if="userType === 'ADMIN'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-            <label for="venditoreSelect">Agente</label>
-            <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect" ng-disabled="disabledListaAgenti"  ng-model="venditoreSelected">
-                <option ng-repeat="option in venditoriForOperatore" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
+            <label for="venditoreSelect">Agente*</label>
+            <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect" ng-disabled="newDate.disabledListaAgenti"  ng-model="newDate.venditoreSelected">
+                <option ng-repeat="option in newDate.venditoriForOperatore" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
             </select>
         </div>
     
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
-            <label for="nomeAttivita">Nome azienda / persona fisica</label>
-            <input ng-required="true" type="text"name="nomeAttivita" class="form-control w-100" id="nomeAttivita"  ng-model="nomeAttivita" />         
+            <label for="nomeAttivita">Nome azienda / persona fisica*</label>
+            <input ng-required="true" type="text"name="nomeAttivita" class="form-control w-100" id="nomeAttivita"  ng-model="newDate.nomeAttivita" />         
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
-        <label for="gestoreAttuale">Gestore attuale</label>
-        <select ng-required="true" ng-model="group.value" id="gestoreAttuale" name="gestoreAttuale"  class="form-control" ng-options="Group.Value as Group.Name  for Group in Groups"></select>
-        <div class=" form-control mt-2" ng-show="group.value == 'altro'">
+        <label for="gestoreAttuale">Gestore attuale*</label>
+        <select ng-required="true" ng-model="newDate.group.value" id="gestoreAttuale" name="gestoreAttuale"  class="form-control" ng-options="Group.Value as Group.Name  for Group in newDate.Groups"></select>
+        <div class=" form-control mt-2" ng-show="newDate.group.value == 'altro'">
             <input class="text-box form-control " type="text" name="NewValue" ng-model="newValue" />
-            <button type="button" ng-click="inserisciNuovoGestore(newValue)">Aggiungi</button>
+            <button type="button" ng-click="newDate.inserisciNuovoGestore(newValue)">Aggiungi</button>
         </div>       
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
-        <label for="recapiti">Recapiti</label>
-        <input ng-required="true" type="text"name="recapiti" class="form-control w-100" id="recapiti"  ng-model="recapiti" />         
+        <label for="recapiti">Recapiti*</label>
+        <input ng-required="true" type="text"name="recapiti" class="form-control w-100" id="recapiti"  ng-model="newDate.recapiti" />         
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
         <label for="noteOperatore">Note operatore</label>
-        <textarea  rows="4" cols="50" maxlength="220"  type="text"name="noteOperatore" class="form-control w-100" id="noteOperatore"  ng-model="noteOperatore" ></textarea>         
+        <textarea  rows="4" cols="50" maxlength="220"  type="text"name="noteOperatore" class="form-control w-100" id="noteOperatore"  ng-model="newDate.noteOperatore" ></textarea>         
     </div>
 
         <div class="col-md-12 col-xl-12 mt-3 ">
-            <button  type="submit" class="btn btn-orange ">Crea appuntamento</button>
+            <button ng-disabled="formNewDate.$invalid"  type="submit" class="btn btn-orange ">Crea appuntamento</button>
             
         </div>
     

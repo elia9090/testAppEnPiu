@@ -2,7 +2,9 @@
 app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $window) {
     
     $scope.user = JSON.parse(sessionStorage.user);
-   
+    // CREO LO SCOPE PER IL CONTROLLER DEL FORM altrimenti con ng-if crea uno scope child e non prende il valore assegnato
+    $scope.newDate ={};
+    
     if($scope.user.TYPE !== "ADMIN" && $scope.user.TYPE !== "OPERATORE"){
         $location.path('/dashboard');
     }
@@ -11,39 +13,39 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
     //DATEPICKER
-    $scope.dateOptions = {
+    $scope.newDate.dateOptions = {
         minDate: new Date(),
         startingDay: 1,
         showWeeks:false,
         placement:"auto bottom-right"
       };
-      $scope.altInputFormats = ['M!/d!/yyyy'];
-    $scope.format="dd/MM/yyyy";
+      $scope.newDate.altInputFormats = ['M!/d!/yyyy'];
+    $scope.newDate.format="dd/MM/yyyy";
 
-    $scope.open = function() {
-        $scope.popup.opened = true;
+    $scope.newDate.open = function() {
+        $scope.newDate.popup.opened = true;
     };
-    $scope.popup = {
+    $scope.newDate.popup = {
         opened: false
     };
 
     //TIMEPICKER
-    $scope.hstep = 1;
-    $scope.mstep = 15;
+    $scope.newDate.hstep = 1;
+    $scope.newDate.mstep = 15;
     //setto come default l'orario alle 14:00
     var dateTime = new Date();
     dateTime.setHours(14);
     dateTime.setMinutes(00);
     
-    $scope.oraAppuntamento=dateTime;
+    $scope.newDate.oraAppuntamento=dateTime;
     if($scope.user.TYPE == "OPERATORE"){
         //variabile utile per il submit START
-        $scope.operatoriSelected = $scope.user.Id;
+        $scope.newDate.operatoriSelected = $scope.user.Id;
         //variabile utile per il submit END
 
         $http.get('/listaUtentiForOperatore/'+$scope.user.Id).then((result) => {
         
-            $scope.venditoriForOperatore = result.data.utenti;
+            $scope.newDate.venditoriForOperatore = result.data.utenti;
             }).catch((err) => {
                 if(err.status === 403){
                     alert("Utente non autorizzato");
@@ -52,26 +54,32 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
                 }
                 alert("Impossibile reperire la lista degli agenti associati");
             });
+           
     }
 
     if($scope.user.TYPE == "ADMIN"){
 
-        $scope.disabledListaAgenti = true;
+        $scope.newDate.disabledListaAgenti = true;
         
         $http.get('/listaOperatoriWS').then((result) => {
-            $scope.operatori =  result.data.operatori;
+            $scope.newDate.operatori =  result.data.operatori;
         }).catch((err) => {
+            if(err.status === 403){
+                alert("Utente non autorizzato");
+                $location.path('/logout');
+                return;
+            }
             alert("Impossibile reperire la lista degli operatori");
         });
         
-
-        $scope.showAgentiForOperatore = function(idOperatore){
+        
+        $scope.newDate.showAgentiForOperatore = function(idOperatore){
             //variabile utile per il submit START
-            $scope.operatoriSelected = idOperatore;
+            $scope.newDate.operatoriSelected = idOperatore;
             //variabile utile per il submit END
             $http.get('/listaUtentiForOperatore/'+idOperatore).then((result) => {
-                $scope.venditoriForOperatore = result.data.utenti;
-                $scope.disabledListaAgenti = false;
+                $scope.newDate.venditoriForOperatore = result.data.utenti;
+                $scope.newDate.disabledListaAgenti = false;
                 }).catch((err) => {
                     if(err.status === 403){
                         alert("Utente non autorizzato");
@@ -79,57 +87,94 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
                         return;
                     }
                     alert("L'operatore selezionato non ha agenti associati");
-                    $scope.disabledListaAgenti = true;
-                    $scope.venditoriForOperatore = "";
+                    $scope.newDate.disabledListaAgenti = true;
+                    $scope.newDate.venditoriForOperatore = "";
                 });
            
         }
-
+        
     }
   
 
-    
+   
     $http.get('../../utility/province_comuni.json').then((result) => {
-        $scope.provinciaSelected = "";
-        $scope.province = result.data.province;
+        $scope.newDate.provinciaSelected = "";
+        $scope.newDate.province = result.data.province;
     }).catch((err) => {
         alert("Impossibile reperire la lista dei comuni");
     });
-    $scope.comuniPerProvincia = "";
-    $scope.disabledComuni = true;
+    $scope.newDate.comuniPerProvincia = "";
+    $scope.newDate.disabledComuni = true;
     
-    $scope.showComuni = function(){
-        var newArray = $scope.province.filter(function (el) {
-            return el.nome ===  $scope.provinciaSelected;
+    $scope.newDate.showComuni = function(){
+        var newArray = $scope.newDate.province.filter(function (el) {
+            return el.nome ===  $scope.newDate.provinciaSelected;
           });
-        $scope.comuniPerProvincia = newArray[0].comuni;
-        $scope.disabledComuni = false;
+        $scope.newDate.comuniPerProvincia = newArray[0].comuni;
+        $scope.newDate.disabledComuni = false;
     }
 
     // ATTUALE GESTORE START
-    $scope.Groups = "";
+    $scope.newDate.Groups = "";
 
     $http.get('../../utility/gestori.json').then((result) => {
-       $scope.Groups = result.data.GESTORI;
+       $scope.newDate.Groups = result.data.GESTORI;
     }).catch((err) => {
         alert("Impossibile reperire la lista dei gestori");
     });
 
-    $scope.inserisciNuovoGestore = function (newValue) {
+    $scope.newDate.inserisciNuovoGestore = function (newValue) {
         var obj = {};
         obj.Name = newValue;
         obj.Value = newValue;
-        $scope.Groups.push(obj);
-        $scope.group.value = obj.Value;
-        $scope.newValue = '';
+        $scope.newDate.Groups.push(obj);
+        $scope.newDate.group.value = obj.Value;
+        $scope.newDate.newValue = '';
     }
 
   
-    $scope.group = {
+    $scope.newDate.group = {
         name: "",
         value:""
     }    
 // ATTUALE GESTORE END
+
+
+// invio form 
+
+$scope.newDate.submitNewDate = function(){
+    //prendo la data dal timePicker
+    var oraAppuntamento = $scope.newDate.oraAppuntamento.toLocaleString("it-IT").split(",")[1].split(":")[0] + ":" + $scope.newDate.oraAppuntamento.toLocaleString("it-IT").split(",")[1].split(":")[1];
+
+    //prendo l'id Operatore o dalla session o dalla select
+    var idOperatore;
+    if($scope.user.TYPE == "OPERATORE"){
+        idOperatore =  $scope.user.Id;
+    }else{
+        idOperatore = $scope.newDate.operatoriSelected;
+    }
+
+    $http.post('/addNewDate', {
+       'dataAppuntamento': $scope.newDate.dataAppuntamento,
+       'oraAppuntamento': oraAppuntamento,
+       'provincia': $scope.newDate.provinciaSelected,
+       'comune': $scope.newDate.comuneSelected,
+       'indirizzo': $scope.newDate.indirizzo,
+       'idOperatore': idOperatore,
+       'idAgente': oraAppuntamento,
+    }).then((result) => {
+        alert('Appuntamento creato correttamente');
+        $route.reload();
+    }).catch((err) => {
+        if(err.status === 500){
+            alert("Errore nella registrazione appuntamento");
+        }
+        if(err.status === 403){
+            alert("Utente non autorizzato");
+            $location.path('/logout');
+        }
+    });
+}
 
 
 });
