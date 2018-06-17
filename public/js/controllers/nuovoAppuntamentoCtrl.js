@@ -145,7 +145,9 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
 $scope.newDate.submitNewDate = function(){
     //prendo la data dal timePicker
     var oraAppuntamento = $scope.newDate.oraAppuntamento.toLocaleString("it-IT").split(",")[1].split(":")[0] + ":" + $scope.newDate.oraAppuntamento.toLocaleString("it-IT").split(",")[1].split(":")[1];
-
+    //parsing della data per il DB
+    var dataAppuntamento = $scope.newDate.dataAppuntamento;
+    dataAppuntamento = dataAppuntamento.getFullYear() +"-"+ (dataAppuntamento.getMonth()+1) + "-" +dataAppuntamento.getDate();
     //prendo l'id Operatore o dalla session o dalla select
     var idOperatore;
     if($scope.user.TYPE == "OPERATORE"){
@@ -155,13 +157,17 @@ $scope.newDate.submitNewDate = function(){
     }
 
     $http.post('/addNewDate', {
-       'dataAppuntamento': $scope.newDate.dataAppuntamento,
-       'oraAppuntamento': oraAppuntamento,
+       'dataAppuntamento':dataAppuntamento ,
+       'oraAppuntamento': oraAppuntamento.trim(),
        'provincia': $scope.newDate.provinciaSelected,
        'comune': $scope.newDate.comuneSelected,
        'indirizzo': $scope.newDate.indirizzo,
        'idOperatore': idOperatore,
-       'idAgente': oraAppuntamento,
+       'idAgente': $scope.newDate.venditoreSelected,
+       'nomeAttivita': $scope.newDate.nomeAttivita,
+       'gestoreAttuale': $scope.newDate.group.value,
+       'recapiti': $scope.newDate.recapiti,
+       'noteOperatore': $scope.newDate.noteOperatore,
     }).then((result) => {
         alert('Appuntamento creato correttamente');
         $route.reload();

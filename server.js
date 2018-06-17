@@ -373,9 +373,17 @@ app.post('/addNewDate', ensureToken, function (req, res) {
 	log.info('post Request :: /addNewDate');
 
 	var data = {};
-	
-	var id = parseInt(req.body.userId);
-	var password = req.body.password;
+	   var dataAppuntamento = req.body.dataAppuntamento;
+	   var oraAppuntamento = req.body.oraAppuntamento;
+	   var provincia = req.body.provincia;
+	   var comune = req.body.comune;
+	   var indirizzo = req.body.indirizzo;
+	   var idOperatore = req.body.idOperatore;
+	   var idAgente = req.body.idAgente;
+	   var nomeAttivita = req.body.nomeAttivita;
+	   var gestoreAttuale = req.body.gestoreAttuale;
+	   var recapiti = req.body.recapiti;
+	   var noteOperatore = req.body.noteOperatore;
 
 	pool.getConnection(function (err, connection) {
 		connection.beginTransaction(function(errTrans) {
@@ -385,7 +393,9 @@ app.post('/addNewDate', ensureToken, function (req, res) {
 				});
 				res.sendStatus(500);
 			}else{
-				connection.query('', [password, id ], function (err, rows, fields) {
+				connection.query('INSERT INTO APPUNTAMENTI'
+				+'(ID_APPUNTAMENTO, ID_OPERATORE, ID_VENDITORE, DATA_CREAZIONE, DATA_APPUNTAMENTO, ORA_APPUNTAMENTO, PROVINCIA, COMUNE, INDIRIZZO, NOME_ATTIVITA, NOTE_OPERATORE, ATTUALE_GESTORE, RECAPITI)'
+				+'VALUES (NULL, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?  )', [idOperatore,idAgente,dataAppuntamento,oraAppuntamento,provincia,comune,indirizzo,nomeAttivita, noteOperatore, gestoreAttuale, recapiti], function (err, rows, fields) {
 					if(err){
 						connection.rollback(function() {
 						connection.release();
