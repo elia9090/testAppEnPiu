@@ -1,0 +1,29 @@
+<div class="container" >
+     
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="formEsitoAppuntamento" ng-submit="editDate.submitEditDate()">
+        
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Appuntamento {{editDate.idAppuntamento}}</h2>
+                <hr>
+            </div>
+        </div>
+    <div class="row col-12">
+        <div class="form-group  col-xs-12 col-sm-6 col-md-4 mr-2">
+            <label for="dataAppuntamento">Data appuntamento*</label>
+            <p class="input-group datepicker">
+                    <input type="text" name="dataAppuntamento" id="dataAppuntamento" ng-click="editDate.open()" class="form-control " readonly required="required" uib-datepicker-popup="{{editDate.format}}" ng-model="editDate.dataAppuntamento" ng-required="true" is-open="editDate.popup.opened" datepicker-options="editDate.dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="editDate.open()"><i class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
+        </div>
+        <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
+            <label for="oraAppuntamento">Ora appuntamento*</label>
+            <div uib-timepicker ng-model="editDate.oraAppuntamento" id="oraAppuntamento" ng-required="true"  show-meridian="false" hour-step="editDate.hstep" minute-step="editDate.mstep" ></div>
+        </div>
+    </div>
+        
+    
+    </form>
+    </div>

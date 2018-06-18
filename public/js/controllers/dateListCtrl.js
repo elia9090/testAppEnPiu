@@ -2,9 +2,6 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
-    if(!$scope.user.TYPE == "ADMIN"){
-        $location.path('/dashboard');
-    }
 
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
     
@@ -25,7 +22,7 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
   
 
     $scope.modifyDate = function (id) {
-        
+        $location.path('/editDate/'+id);
     };
 
     $scope.rowClass = function (esito) {
@@ -34,7 +31,7 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
         }else if (esito=='KO'){
             return 'red-background'
         }else{
-            return 'grey-background'
+            return 'white-background'
         }
         
     };

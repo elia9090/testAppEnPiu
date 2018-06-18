@@ -438,29 +438,109 @@ app.get('/listaAppuntamenti', ensureToken, function (req, res) {
 			res.sendStatus(403); 
 			
 		} else {
+			
 			var data = {};
+			var today = new Date();
+			var meseCorrente = today.getMonth()+1;
+			var giornoCorrente = today.getDate();
+			var annoCorrente = today.getFullYear();
+
+			var from = "";
+			var to = "";
+
+			if(giornoCorrente >= 15){
+				
+				from = annoCorrente+"-"+meseCorrente+"-"+"15";
+				if(meseCorrente == 12){
+					to = (annoCorrente+1)+"-01-"+"15"
+				}else{
+					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"15"
+				}
+				
+			}else{
+				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
+				to = annoCorrente+"-"+(meseCorrente)+"-"+"15"
+			}
+
+
 			pool.getConnection(function (err, connection) {
 				connection.query(
 				'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
 				' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
 				' FROM APPUNTAMENTI'+
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
-				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_OPERATORE=VENDITORE.ID_UTENTE' , function (err, rows, fields) {
+				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_OPERATORE=VENDITORE.ID_UTENTE'+
+				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
+				' OR ESITO = "VALUTA" ' ,[from, to], function (err, rows, fields) {
 					connection.release();
-					if (rows.length !== 0 && !err) {
-						data["appuntamenti"] = rows;
-						res.json(data);
-					} else if (rows.length === 0) {
-						//Error code 2 = no rows in db.
-						data["error"] = 2;
-						data["appuntamenti"] = 'Nessun appuntamento trovato';
-						res.status(404).json(data);
-					} else {
-						data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
-						res.status(500).json(data);
-						console.log('Errore in fase di reperimento appuntamenti: ' + err);
-						log.error('Errore in fase di reperimento appuntamenti: ' + err);
+					if(err){
+						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
+						res.sendStatus(500);
+					}else{
+						if (rows.length !== 0) {
+							data["appuntamenti"] = rows;
+							res.json(data);
+						} else if (rows.length === 0) {
+							//Error code 2 = no rows in db.
+							data["error"] = 2;
+							data["appuntamenti"] = 'Nessun appuntamento trovato';
+							res.status(404).json(data);
+						} else {
+							data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
+							res.status(500).json(data);
+							console.log('Errore in fase di reperimento appuntamenti: ' + err);
+							log.error('Errore in fase di reperimento appuntamenti: ' + err);
+						}
 					}
+				
+				});
+			
+			});
+		  
+		}
+	});
+});
+//Appuntamento
+app.get('/appuntamento/:id', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			
+			var data = {};
+			
+			var idAppuntamento = req.params.id;
+
+			pool.getConnection(function (err, connection) {
+				connection.query(
+					'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
+					' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
+					' FROM APPUNTAMENTI'+
+					' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
+					' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_OPERATORE=VENDITORE.ID_UTENTE'+
+					' WHERE APPUNTAMENTI.ID_APPUNTAMENTO = ?'  ,[idAppuntamento], function (err, rows, fields) {
+					connection.release();
+					if(err){
+						log.error('ERRORE SQL GET APPUNTAMENTO: '+idAppuntamento+' --> ' + err);
+						res.sendStatus(500);
+					}else{
+						if (rows.length !== 0) {
+							data["appuntamento"] = rows;
+							res.json(data);
+						} else if (rows.length === 0) {
+							//Error code 2 = no rows in db.
+							data["error"] = 2;
+							data["appuntamento"] = 'Nessun appuntamento trovato';
+							res.status(404).json(data);
+						} else {
+							data["appuntamento"] = 'Errore in fase di reperimento appuntamento';
+							res.status(500).json(data);
+							console.log('Errore in fase di reperimento appuntamento: ' + err);
+							log.error('Errore in fase di reperimento appuntamento: ' + err);
+						}
+					}
+				
 				});
 			
 			});

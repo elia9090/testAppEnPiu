@@ -46,6 +46,10 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
         .when('/editPassword', {
             templateUrl: '../partials/editPassword.html',
             controller:'editPasswordCtrl'
+        })
+        .when('/editDate/:id', {
+            templateUrl: '../partials/editAppuntamento.html',
+            controller:'editDateCtrl'
 		})
         .otherwise({redirectTo:'/'});
         
@@ -56,4 +60,3 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
             responsive: true
         });
 }]);
-
