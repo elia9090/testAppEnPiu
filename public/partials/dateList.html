@@ -29,11 +29,11 @@
           <tbody>
               <tr  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : 'DATA_APPUNTAMENTO' " ng-class="rowClass(x.ESITO)">
                   <td>
-                     {{x.COGNOME_VENDITORE}}  {{X.NOME_VENDITORE}}
+                     {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
                   </td> 
                   
                 <td>
-                    {{x.COGNOME_OPERATORE}} {{X.NOME_VENDITORE}}
+                    {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}}
                 </td>
                 <td ng-bind="x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'">
                     {{x.DATA_APPUNTAMENTO}}

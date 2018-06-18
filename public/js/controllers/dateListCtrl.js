@@ -5,9 +5,22 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
 
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
     
-    $scope.usersList = [];
+    $scope.dateList = [];
     
-    $http.get('/listaAppuntamenti').then((result) => {
+    var url = "";
+
+    if($scope.user.TYPE == "ADMIN"){
+        url = '/listaAppuntamentiAdmin';
+    }else if($scope.user.TYPE == "OPERATORE"){
+        url = '/listaAppuntamentiOperatore/'+$scope.user.id;
+    }else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
+        url = '/listaAppuntamentiVenditore/'+$scope.user.id;
+    }
+
+
+
+    
+    $http.get(url).then((result) => {
         
     $scope.dateList = result.data.appuntamenti;
     

@@ -469,7 +469,7 @@ app.get('/listaAppuntamentiAdmin', ensureToken, function (req, res) {
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR ESITO IS NULL' ,[from, to], function (err, rows, fields) {
+				' OR ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?)' ,[from, to,to], function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
@@ -537,7 +537,7 @@ app.get('/listaAppuntamentiVenditore/:id', ensureToken, function (req, res) {
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR ESITO IS NULL) AND APPUNTAMENTI.ID_VENDITORE=?' ,[from, to, id], function (err, rows, fields) {
+				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?)) AND APPUNTAMENTI.ID_VENDITORE=?' ,[from, to, to,id], function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
@@ -605,7 +605,7 @@ app.get('/listaAppuntamentiOperatore/:id', ensureToken, function (req, res) {
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR ESITO IS NULL) AND APPUNTAMENTI.ID_OPERATORE = ?' ,[from, to,id], function (err, rows, fields) {
+				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?)) AND APPUNTAMENTI.ID_OPERATORE = ?' ,[from, to,to, id], function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
