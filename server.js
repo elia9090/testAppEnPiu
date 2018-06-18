@@ -431,8 +431,8 @@ app.post('/addNewDate', ensureToken, function (req, res) {
 });
 });
 
-//lsita appuntamenti
-app.get('/listaAppuntamenti', ensureToken, function (req, res) {
+//lsita appuntamenti admin
+app.get('/listaAppuntamentiAdmin', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -449,14 +449,12 @@ app.get('/listaAppuntamenti', ensureToken, function (req, res) {
 			var to = "";
 
 			if(giornoCorrente >= 15){
-				
 				from = annoCorrente+"-"+meseCorrente+"-"+"15";
 				if(meseCorrente == 12){
 					to = (annoCorrente+1)+"-01-"+"15"
 				}else{
 					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"15"
 				}
-				
 			}else{
 				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
 				to = annoCorrente+"-"+(meseCorrente)+"-"+"15"
@@ -469,9 +467,9 @@ app.get('/listaAppuntamenti', ensureToken, function (req, res) {
 				' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
 				' FROM APPUNTAMENTI'+
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
-				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_OPERATORE=VENDITORE.ID_UTENTE'+
+				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR ESITO = "VALUTA" ' ,[from, to], function (err, rows, fields) {
+				' OR ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR ESITO IS NULL' ,[from, to], function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
@@ -500,6 +498,148 @@ app.get('/listaAppuntamenti', ensureToken, function (req, res) {
 		}
 	});
 });
+
+//lsita appuntamenti venditore
+app.get('/listaAppuntamentiVenditore/:id', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			var id=req.params.id;
+			var data = {};
+			var today = new Date();
+			var meseCorrente = today.getMonth()+1;
+			var giornoCorrente = today.getDate();
+			var annoCorrente = today.getFullYear();
+
+			var from = "";
+			var to = "";
+
+			if(giornoCorrente >= 15){
+				from = annoCorrente+"-"+meseCorrente+"-"+"15";
+				if(meseCorrente == 12){
+					to = (annoCorrente+1)+"-01-"+"15"
+				}else{
+					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"15"
+				}
+			}else{
+				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
+				to = annoCorrente+"-"+(meseCorrente)+"-"+"15"
+			}
+
+
+			pool.getConnection(function (err, connection) {
+				connection.query(
+				'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
+				' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
+				' FROM APPUNTAMENTI'+
+				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
+				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
+				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
+				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR ESITO IS NULL) AND APPUNTAMENTI.ID_VENDITORE=?' ,[from, to, id], function (err, rows, fields) {
+					connection.release();
+					if(err){
+						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
+						res.sendStatus(500);
+					}else{
+						if (rows.length !== 0) {
+							data["appuntamenti"] = rows;
+							res.json(data);
+						} else if (rows.length === 0) {
+							//Error code 2 = no rows in db.
+							data["error"] = 2;
+							data["appuntamenti"] = 'Nessun appuntamento trovato';
+							res.status(404).json(data);
+						} else {
+							data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
+							res.status(500).json(data);
+							console.log('Errore in fase di reperimento appuntamenti: ' + err);
+							log.error('Errore in fase di reperimento appuntamenti: ' + err);
+						}
+					}
+				
+				});
+			
+			});
+		  
+		}
+	});
+});
+
+//lsita appuntamenti operatore
+app.get('/listaAppuntamentiOperatore/:id', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			var id=req.params.id;
+			var data = {};
+			var today = new Date();
+			var meseCorrente = today.getMonth()+1;
+			var giornoCorrente = today.getDate();
+			var annoCorrente = today.getFullYear();
+
+			var from = "";
+			var to = "";
+
+			if(giornoCorrente >= 15){
+				from = annoCorrente+"-"+meseCorrente+"-"+"15";
+				if(meseCorrente == 12){
+					to = (annoCorrente+1)+"-01-"+"15"
+				}else{
+					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"15"
+				}
+			}else{
+				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
+				to = annoCorrente+"-"+(meseCorrente)+"-"+"15"
+			}
+
+
+			pool.getConnection(function (err, connection) {
+				connection.query(
+				'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
+				' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
+				' FROM APPUNTAMENTI'+
+				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
+				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
+				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
+				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR ESITO IS NULL) AND APPUNTAMENTI.ID_OPERATORE = ?' ,[from, to,id], function (err, rows, fields) {
+					connection.release();
+					if(err){
+						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
+						res.sendStatus(500);
+					}else{
+						if (rows.length !== 0) {
+							data["appuntamenti"] = rows;
+							res.json(data);
+						} else if (rows.length === 0) {
+							//Error code 2 = no rows in db.
+							data["error"] = 2;
+							data["appuntamenti"] = 'Nessun appuntamento trovato';
+							res.status(404).json(data);
+						} else {
+							data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
+							res.status(500).json(data);
+							console.log('Errore in fase di reperimento appuntamenti: ' + err);
+							log.error('Errore in fase di reperimento appuntamenti: ' + err);
+						}
+					}
+				
+				});
+			
+			});
+		  
+		}
+	});
+});
+
+
+
+
+
+
 //Appuntamento
 app.get('/appuntamento/:id', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
@@ -518,7 +658,7 @@ app.get('/appuntamento/:id', ensureToken, function (req, res) {
 					' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
 					' FROM APPUNTAMENTI'+
 					' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
-					' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_OPERATORE=VENDITORE.ID_UTENTE'+
+					' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 					' WHERE APPUNTAMENTI.ID_APPUNTAMENTO = ?'  ,[idAppuntamento], function (err, rows, fields) {
 					connection.release();
 					if(err){
@@ -526,7 +666,7 @@ app.get('/appuntamento/:id', ensureToken, function (req, res) {
 						res.sendStatus(500);
 					}else{
 						if (rows.length !== 0) {
-							data["appuntamento"] = rows;
+							data["appuntamento"] = rows[0];
 							res.json(data);
 						} else if (rows.length === 0) {
 							//Error code 2 = no rows in db.

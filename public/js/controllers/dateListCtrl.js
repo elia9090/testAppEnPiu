@@ -22,7 +22,16 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
   
 
     $scope.modifyDate = function (id) {
-        $location.path('/editDate/'+id);
+        if($scope.user.TYPE == "ADMIN"){
+            $location.path('/editDateAdmin/'+id);
+        }
+        else if($scope.user.TYPE == "OPERATORE"){
+            $location.path('/editDateOperatore/'+id);
+        }
+        else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
+            $location.path('/editDateVenditore/'+id);
+        }
+       
     };
 
     $scope.rowClass = function (esito) {

@@ -1,0 +1,31 @@
+<div class="container" >
+     
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="editAppuntamentoAdmin" ng-submit="editDateAdmin.submiteditDateAdmin()">
+        
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Appuntamento {{editDateAdmin.idAppuntamento}}</h2>
+                <hr>
+                <p class="orangeText">* Campi obbligatori</p>
+            </div>
+        </div>
+    <div class="row col-12" >
+        <div class="form-group  col-xs-12 col-sm-6 col-md-4 mr-2">
+            <label for="dataAppuntamento">Data appuntamento*</label>
+            <p class="input-group datepicker">
+                    <input type="text" name="dataAppuntamento" id="dataAppuntamento" ng-click="editDateAdmin.open()" class="form-control " readonly required="required" uib-datepicker-popup="{{editDateAdmin.format}}" ng-model="editDateAdmin.dataAppuntamento" value="" ng-required="true" is-open="editDateAdmin.popup.opened" datepicker-options="editDateAdmin.dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="editDateAdmin.open()"><i class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
+        </div>
+        <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
+            <label for="oraAppuntamento">Ora appuntamento*</label>
+            <div uib-timepicker ng-model="editDateAdmin.oraAppuntamento" id="oraAppuntamento" ng-required="true"  show-meridian="false" hour-step="editDateAdmin.hstep" minute-step="editDateAdmin.mstep" ></div>
+        </div>
+    </div>
+ 
+        
+    
+    </form>
+    </div>

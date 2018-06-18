@@ -1,8 +1,12 @@
-app.controller('editDateCtrl', function ( $scope, $http, $location,$routeParams,$q) {
+app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routeParams) {
    
     $scope.user = JSON.parse(sessionStorage.user);
+   
+    if(!$scope.user.TYPE == "ADMIN"){
+        $location.path('/dashboard');
+    }
 
-    $scope.editDate = {};
+    $scope.editDateAdmin = {};
 
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
     
@@ -13,6 +17,14 @@ app.controller('editDateCtrl', function ( $scope, $http, $location,$routeParams,
    
     $http.get('/appuntamento/'+idAppuntamento).then((result) => {
         $scope.editDate.Appuntamento =  result.data.appuntamento;
+        var ora = parseInt($scope.editDate.Appuntamento.ORA_APPUNTAMENTO.split(":")[0]);
+        var minuti = parseInt($scope.editDate.Appuntamento.ORA_APPUNTAMENTO.split(":")[1]);
+        var dateTime = new Date();
+        dateTime.setHours(ora);
+        dateTime.setMinutes(minuti);
+        $scope.editDate.oraAppuntamento=dateTime;
+        $scope.editDate.dataAppuntamento = new Date($scope.editDate.Appuntamento.DATA_APPUNTAMENTO);
+
     }).catch((err) => {
         if(err.status === 403){
             alert("Utente non autorizzato");
@@ -22,10 +34,6 @@ app.controller('editDateCtrl', function ( $scope, $http, $location,$routeParams,
         alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
         $location.path('/listaAppuntamenti');
     });
-
-    $scope.editDate.IS_VENDITORE = $scope.user.TYPE == "RESPONSABILE_AGENTI" || $scope.user.TYPE == "AGENTE";
-    $scope.editDate.IS_ADMIN = $scope.user.TYPE == "ADMIN";
-    $scope.editDate.IS_OPERATORE = $scope.user.TYPE == "OPERATORE";
    
     $scope.editDate.dateOptions = {
         minDate: new Date(),
@@ -33,7 +41,7 @@ app.controller('editDateCtrl', function ( $scope, $http, $location,$routeParams,
         showWeeks:false,
         placement:"auto bottom-right"
       };
-      $scope.editDate.altInputFormats = ['M!/d!/yyyy'];
+    $scope.editDate.altInputFormats = ['M!/d!/yyyy'];
     $scope.editDate.format="dd/MM/yyyy";
 
     $scope.editDate.open = function() {
@@ -46,15 +54,8 @@ app.controller('editDateCtrl', function ( $scope, $http, $location,$routeParams,
     //TIMEPICKER
     $scope.editDate.hstep = 1;
     $scope.editDate.mstep = 15;
-    //setto come default l'orario l'orario dell'appuntamento
-    var ora = parseInt($scope.editDate.Appuntamento.ORA_APPUNTAMENTO.split(":")[0]);
-    var minuti = parseInt($scope.editDate.Appuntamento.ORA_APPUNTAMENTO.split(":")[1]);
-    var dateTime = new Date();
-    dateTime.setHours(ora);
-    dateTime.setMinutes(minuti);
-    $scope.editDate.oraAppuntamento=dateTime;
 
-    $scope.editDate.dataAppuntamento = $scope.editDate.Appuntamento.DATA_APPUNTAMENTO;
+    
 
 
 });
