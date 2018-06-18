@@ -4,7 +4,7 @@
         
         <div class="row col-12">
             <div class="col-md-12">
-                <h2>Appuntamento {{editDateAdmin.idAppuntamento}}</h2>
+                <h2>Appuntamento {{editDateAdmin.Appuntamento.ID_APPUNTAMENTO}}</h2>
                 <hr>
                 <p class="orangeText">* Campi obbligatori</p>
             </div>
@@ -23,6 +23,35 @@
             <label for="oraAppuntamento">Ora appuntamento*</label>
             <div uib-timepicker ng-model="editDateAdmin.oraAppuntamento" id="oraAppuntamento" ng-required="true"  show-meridian="false" hour-step="editDateAdmin.hstep" minute-step="editDateAdmin.mstep" ></div>
         </div>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="provinceSelect">Provincia*</label>
+        <select ng-required="true" name="provinceSelect" class="form-control" id="provinceSelect" ng-change="editDateAdmin.showComuni()" ng-model="editDateAdmin.provinciaSelected">
+            <option ng-repeat="option in editDateAdmin.province" value="{{option.nome}}">{{option.nome}}</option>
+        </select>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="comuniSelect">Comune*</label>
+        <select ng-required="true" name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="editDateAdmin.disabledComuni" ng-model="editDateAdmin.comuneSelected">
+                <option ng-repeat="option in editDateAdmin.comuniPerProvincia"  value="{{option.nome}}">{{option.nome}}</option>
+        </select>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+            <label for="indirizzo">Indirizzo*</label>
+            <input ng-required="true" type="text"name="indirizzo" class="form-control w-100" id="indirizzo" ng-disabled="editDateAdmin.disabledComuni" ng-model="editDateAdmin.indirizzo" />         
+    </div>
+
+    <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+        <label for="operatoriSelect">Operatore*</label>
+        <select ng-required="true" name="operatoriSelect" class="form-control"  id="operatoriSelect" ng-change="editDateAdmin.showAgentiForOperatore(editDateAdmin.operatoriSelected)"  ng-model="editDateAdmin.operatoriSelected">
+            <option ng-repeat="option in editDateAdmin.operatori" ng-value="option.ID_UTENTE" ng-selected="option.ID_UTENTE === editDateAdmin.operatoriSelected" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
+        </select>    
+</div>
+    <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+        <label for="venditoreSelect">Agente*</label>
+        <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect" ng-disabled="editDateAdmin.disabledListaAgenti"  ng-model="editDateAdmin.venditoreSelected">
+            <option ng-repeat="option1 in editDateAdmin.venditoriForOperatore" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === editDateAdmin.venditoreSelected" value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
+        </select>
     </div>
  
         
