@@ -53,8 +53,63 @@
             <option ng-repeat="option1 in editDateAdmin.venditoriForOperatore" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === editDateAdmin.venditoreSelected" value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
         </select>
     </div>
- 
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+        <label for="nomeAttivita">Nome azienda / persona fisica*</label>
+        <input ng-required="true" type="text"name="nomeAttivita" class="form-control w-100" id="nomeAttivita"  ng-model="editDateAdmin.nomeAttivita" />         
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+    <label for="gestoreAttuale">Gestore attuale*</label>
+    <select ng-required="true" ng-model="editDateAdmin.group.value" id="gestoreAttuale" name="gestoreAttuale"  class="form-control" ng-options="Group.Value as Group.Name  for Group in editDateAdmin.Groups"></select>
+    <div class=" form-control mt-2" ng-show="editDateAdmin.group.value == 'altro'">
+        <input class="text-box form-control " type="text" name="NewValue" ng-model="newValue" />
+        <button type="button" ng-click="editDateAdmin.inserisciNuovoGestore(newValue)">Aggiungi</button>
+    </div>       
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+    <label for="recapiti">Recapiti*</label>
+    <input ng-required="true" type="text"name="recapiti" class="form-control w-100" id="recapiti"  ng-model="editDateAdmin.recapiti" />         
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+    <label for="noteOperatore">Note operatore</label>
+    <textarea  rows="4" cols="50" maxlength="220"  type="text"name="noteOperatore" class="form-control w-100" id="noteOperatore"  ng-model="editDateAdmin.noteOperatore" ></textarea>         
+</div>
+<div class="row col-12">
+    <div class="col-md-12">
+        <hr>
+        <h4>Esito </h4>
+        <hr>
         
-    
-    </form>
     </div>
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+        <label for="esitoAppuntamento">Esito appuntamento</label>
+        <select ng-required="false"  ng-model="editDateAdmin.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in editDateAdmin.Esiti"></select>      
+</div>
+
+<div ng-if="editDateAdmin.esito.value == 'OK'"  class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+    <label for="numLuce">Numero contratti luce*</label>
+    <select ng-change="editDateAdmin.createInputLuce()" ng-required="true" ng-model="editDateAdmin.numLuce" id="numLuce" name="numLuce"  class="form-control" ng-options="o as o for o in editDateAdmin.numeriContratto"></select>
+    <div ng-if="editDateAdmin.numLuce > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateAdmin.inputsLuce">
+            <input type="text"    class="form-control w-100" placeholder="Codice contratto luce" ng-required="true"  ng-model="input.codice">
+        </div>
+    </div>
+    <label for="numGas">Numero contratti gas*</label>
+    <select ng-change="editDateAdmin.createInputGas()" ng-required="true" ng-model="editDateAdmin.numGas" id="numGas" name="numGas"  class="form-control" ng-options="o as o for o in editDateAdmin.numeriContratto"></select>
+    <div ng-if="editDateAdmin.numGas > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateAdmin.inputsGas">
+            <input type="text"  class="form-control w-100" ng-required="true" placeholder="Codice contratto gas"  ng-model="input.codice">
+        </div>
+    </div>
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+        <label for="editDateAdmin.noteAgente">Note Agente</label>
+        <textarea  rows="4" cols="50" maxlength="220"  type="text"name="noteAgente" class="form-control w-100" id="noteAgente"  ng-model="editDateAdmin.noteAgente" ></textarea>         
+    </div>
+
+<div class="col-md-12 col-xl-12 mt-3 ">
+        <button ng-disabled="editAppuntamentoAdmin.$invalid || (editDateAdmin.esito.value == 'OK' && editDateAdmin.numLuce == 0 && editDateAdmin.numGas == 0 )"  type="submit" class="btn btn-orange ">Salva modifiche</button> 
+</div>
+    
+</form>
+</div>

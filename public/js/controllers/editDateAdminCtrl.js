@@ -1,4 +1,4 @@
-app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routeParams, $timeout) {
+app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routeParams) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -88,7 +88,112 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
     
    
     // OPERATORI AGENTI END
-    }).catch((err) => {
+
+// INFO FINALI start
+
+$scope.editDateAdmin.nomeAttivita = $scope.editDateAdmin.Appuntamento.NOME_ATTIVITA;
+$scope.editDateAdmin.recapiti = $scope.editDateAdmin.Appuntamento.RECAPITI;
+$scope.editDateAdmin.noteOperatore = $scope.editDateAdmin.Appuntamento.NOTE_OPERATORE;
+
+// INFO FINALI end
+
+// ATTUALE GESTORE START
+$scope.editDateAdmin.Groups = "";
+
+$http.get('../../utility/gestori.json').then((result) => {
+   $scope.editDateAdmin.Groups = result.data.GESTORI;
+   $scope.editDateAdmin.inserisciNuovoGestore($scope.editDateAdmin.Appuntamento.ATTUALE_GESTORE);
+
+}).catch((err) => {
+    alert("Impossibile reperire la lista dei gestori");
+});
+
+$scope.editDateAdmin.inserisciNuovoGestore = function (newValue) {
+    var obj = {};
+    obj.Name = newValue;
+    obj.Value = newValue;
+    $scope.editDateAdmin.Groups.push(obj);
+    $scope.editDateAdmin.group.value = obj.Value;
+    $scope.editDateAdmin.newValue = '';
+}
+
+
+$scope.editDateAdmin.group = {
+    name: "",
+    value:""
+}    
+// ATTUALE GESTORE END
+
+
+// ESITO APPUNTAMENTO 
+
+$scope.editDateAdmin.Esiti =    [
+    {
+        "Name":"KO",
+        "Value":"KO"
+    },
+    {
+        "Name":"VALUTA",
+        "Value":"VALUTA"
+    },
+    {
+        "Name":"ASSENTE",
+        "Value":"ASSENTE"
+    },
+    {
+        "Name":"OK",
+        "Value":"OK"
+    },
+    {
+        "Name":"NON VISITATO",
+        "Value":"NON VISITATO"
+    },
+    {
+        "Name":" ",
+        "Value":" "
+    }
+    
+];
+
+$scope.editDateAdmin.numeri = function (){
+    for(var i = 0; i<100 ; i++){
+        $scope.editDateAdmin.numeriContratto.push(i);
+    }
+}
+
+$scope.editDateAdmin.numeriContratto = [];
+ 
+$scope.editDateAdmin.numeri();
+
+
+$scope.editDateAdmin.createInputLuce = function (){
+    $scope.editDateAdmin.inputsLuce = [];
+    
+    var inputNumbers = Math.floor(parseInt($scope.editDateAdmin.numLuce) / 3);
+    if(parseInt($scope.editDateAdmin.numLuce) % 3 > 0){
+        inputNumbers = inputNumbers + 1;
+    }
+    for(var i = 0; i<inputNumbers; i++){
+        var dataObj = {codice:''};
+        $scope.editDateAdmin.inputsLuce.push(dataObj);
+    }
+}
+$scope.editDateAdmin.createInputGas = function (){
+    
+    $scope.editDateAdmin.inputsGas = [];
+    var inputNumbers = Math.floor(parseInt($scope.editDateAdmin.numGas) / 3);
+    if(parseInt($scope.editDateAdmin.numGas) % 3 > 0){
+        inputNumbers = inputNumbers + 1;
+    }
+    for(var i = 0; i<inputNumbers; i++){
+        var dataObj = {codice:''};
+        $scope.editDateAdmin.inputsGas.push(dataObj);
+    }
+}
+
+
+//fine then getAppuntamento
+}).catch((err) => {
         if(err.status === 403){
             alert("Utente non autorizzato");
             $location.path('/logout');
