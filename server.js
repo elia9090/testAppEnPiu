@@ -11,6 +11,13 @@ log4js.configure('./config/log4js.json');
 var log = log4js.getLogger("server");
 
 
+app.listen(3000,'192.168.1.187' || 'localhost',function() {
+    console.log('Application worker  started...');
+  }
+  );
+
+
+
 //STATIC FILES
 app.use(express.static(__dirname + '/public'));
 

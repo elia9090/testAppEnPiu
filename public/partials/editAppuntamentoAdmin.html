@@ -90,8 +90,8 @@
     <label for="numLuce">Numero contratti luce*</label>
     <select ng-change="editDateAdmin.createInputLuce()" ng-required="true" ng-model="editDateAdmin.numLuce" id="numLuce" name="numLuce"  class="form-control" ng-options="o as o for o in editDateAdmin.numeriContratto"></select>
     <div ng-if="editDateAdmin.numLuce > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateAdmin.inputsLuce">
-            <input type="text"    class="form-control w-100" placeholder="Codice contratto luce" ng-required="true"  ng-model="input.codice">
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateAdmin.inputsLuce track by $index">
+            <input type="text"    class="form-control w-100" placeholder="Codice contratto luce" ng-required="true"  ng-model="editDateAdmin.inputsLuce[$index]">
         </div>
     </div>
     <label for="numGas">Numero contratti gas*</label>

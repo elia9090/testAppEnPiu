@@ -32,6 +32,7 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
         $scope.editDateAdmin.provinciaSelected = $scope.editDateAdmin.Appuntamento.PROVINCIA;
         $scope.editDateAdmin.comuneSelected = $scope.editDateAdmin.Appuntamento.COMUNE;
         $scope.editDateAdmin.indirizzo = $scope.editDateAdmin.Appuntamento.INDIRIZZO;
+       
         
     $http.get('../../utility/province_comuni.json').then((result) => {
         
@@ -94,7 +95,15 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
 $scope.editDateAdmin.nomeAttivita = $scope.editDateAdmin.Appuntamento.NOME_ATTIVITA;
 $scope.editDateAdmin.recapiti = $scope.editDateAdmin.Appuntamento.RECAPITI;
 $scope.editDateAdmin.noteOperatore = $scope.editDateAdmin.Appuntamento.NOTE_OPERATORE;
-
+if($scope.editDateAdmin.Appuntamento.CODICI_CONTRATTO_LUCE==null){
+    $scope.editDateAdmin.inputsLuce=[];
+}
+else{
+ $scope.editDateAdmin.inputsLuce=$scope.editDateAdmin.Appuntamento.CODICI_CONTRATTO_LUCE.split(';');
+}
+ $scope.editDateAdmin.numLuce=$scope.editDateAdmin.Appuntamento.NUM_LUCE;
+ $scope.editDateAdmin.esito={};
+ $scope.editDateAdmin.esito.value=$scope.editDateAdmin.Appuntamento.ESITO;
 // INFO FINALI end
 
 // ATTUALE GESTORE START
@@ -167,16 +176,26 @@ $scope.editDateAdmin.numeri();
 
 
 $scope.editDateAdmin.createInputLuce = function (){
-    $scope.editDateAdmin.inputsLuce = [];
+    var luceLength=$scope.editDateAdmin.inputsLuce.length;
+    //$scope.editDateAdmin.inputsLuce = [];
     
     var inputNumbers = Math.floor(parseInt($scope.editDateAdmin.numLuce) / 3);
     if(parseInt($scope.editDateAdmin.numLuce) % 3 > 0){
         inputNumbers = inputNumbers + 1;
     }
-    for(var i = 0; i<inputNumbers; i++){
-        var dataObj = {codice:''};
-        $scope.editDateAdmin.inputsLuce.push(dataObj);
+    var diff=inputNumbers-luceLength;
+    if (diff>=0){
+    for(var i = 0; i<diff; i++){
+        var dataObj = {};
+        $scope.editDateAdmin.inputsLuce.push('');
     }
+}else{
+    for(var i = 0; i<-diff; i++){
+        
+        $scope.editDateAdmin.inputsLuce.pop();
+    }
+
+}
 }
 $scope.editDateAdmin.createInputGas = function (){
     
@@ -186,7 +205,7 @@ $scope.editDateAdmin.createInputGas = function (){
         inputNumbers = inputNumbers + 1;
     }
     for(var i = 0; i<inputNumbers; i++){
-        var dataObj = {codice:''};
+        //var dataObj = {codice:''};
         $scope.editDateAdmin.inputsGas.push(dataObj);
     }
 }
