@@ -47,13 +47,24 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
        
     };
 
-    $scope.rowClass = function (esito) {
+    $scope.tdEsitoClass = function (esito) {
         if (esito=='OK'){
             return 'green-background'
         }else if (esito=='KO'){
             return 'red-background'
+        }else if(esito == 'VALUTA'){
+            return 'yellow-background'
         }else{
             return 'white-background'
+        }
+        
+    };
+    $scope.today = new Date().getFullYear() +"-"+ (new Date().getMonth()+1) + "-" + new Date().getDate();
+
+    $scope.tdDataClass = function (dataAppuntamento, esito) {
+
+        if((new Date(dataAppuntamento) < new Date($scope.today)) && (esito == null || esito.trim() == '')){
+            return 'red-background'
         }
         
     };

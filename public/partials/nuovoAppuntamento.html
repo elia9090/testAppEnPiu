@@ -54,7 +54,7 @@
 
     <div ng-if="userType === 'ADMIN'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="operatoriSelect">Operatore*</label>
-            <select ng-required="true" name="operatoriSelect" class="form-control" id="operatoriSelect" ng-change="newDate.showAgentiForOperatore(operatoriSelected)"  ng-model="newDate.operatoriSelected">
+            <select ng-required="true" name="operatoriSelect" class="form-control" id="operatoriSelect" ng-change="newDate.showAgentiForOperatore(newDate.operatoriSelected)"  ng-model="newDate.operatoriSelected">
                 <option ng-repeat="option in newDate.operatori" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}}-{{option.COGNOME}} {{option.NOME}}</option>
             </select>    
     </div>

@@ -1,5 +1,5 @@
 
-app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $window) {
+app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $window, $route) {
     
     $scope.user = JSON.parse(sessionStorage.user);
     // CREO LO SCOPE PER IL CONTROLLER DEL FORM altrimenti con ng-if crea uno scope child e non prende il valore assegnato

@@ -27,21 +27,21 @@
             </tr>
           </thead>
           <tbody>
-              <tr  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : 'DATA_APPUNTAMENTO' " >
+              <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : ['DATA_APPUNTAMENTO','ORA_APPUNTAMENTO'] " >
                   <td>
                      {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
                   </td> 
                   
                 <td>
-                    {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}}
+                    {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
                 </td>
-                <td ng-bind="x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'">
-                    {{x.DATA_APPUNTAMENTO}}
+                <td >
+                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
                 </td>
                 <td>
                     {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
                 </td>
-                <td ng-class="rowClass(x.ESITO)">
+                <td ng-class="tdEsitoClass(x.ESITO)">
                     {{x.ESITO}}
                 </td>
                 <td>
