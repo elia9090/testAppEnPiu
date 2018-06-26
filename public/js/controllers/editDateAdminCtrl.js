@@ -95,13 +95,25 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
 $scope.editDateAdmin.nomeAttivita = $scope.editDateAdmin.Appuntamento.NOME_ATTIVITA;
 $scope.editDateAdmin.recapiti = $scope.editDateAdmin.Appuntamento.RECAPITI;
 $scope.editDateAdmin.noteOperatore = $scope.editDateAdmin.Appuntamento.NOTE_OPERATORE;
+
+//POPOLO GAS E LUCE START
 if($scope.editDateAdmin.Appuntamento.CODICI_CONTRATTO_LUCE==null){
     $scope.editDateAdmin.inputsLuce=[];
 }
 else{
  $scope.editDateAdmin.inputsLuce=$scope.editDateAdmin.Appuntamento.CODICI_CONTRATTO_LUCE.split(';');
 }
+
+if($scope.editDateAdmin.Appuntamento.CODICI_CONTRATTO_GAS==null){
+    $scope.editDateAdmin.inputsGas=[];
+}
+else{
+ $scope.editDateAdmin.inputsGas=$scope.editDateAdmin.Appuntamento.CODICI_CONTRATTO_GAS.split(';');
+}
+
  $scope.editDateAdmin.numLuce=$scope.editDateAdmin.Appuntamento.NUM_LUCE;
+ $scope.editDateAdmin.numGas=$scope.editDateAdmin.Appuntamento.NUM_GAS;
+//POPOLO GAS E LUCE END
  $scope.editDateAdmin.esito={};
  $scope.editDateAdmin.esito.value=$scope.editDateAdmin.Appuntamento.ESITO;
 // INFO FINALI end
@@ -186,7 +198,7 @@ $scope.editDateAdmin.createInputLuce = function (){
     var diff=inputNumbers-luceLength;
     if (diff>=0){
     for(var i = 0; i<diff; i++){
-        var dataObj = {};
+       
         $scope.editDateAdmin.inputsLuce.push('');
     }
 }else{
@@ -198,19 +210,25 @@ $scope.editDateAdmin.createInputLuce = function (){
 }
 }
 $scope.editDateAdmin.createInputGas = function (){
-    
-    $scope.editDateAdmin.inputsGas = [];
+    var gasLength=$scope.editDateAdmin.inputsGas.length;
+
     var inputNumbers = Math.floor(parseInt($scope.editDateAdmin.numGas) / 3);
     if(parseInt($scope.editDateAdmin.numGas) % 3 > 0){
         inputNumbers = inputNumbers + 1;
     }
-    for(var i = 0; i<inputNumbers; i++){
-        //var dataObj = {codice:''};
-        $scope.editDateAdmin.inputsGas.push(dataObj);
+    var diff=inputNumbers-gasLength;
+    if (diff>=0){
+    for(var i = 0; i<diff; i++){
+        
+        $scope.editDateAdmin.inputsGas.push('');
+    }
+}else{
+    for(var i = 0; i<-diff; i++){
+        
+        $scope.editDateAdmin.inputsGas.pop();
     }
 }
-
-
+}
 //fine then getAppuntamento
 }).catch((err) => {
         if(err.status === 403){

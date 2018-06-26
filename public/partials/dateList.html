@@ -27,7 +27,7 @@
             </tr>
           </thead>
           <tbody>
-              <tr  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : 'DATA_APPUNTAMENTO' " ng-class="rowClass(x.ESITO)">
+              <tr  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : 'DATA_APPUNTAMENTO' " >
                   <td>
                      {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
                   </td> 
@@ -41,7 +41,7 @@
                 <td>
                     {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
                 </td>
-                <td>
+                <td ng-class="rowClass(x.ESITO)">
                     {{x.ESITO}}
                 </td>
                 <td>
