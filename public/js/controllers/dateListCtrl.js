@@ -46,6 +46,9 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
         }
        
     };
+    $scope.viewDate = function (id) {
+        $location.path('/viewDate/'+id);
+    };
 
     $scope.tdEsitoClass = function (esito) {
         if (esito=='OK'){
@@ -54,6 +57,8 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
             return 'red-background'
         }else if(esito == 'VALUTA'){
             return 'yellow-background'
+        } else if(esito == 'ASSENTE' || esito == 'NON VISITATO'){
+            return 'grey-background'
         }else{
             return 'white-background'
         }

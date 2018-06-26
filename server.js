@@ -455,16 +455,17 @@ app.get('/listaAppuntamentiAdmin', ensureToken, function (req, res) {
 			var from = "";
 			var to = "";
 
+			//aggiungo 3 giorni in piu alla data to per avere visibilità dei mesi
 			if(giornoCorrente >= 15){
 				from = annoCorrente+"-"+meseCorrente+"-"+"15";
 				if(meseCorrente == 12){
-					to = (annoCorrente+1)+"-01-"+"15"
+					to = (annoCorrente+1)+"-01-"+"18"
 				}else{
-					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"15"
+					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"18"
 				}
 			}else{
 				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
-				to = annoCorrente+"-"+(meseCorrente)+"-"+"15"
+				to = annoCorrente+"-"+(meseCorrente)+"-"+"18"
 			}
 
 

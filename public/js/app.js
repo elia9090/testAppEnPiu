@@ -47,6 +47,10 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
             templateUrl: '../partials/editPassword.html',
             controller:'editPasswordCtrl'
         })
+        .when('/viewDate/:id', {
+            templateUrl: '../partials/viewAppuntamento.html',
+            controller:'viewDateCtrl'
+        })
         .when('/editDateAdmin/:id', {
             templateUrl: '../partials/editAppuntamentoAdmin.html',
             controller:'editDateAdminCtrl'
