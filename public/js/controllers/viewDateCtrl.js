@@ -1,4 +1,5 @@
 app.controller('usersListCtrl', function ( $scope, $http, $location,$route) {
+
     $scope.user = JSON.parse(sessionStorage.user);
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
@@ -11,6 +12,8 @@ app.controller('usersListCtrl', function ( $scope, $http, $location,$route) {
     $http.get('/appuntamento/'+idAppuntamento).then((result) => {
 
         $scope.viewDate.Appuntamento =  result.data.appuntamento;
+
+        
 
     }).catch((err) => {
         if(err.status === 403){
