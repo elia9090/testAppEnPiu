@@ -13,7 +13,22 @@ app.controller('usersListCtrl', function ( $scope, $http, $location,$route) {
 
         $scope.viewDate.Appuntamento =  result.data.appuntamento;
 
+
+        if($scope.viewDate.Appuntamento.ESITO !== null 
+                || $scope.viewDate.Appuntamento.ESITO !== " " 
+                    || $scope.viewDate.Appuntamento.ESITO !== "")
+                    {
+                        $scope.viewDate.hasEsito = true;
+
+                    }else{
+                        $scope.viewDate.hasEsito = false;
+                    }
         
+        if($scope.viewDate.Appuntamento.ESITO == 'OK'){
+            $scope.viewDate.hasEsito_OK = true;
+        }else{
+            $scope.viewDate.hasEsito_OK = false;
+        }
 
     }).catch((err) => {
         if(err.status === 403){

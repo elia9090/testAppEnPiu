@@ -45,10 +45,82 @@
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="Operatore">Agente</label>
-            <p id="Operatore" class="input-group datepicker font-weight-bold">
+            <label for="agente">Agente</label>
+            <p id="agente" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.COGNOME_VENDITORE}} {{viewDate.Appuntamento.NOME_VENDITORE}} 
             </p>
         </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="attivita">Nome azienda / Persona fisica</label>
+            <p id="attivita" class="input-group datepicker font-weight-bold">
+                {{viewDate.Appuntamento.NOME_ATTIVITA}} 
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="gestore">Gestore attuale</label>
+            <p id="gestore" class="input-group datepicker font-weight-bold">
+                {{viewDate.Appuntamento.ATTUALE_GESTORE}} 
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="recapiti">Recapiti</label>
+            <p id="recapiti" class="input-group datepicker font-weight-bold">
+                {{viewDate.Appuntamento.RECAPITI}} 
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="noteOperatore">Note operatore</label>
+            <textarea id="noteOperatore"  rows="4" cols="50" maxlength="220"  type="text" readonly >{{viewDate.Appuntamento.NOTE_OPERATORE}}  </textarea> 
+        </div>
+
+    <div ng-if="viewDate.hasEsito">
+        <div class="row col-12">
+            <div class="col-md-12">
+                <hr>
+                <h4>Esito </h4>
+                <hr>
+            </div>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="esitoAppuntamento">Esito appuntamento</label>
+            <p id="esitoAppuntamento" class="input-group datepicker font-weight-bold">
+                {{viewDate.Appuntamento.ESITO}} 
+            </p>
+        </div>
+        <div ng-if="viewDate.hasEsito_OK">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="numLuce">Numero contratti luce</label>
+                <p id="numLuce" class="input-group datepicker font-weight-bold">
+                    {{viewDate.Appuntamento.NUM_LUCE}} 
+                </p>
+            </div>  
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                    <label for="numGas">Numero contratti gas</label>
+                    <p id="numGas" class="input-group datepicker font-weight-bold">
+                        {{viewDate.Appuntamento.NUM_GAS}} 
+                    </p>
+            </div>  
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                    <label for="codLuce">Codici contratti luce</label>
+                    <p id="codLuce" class="input-group datepicker font-weight-bold">
+                        {{viewDate.Appuntamento.CODICI_CONTRATTO_LUCE}} 
+                    </p>
+            </div>  
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                    <label for="codGas">Codici contratti gas</label>
+                    <p id="codGas" class="input-group datepicker font-weight-bold">
+                        {{viewDate.Appuntamento.CODICI_CONTRATTO_GAS}} 
+                    </p>
+            </div>  
+        </div>
+
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="noteAgente">Note agente</label>
+            <textarea id="noteAgente"  rows="4" cols="50" maxlength="220"  type="text" readonly >{{viewDate.Appuntamento.NOTE_AGENTE}}  </textarea> 
+        </div>
+
+
+
+    </div>
    
 </div>
