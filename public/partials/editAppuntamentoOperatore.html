@@ -1,0 +1,94 @@
+<div class="container" >
+     
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="editAppuntamentoOperatore" ng-submit="editDateOperatore.submiteditDateOperatore()">
+        
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Appuntamento {{editDateOperatore.Appuntamento.ID_APPUNTAMENTO}}</h2>
+                <hr>
+                <p class="orangeText">* Campi obbligatori</p>
+            </div>
+        </div>
+    <div class="row col-12" >
+        <div class="form-group  col-xs-12 col-sm-6 col-md-4 mr-2">
+            <label for="dataAppuntamento">Data appuntamento*</label>
+            <p class="input-group datepicker">
+                    <input type="text" name="dataAppuntamento" id="dataAppuntamento" ng-click="editDateOperatore.open()" class="form-control " readonly required="required" uib-datepicker-popup="{{editDateOperatore.format}}" ng-model="editDateOperatore.dataAppuntamento" value="" ng-required="true" is-open="editDateOperatore.popup.opened" datepicker-options="editDateOperatore.dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="editDateOperatore.open()"><i class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
+        </div>
+        <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
+            <label for="oraAppuntamento">Ora appuntamento*</label>
+            <div uib-timepicker ng-model="editDateOperatore.oraAppuntamento" id="oraAppuntamento" ng-required="true"  show-meridian="false" hour-step="editDateOperatore.hstep" minute-step="editDateOperatore.mstep" ></div>
+        </div>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="provinceSelect">Provincia*</label>
+        <select ng-required="true" name="provinceSelect" class="form-control" id="provinceSelect" ng-change="editDateOperatore.showComuni()" ng-model="editDateOperatore.provinciaSelected">
+            <option ng-repeat="option in editDateOperatore.province" value="{{option.nome}}">{{option.nome}}</option>
+        </select>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="comuniSelect">Comune*</label>
+        <select ng-required="true" name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="editDateOperatore.disabledComuni" ng-model="editDateOperatore.comuneSelected">
+                <option ng-repeat="option in editDateOperatore.comuniPerProvincia"  value="{{option.nome}}">{{option.nome}}</option>
+        </select>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+            <label for="indirizzo">Indirizzo*</label>
+            <input ng-required="true" type="text"name="indirizzo" class="form-control w-100" id="indirizzo" ng-disabled="editDateOperatore.disabledComuni" ng-model="editDateOperatore.indirizzo" />         
+    </div>
+
+
+    <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+        <label for="venditoreSelect">Agente*</label>
+        <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect" ng-disabled="editDateOperatore.disabledListaAgenti"  ng-model="editDateOperatore.venditoreSelected">
+            <option ng-repeat="option1 in editDateOperatore.venditoriForOperatore" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === editDateOperatore.venditoreSelected" value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
+        </select>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+        <label for="nomeAttivita">Nome azienda / persona fisica*</label>
+        <input ng-required="true" type="text"name="nomeAttivita" class="form-control w-100" id="nomeAttivita"  ng-model="editDateOperatore.nomeAttivita" />         
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+    <label for="gestoreAttuale">Gestore attuale*</label>
+    <select ng-required="true" ng-model="editDateOperatore.group.value" id="gestoreAttuale" name="gestoreAttuale"  class="form-control" ng-options="Group.Value as Group.Name  for Group in editDateOperatore.Groups"></select>
+    <div class=" form-control mt-2" ng-show="editDateOperatore.group.value == 'altro'">
+        <input class="text-box form-control " type="text" name="NewValue" ng-model="newValue" />
+        <button type="button" ng-click="editDateOperatore.inserisciNuovoGestore(newValue)">Aggiungi</button>
+    </div>       
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+    <label for="recapiti">Recapiti*</label>
+    <input ng-required="true" type="text"name="recapiti" class="form-control w-100" id="recapiti"  ng-model="editDateOperatore.recapiti" />         
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+    <label for="noteOperatore">Note operatore</label>
+    <textarea  rows="4" cols="50" maxlength="220"  type="text"name="noteOperatore" class="form-control w-100" id="noteOperatore"  ng-model="editDateOperatore.noteOperatore" ></textarea>         
+</div>
+<div class="row col-12">
+    <div class="col-md-12">
+        <hr>
+        <h4>Esito </h4>
+        <hr>
+        
+    </div>
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+        <label for="esitoAppuntamento">Esito appuntamento</label>
+        <select ng-required="false"  ng-model="editDateOperatore.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in editDateOperatore.Esiti"></select>      
+</div>
+
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+    <label for="noteAgente">Note agente</label>
+    <textarea id="noteAgente"  rows="4" cols="50" maxlength="220"  type="text" readonly >{{editDateOperatore.Appuntamento.NOTE_AGENTE}}  </textarea> 
+</div>
+
+<div class="col-md-12 col-xl-12 mt-3 ">
+        <button ng-disabled="editAppuntamentoOperatore.$invalid "  type="submit" class="btn btn-orange ">Salva modifiche</button> 
+</div>
+    
+</form>
+</div>

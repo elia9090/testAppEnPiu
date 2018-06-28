@@ -52,7 +52,7 @@
                   
                 </td>
                 <td>
-                    <button  class="btn btn-orange btn-modifyUtente" ng-click="modifyDate(x.ID_APPUNTAMENTO)">
+                    <button ng-disabled="user.TYPE == 'OPERATORE' && (x.ESITO == 'KO' || x.ESITO == 'OK') "  class="btn btn-orange btn-modifyUtente" ng-click="modifyDate(x.ID_APPUNTAMENTO)">
                         <i class="fas fa-pencil-alt"></i>
                     </button>
                   

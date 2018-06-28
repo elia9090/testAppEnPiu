@@ -137,7 +137,14 @@ $scope.editDateOperatore.Esiti =    [
         "Name":"VALUTA",
         "Value":"VALUTA"
     },
-  
+    {
+        "Name":"ASSENTE",
+        "Value":"ASSENTE"
+    },
+    {
+        "Name":"NON VISITATO",
+        "Value":"NON VISITATO"
+    },
    
     {
         "Name":" ",
