@@ -1,0 +1,110 @@
+<div class="container" >
+     
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="editAppuntamentoVenditore" ng-submit="editDateVenditore.submiteditDateVenditore()">
+        
+        <div class="row col-12" >
+            <div class="form-group  col-xs-12 col-sm-6 col-md-4 mr-2">
+                <label for="dataAppuntamento">Data appuntamento </label>
+                <p id="dataAppuntamento" class="input-group datepicker font-weight-bold">
+                    {{editDateVenditore.Appuntamento.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
+                </p>
+            </div>
+            <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
+                <label for="oraAppuntamento">Ora appuntamento</label>
+                <p id="oraAppuntamento" class="input-group datepicker font-weight-bold">
+                    {{editDateVenditore.Appuntamento.ORA_APPUNTAMENTO}}
+                </p>
+            </div>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="provinceSelect">Provincia</label>
+            <p id="provinceSelect" class="input-group datepicker font-weight-bold">
+                {{editDateVenditore.Appuntamento.PROVINCIA}}
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="comuneSelect">Comune</label>
+            <p id="comuneSelect" class="input-group datepicker font-weight-bold">
+                {{editDateVenditore.Appuntamento.COMUNE}}
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="comuneSelect">Indirizzo</label>
+            <p id="comuneSelect" class="input-group datepicker font-weight-bold">
+                {{editDateVenditore.Appuntamento.INDIRIZZO}}
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="Operatore">Operatore</label>
+            <p id="Operatore" class="input-group datepicker font-weight-bold">
+                {{editDateVenditore.Appuntamento.COGNOME_OPERATORE}} {{editDateVenditore.Appuntamento.NOME_OPERATORE}} 
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="agente">Agente</label>
+            <p id="agente" class="input-group datepicker font-weight-bold">
+                {{editDateVenditore.Appuntamento.COGNOME_VENDITORE}} {{editDateVenditore.Appuntamento.NOME_VENDITORE}} 
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="attivita">Nome azienda / Persona fisica</label>
+            <p id="attivita" class="input-group datepicker font-weight-bold">
+                {{editDateVenditore.Appuntamento.NOME_ATTIVITA}} 
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="gestore">Gestore attuale</label>
+            <p id="gestore" class="input-group datepicker font-weight-bold">
+                {{editDateVenditore.Appuntamento.ATTUALE_GESTORE}} 
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="recapiti">Recapiti</label>
+            <p id="recapiti" class="input-group datepicker font-weight-bold">
+                {{editDateVenditore.Appuntamento.RECAPITI}} 
+            </p>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="noteOperatore">Note operatore</label>
+            <textarea id="noteOperatore"  rows="4" cols="50" maxlength="220"  type="text" readonly >{{editDateVenditore.Appuntamento.NOTE_OPERATORE}}  </textarea> 
+        </div>
+<div class="row col-12">
+    <div class="col-md-12">
+        <hr>
+        <h4>Esito </h4>
+        <hr>
+        
+    </div>
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+        <label for="esitoAppuntamento">Esito appuntamento</label>
+        <select ng-required="false"  ng-model="editDateVenditore.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in editDateVenditore.Esiti"></select>      
+</div>
+
+<div ng-if="editDateVenditore.esito.value == 'OK'"  class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+    <label for="numLuce">Numero contratti luce*</label>
+    <select ng-change="editDateVenditore.createInputLuce()" ng-required="true" ng-model="editDateVenditore.numLuce" id="numLuce" name="numLuce"  class="form-control" ng-options="o as o for o in editDateVenditore.numeriContratto"></select>
+    <div ng-if="editDateVenditore.numLuce > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateVenditore.inputsLuce track by $index">
+            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100" placeholder="Cod. contratto luce" ng-required="true"  ng-model="editDateVenditore.inputsLuce[$index]">
+        </div>
+    </div>
+    <label for="numGas">Numero contratti gas*</label>
+    <select ng-change="editDateVenditore.createInputGas()" ng-required="true" ng-model="editDateVenditore.numGas" id="numGas" name="numGas"  class="form-control" ng-options="o as o for o in editDateVenditore.numeriContratto"></select>
+    <div ng-if="editDateVenditore.numGas > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateVenditore.inputsGas track by $index">
+            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"  class="form-control w-100 " ng-required="true" placeholder="Cod. contratto gas"  ng-model="editDateVenditore.inputsGas[$index]">
+        </div>
+    </div>
+</div>
+<div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+        <label for="editDateVenditore.noteAgente">Note Agente</label>
+        <textarea  rows="4" cols="50" maxlength="220"  type="text"name="noteAgente" class="form-control w-100" id="noteAgente"  ng-model="editDateVenditore.noteAgente" ></textarea>         
+    </div>
+
+<div class="col-md-12 col-xl-12 mt-3 ">
+        <button ng-disabled="editAppuntamentoVenditore.$invalid || (editDateVenditore.esito.value == 'OK' && editDateVenditore.numLuce == 0 && editDateVenditore.numGas == 0 )"  type="submit" class="btn btn-orange ">Salva modifiche</button> 
+</div>
+    
+</form>
+</div>
