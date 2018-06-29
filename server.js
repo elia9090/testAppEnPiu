@@ -438,6 +438,87 @@ app.post('/addNewDate', ensureToken, function (req, res) {
 });
 });
 
+
+app.post('/editDateAdmin', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+	} else {
+	console.log("post :: /editDateAdmin");
+	log.info('post Request :: /editDateAdmin');
+
+	var data = {};
+		var idAppuntamento = req.body.idAppuntamento;
+		var dataAppuntamento = req.body.dataAppuntamento;
+		var oraAppuntamento = req.body.oraAppuntamento;
+		var provincia = req.body.provincia;
+		var comune = req.body.comune;
+		var indirizzo = req.body.indirizzo;
+		var idOperatore = req.body.idOperatore;
+		var idAgente = req.body.idAgente;
+		var nomeAttivita = req.body.nomeAttivita;
+		var gestoreAttuale = req.body.gestoreAttuale;
+		var recapiti = req.body.recapiti;
+		var noteOperatore = req.body.noteOperatore;
+		var recapiti = req.body.recapiti;
+		var esitoAppuntamento = req.body.esitoAppuntamento;
+		var noteAgente = req.body.noteAgente;
+		 //VERIFICARE SE SONO NULL O VUOTI COME LI GESTISCE VISTO CHE IL CAMPO è INT
+		 var numLuce = req.body.numLuce;
+		 var numGas = req.body.numGas;
+		  //VERIFICARE SE SONO NULL O VUOTI COME LI GESTISCE VISTO CHE IL CAMPO è INT
+		 var codici_contratto_luce = req.body.codici_contratto_luce ;
+		 var codici_contratto_gas = req.body.codici_contratto_gas;
+		
+
+	pool.getConnection(function (err, connection) {
+		connection.beginTransaction(function(errTrans) {
+			if (errTrans) {                  //Transaction Error (Rollback and release connection)
+				connection.rollback(function() {
+				connection.release();
+				});
+				res.sendStatus(500);
+			}else{
+				connection.query('UPDATE APPUNTAMENTI SET DATA_APPUNTAMENTO = ?, ORA_APPUNTAMENTO = ?, '
+				+' PROVINCIA = ?, COMUNE = ?, INDIRIZZO, ID_OPERATORE = ?, ID_VENDITORE = ?, NOME_ATTIVITA = ?, NOTE_OPERATORE = ?, '
+				+' ATTUALE_GESTORE = ?, RECAPITI = ?, ESITO = ?, NOTE_AGENTE = ?, '
+				+' NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, '
+				+'  WHERE ID_APPUNTAMENTO = ? ', [dataAppuntamento,oraAppuntamento,provincia,comune,indirizzo,idOperatore, idAgente,nomeAttivita,noteOperatore,gestoreAttuale,recapiti, esitoAppuntamento, noteAgente, numLuce, numGas, codici_contratto_luce, codici_contratto_gas  ,idAppuntamento], function (err, rows, fields) {
+					if(err){
+						connection.rollback(function() {
+						connection.release();
+						//Failure
+						});
+						log.error('ERRORE SQL editDateAdmin ' + err);
+						res.sendStatus(500);
+							
+					}else{
+						connection.commit(function(err) {
+							if (err) {
+								connection.rollback(function() {
+								connection.release();
+								//Failure
+								});
+								res.sendStatus(500);
+							} else {
+								connection.release();
+								data["RESULT"] = "OK";
+								res.json(data);
+								//Success
+							}
+						});
+					}
+					
+				});
+			}
+		});
+	
+		
+	});
+	}
+});
+});
+
 // NUOVO APPUNTAMENTO
 app.post('/editDateVenditore', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
