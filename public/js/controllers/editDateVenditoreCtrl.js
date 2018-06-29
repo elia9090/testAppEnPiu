@@ -142,7 +142,32 @@ $scope.editDateVenditore.createInputGas = function (){
         alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
         $location.path('/listaAppuntamenti');
     });
+
+    //submit del form
    
+    $scope.editDateVenditore.submitDateVenditore = function(){
+
+        $http.post('/editDateVenditore', {
+            'esitoAppuntamento': $scope.editDateVenditore.esito.value,
+            'numLuce' : $scope.editDateVenditore.numLuce,
+            'numGas' : $scope.editDateVenditore.numGas,
+            'codici_contratto_gas': $scope.editDateVenditore.inputsGas.join(";"),
+            'codici_contratto_luce': $scope.editDateVenditore.inputsLuce.join(";"),
+            'noteAgente' : $scope.editDateVenditore.noteAgente
+     
+         }).then((result) => {
+             alert('Appuntamento modificato correttamente');
+             $route.reload();
+         }).catch((err) => {
+             if(err.status === 500){
+                 alert("Errore nella modifica appuntamento");
+             }
+             if(err.status === 403){
+                 alert("Utente non autorizzato");
+                 $location.path('/logout');
+             }
+         });
+    }
     
 
 });

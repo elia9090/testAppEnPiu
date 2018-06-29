@@ -1,4 +1,4 @@
-app.controller('usersListCtrl', function ( $scope, $http, $location,$route) {
+app.controller('viewDateCtrl', function ( $scope, $http, $location,$route) {
 
     $scope.user = JSON.parse(sessionStorage.user);
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
