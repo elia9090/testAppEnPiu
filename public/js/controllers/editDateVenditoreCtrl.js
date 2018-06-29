@@ -148,6 +148,7 @@ $scope.editDateVenditore.createInputGas = function (){
     $scope.editDateVenditore.submitDateVenditore = function(){
 
         $http.post('/editDateVenditore', {
+            'idAppuntamento': $scope.editDateVenditore.Appuntamento.ID_APPUNTAMENTO,
             'esitoAppuntamento': $scope.editDateVenditore.esito.value,
             'numLuce' : $scope.editDateVenditore.numLuce,
             'numGas' : $scope.editDateVenditore.numGas,

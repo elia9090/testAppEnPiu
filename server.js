@@ -438,6 +438,71 @@ app.post('/addNewDate', ensureToken, function (req, res) {
 });
 });
 
+// NUOVO APPUNTAMENTO
+app.post('/editDateVenditore', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+	} else {
+	console.log("post :: /editDateVenditore");
+	log.info('post Request :: /editDateVenditore');
+
+	var data = {};
+	   var idAppuntamento = req.body.idAppuntamento;
+	   var esitoAppuntamento = req.body.esitoAppuntamento;
+
+	   //VERIFICARE SE SONO NULL O VUOTI COME LI GESTISCE VISTO CHE IL CAMPO è INT
+	   var numLuce = req.body.numLuce;
+	   var numGas = req.body.numGas;
+	    //VERIFICARE SE SONO NULL O VUOTI COME LI GESTISCE VISTO CHE IL CAMPO è INT
+	   var codici_contratto_luce = req.body.codici_contratto_luce ;
+	   var codici_contratto_gas = req.body.codici_contratto_gas;
+	   var noteAgente = req.body.noteAgente;
+
+	pool.getConnection(function (err, connection) {
+		connection.beginTransaction(function(errTrans) {
+			if (errTrans) {                  //Transaction Error (Rollback and release connection)
+				connection.rollback(function() {
+				connection.release();
+				});
+				res.sendStatus(500);
+			}else{
+				connection.query('UPDATE APPUNTAMENTI SET ESITO = ?, NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, NOTE_AGENTE = ? WHERE ID_APPUNTAMENTO = ?', [esitoAppuntamento, numLuce, numGas, codici_contratto_luce, codici_contratto_gas, noteAgente, idAppuntamento], function (err, rows, fields) {
+					if(err){
+						connection.rollback(function() {
+						connection.release();
+						//Failure
+						});
+						log.error('ERRORE SQL INSERT APPUNTAMENTO ' + err);
+						res.sendStatus(500);
+							
+					}else{
+						connection.commit(function(err) {
+							if (err) {
+								connection.rollback(function() {
+								connection.release();
+								//Failure
+								});
+								res.sendStatus(500);
+							} else {
+								connection.release();
+								data["RESULT"] = "OK";
+								res.json(data);
+								//Success
+							}
+						});
+					}
+					
+				});
+			}
+		});
+	
+		
+	});
+	}
+});
+});
+
 //lsita appuntamenti admin
 app.get('/listaAppuntamentiAdmin', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
