@@ -473,7 +473,78 @@ app.post('/editDateVenditore', ensureToken, function (req, res) {
 						connection.release();
 						//Failure
 						});
-						log.error('ERRORE SQL INSERT APPUNTAMENTO ' + err);
+						log.error('ERRORE SQL editDateVenditore ' + err);
+						res.sendStatus(500);
+							
+					}else{
+						connection.commit(function(err) {
+							if (err) {
+								connection.rollback(function() {
+								connection.release();
+								//Failure
+								});
+								res.sendStatus(500);
+							} else {
+								connection.release();
+								data["RESULT"] = "OK";
+								res.json(data);
+								//Success
+							}
+						});
+					}
+					
+				});
+			}
+		});
+	
+		
+	});
+	}
+});
+});
+app.post('/editDateOperatore', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+	} else {
+	console.log("post :: /editDateOperatore");
+	log.info('post Request :: /editDateOperatore');
+
+	var data = {};
+		var idAppuntamento = req.body.idAppuntamento;
+		var dataAppuntamento = req.body.dataAppuntamento;
+		var oraAppuntamento = req.body.oraAppuntamento;
+		var provincia = req.body.provincia;
+		var comune = req.body.comune;
+		var indirizzo = req.body.indirizzo;
+		var idOperatore = req.body.idOperatore;
+		var idAgente = req.body.idAgente;
+		var nomeAttivita = req.body.nomeAttivita;
+		var gestoreAttuale = req.body.gestoreAttuale;
+		var recapiti = req.body.recapiti;
+		var noteOperatore = req.body.noteOperatore;
+		var recapiti = req.body.recapiti;
+		var esitoAppuntamento = req.body.esitoAppuntamento;
+		var noteAgente = req.body.noteAgente;
+
+	pool.getConnection(function (err, connection) {
+		connection.beginTransaction(function(errTrans) {
+			if (errTrans) {                  //Transaction Error (Rollback and release connection)
+				connection.rollback(function() {
+				connection.release();
+				});
+				res.sendStatus(500);
+			}else{
+				connection.query('UPDATE APPUNTAMENTI SET DATA_APPUNTAMENTO = ?, ORA_APPUNTAMENTO = ?, '
+				+' PROVINCIA = ?, COMUNE = ?, INDIRIZZO, ID_OPERATORE = ?, ID_VENDITORE = ?, NOME_ATTIVITA = ?, NOTE_OPERATORE = ?, '
+				+' ATTUALE_GESTORE = ?, RECAPITI = ?, ESITO = ?, NOTE_AGENTE = ? '
+				+'  WHERE ID_APPUNTAMENTO = ? ', [dataAppuntamento,oraAppuntamento,provincia,comune,indirizzo,idOperatore, idAgente,nomeAttivita,noteOperatore,gestoreAttuale,recapiti, esitoAppuntamento, noteAgente  ,idAppuntamento], function (err, rows, fields) {
+					if(err){
+						connection.rollback(function() {
+						connection.release();
+						//Failure
+						});
+						log.error('ERRORE SQL editDateOperatore ' + err);
 						res.sendStatus(500);
 							
 					}else{

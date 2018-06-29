@@ -196,4 +196,57 @@ $scope.editDateOperatore.Esiti =    [
         $scope.editDateOperatore.comuniPerProvincia = newArray[0].comuni;
         $scope.editDateOperatore.disabledComuni = false;
     }
+
+
+
+    $scope.editDateOperatore.submitDateOperatore = function (){
+
+            //prendo la data dal timePicker
+        var oraAppuntamento = $scope.editDateOperatore.oraAppuntamento.toLocaleString("it-IT").split(",")[1].split(":")[0] + ":" + $scope.editDateOperatore.oraAppuntamento.toLocaleString("it-IT").split(",")[1].split(":")[1];
+        //parsing della data per il DB
+        var dataAppuntamento = $scope.editDateOperatore.dataAppuntamento;
+        dataAppuntamento = dataAppuntamento.getFullYear() +"-"+ (dataAppuntamento.getMonth()+1) + "-" +dataAppuntamento.getDate();
+        //prendo l'id Operatore o dalla session o dalla select
+        var idOperatore;
+        if($scope.user.TYPE == "OPERATORE"){
+            idOperatore =  $scope.user.Id;
+        }else{
+            idOperatore = $scope.editDateOperatore.operatoriSelected;
+        }
+
+        $http.post('/editDateOperatore', {
+            'idAppuntamento' :  $scope.editDateOperatore.Appuntamento.ID_APPUNTAMENTO,
+            'dataAppuntamento':dataAppuntamento ,
+            'oraAppuntamento': oraAppuntamento.trim(),
+            'provincia': $scope.editDateOperatore.provinciaSelected,
+            'comune': $scope.editDateOperatore.comuneSelected,
+            'indirizzo': $scope.editDateOperatore.indirizzo,
+            'idOperatore': idOperatore,
+            'idAgente': $scope.editDateOperatore.venditoreSelected,
+            'nomeAttivita': $scope.editDateOperatore.nomeAttivita,
+            'gestoreAttuale': $scope.editDateOperatore.group.value,
+            'recapiti': $scope.editDateOperatore.recapiti,
+            'noteOperatore': $scope.editDateOperatore.noteOperatore,
+            'esitoAppuntamento': $scope.editDateOperatore.esito.value,
+            'noteAgente' : $scope.editDateOperatore.noteAgente
+
+         }).then((result) => {
+             alert('Appuntamento modificato correttamente');
+             $route.reload();
+         }).catch((err) => {
+             if(err.status === 500){
+                 alert("Errore nella modifica appuntamento");
+             }
+             if(err.status === 403){
+                 alert("Utente non autorizzato");
+                 $location.path('/logout');
+             }
+         });
+
+    }
+
+
+
+
+
 });
