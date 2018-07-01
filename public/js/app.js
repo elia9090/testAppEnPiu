@@ -42,6 +42,9 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
         }).when('/listaAppuntamenti', {
             templateUrl: '../partials/dateList.html',
             controller:'dateListCtrl'
+        }).when('/ricercaAppuntamenti', {
+            templateUrl: '../partials/dateSearch.html',
+            controller:'dateSearchCtrl'
         })
         .when('/editPassword', {
             templateUrl: '../partials/editPassword.html',
