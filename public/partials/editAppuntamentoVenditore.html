@@ -1,71 +1,77 @@
 <div class="container" >
      
     <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="editAppuntamentoVenditore" ng-submit="editDateVenditore.submitDateVenditore()">
-        
+            <div class="row col-12">
+                    <div class="col-md-12">
+                        <h2>Appuntamento {{editDateVenditore.Appuntamento.ID_APPUNTAMENTO}}</h2>
+                        <hr>
+                        
+                    </div>
+                </div>
         <div class="row col-12" >
-            <div class="form-group  col-xs-12 col-sm-6 col-md-4 mr-2">
-                <label for="dataAppuntamento">Data appuntamento </label>
+            <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-4 mr-2">
+                <label for="dataAppuntamento">Data appuntamento: &nbsp; </label>
                 <p id="dataAppuntamento" class="input-group datepicker font-weight-bold">
                     {{editDateVenditore.Appuntamento.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
                 </p>
             </div>
-            <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
-                <label for="oraAppuntamento">Ora appuntamento</label>
+            <div class="form-group pb-3   col-xs-12 col-sm-6 col-md-6">
+                <label for="oraAppuntamento">Ora appuntamento: &nbsp;</label>
                 <p id="oraAppuntamento" class="input-group datepicker font-weight-bold">
                     {{editDateVenditore.Appuntamento.ORA_APPUNTAMENTO}}
                 </p>
             </div>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="provinceSelect">Provincia</label>
+            <label for="provinceSelect">Provincia: &nbsp;</label>
             <p id="provinceSelect" class="input-group datepicker font-weight-bold">
                 {{editDateVenditore.Appuntamento.PROVINCIA}}
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="comuneSelect">Comune</label>
+            <label for="comuneSelect">Comune: &nbsp;</label>
             <p id="comuneSelect" class="input-group datepicker font-weight-bold">
                 {{editDateVenditore.Appuntamento.COMUNE}}
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="comuneSelect">Indirizzo</label>
+            <label for="comuneSelect">Indirizzo: &nbsp;</label>
             <p id="comuneSelect" class="input-group datepicker font-weight-bold">
                 {{editDateVenditore.Appuntamento.INDIRIZZO}}
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="Operatore">Operatore</label>
+            <label for="Operatore">Operatore: &nbsp;</label>
             <p id="Operatore" class="input-group datepicker font-weight-bold">
                 {{editDateVenditore.Appuntamento.COGNOME_OPERATORE}} {{editDateVenditore.Appuntamento.NOME_OPERATORE}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="agente">Agente</label>
+            <label for="agente">Agente: &nbsp;</label>
             <p id="agente" class="input-group datepicker font-weight-bold">
                 {{editDateVenditore.Appuntamento.COGNOME_VENDITORE}} {{editDateVenditore.Appuntamento.NOME_VENDITORE}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="attivita">Nome azienda / Persona fisica</label>
+            <label for="attivita">Nome azienda / Persona fisica: &nbsp;</label>
             <p id="attivita" class="input-group datepicker font-weight-bold">
                 {{editDateVenditore.Appuntamento.NOME_ATTIVITA}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="gestore">Gestore attuale</label>
+            <label for="gestore">Gestore attuale: &nbsp;</label>
             <p id="gestore" class="input-group datepicker font-weight-bold">
                 {{editDateVenditore.Appuntamento.ATTUALE_GESTORE}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="recapiti">Recapiti</label>
+            <label for="recapiti">Recapiti: &nbsp;</label>
             <p id="recapiti" class="input-group datepicker font-weight-bold">
                 {{editDateVenditore.Appuntamento.RECAPITI}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="noteOperatore">Note operatore</label>
+            <label for="noteOperatore">Note operatore: &nbsp;</label>
             <textarea id="noteOperatore"  rows="4" cols="50" maxlength="220"  type="text" readonly >{{editDateVenditore.Appuntamento.NOTE_OPERATORE}}  </textarea> 
         </div>
 <div class="row col-12">
@@ -77,7 +83,7 @@
     </div>
 </div>
 <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
-        <label for="esitoAppuntamento">Esito appuntamento</label>
+        <label for="esitoAppuntamento">Esito appuntamento: &nbsp;</label>
         <select ng-required="false"  ng-model="editDateVenditore.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in editDateVenditore.Esiti"></select>      
 </div>
 

@@ -480,9 +480,9 @@ app.post('/editDateAdmin', ensureToken, function (req, res) {
 				res.sendStatus(500);
 			}else{
 				connection.query('UPDATE APPUNTAMENTI SET DATA_APPUNTAMENTO = ?, ORA_APPUNTAMENTO = ?, '
-				+' PROVINCIA = ?, COMUNE = ?, INDIRIZZO, ID_OPERATORE = ?, ID_VENDITORE = ?, NOME_ATTIVITA = ?, NOTE_OPERATORE = ?, '
+				+' PROVINCIA = ?, COMUNE = ?, INDIRIZZO = ?, ID_OPERATORE = ?, ID_VENDITORE = ?, NOME_ATTIVITA = ?, NOTE_OPERATORE = ?, '
 				+' ATTUALE_GESTORE = ?, RECAPITI = ?, ESITO = ?, NOTE_AGENTE = ?, '
-				+' NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, '
+				+' NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ? '
 				+'  WHERE ID_APPUNTAMENTO = ? ', [dataAppuntamento,oraAppuntamento,provincia,comune,indirizzo,idOperatore, idAgente,nomeAttivita,noteOperatore,gestoreAttuale,recapiti, esitoAppuntamento, noteAgente, numLuce, numGas, codici_contratto_luce, codici_contratto_gas  ,idAppuntamento], function (err, rows, fields) {
 					if(err){
 						connection.rollback(function() {
@@ -617,7 +617,7 @@ app.post('/editDateOperatore', ensureToken, function (req, res) {
 				res.sendStatus(500);
 			}else{
 				connection.query('UPDATE APPUNTAMENTI SET DATA_APPUNTAMENTO = ?, ORA_APPUNTAMENTO = ?, '
-				+' PROVINCIA = ?, COMUNE = ?, INDIRIZZO, ID_OPERATORE = ?, ID_VENDITORE = ?, NOME_ATTIVITA = ?, NOTE_OPERATORE = ?, '
+				+' PROVINCIA = ?, COMUNE = ?, INDIRIZZO = ?, ID_OPERATORE = ?, ID_VENDITORE = ?, NOME_ATTIVITA = ?, NOTE_OPERATORE = ?, '
 				+' ATTUALE_GESTORE = ?, RECAPITI = ?, ESITO = ?, NOTE_AGENTE = ? '
 				+'  WHERE ID_APPUNTAMENTO = ? ', [dataAppuntamento,oraAppuntamento,provincia,comune,indirizzo,idOperatore, idAgente,nomeAttivita,noteOperatore,gestoreAttuale,recapiti, esitoAppuntamento, noteAgente  ,idAppuntamento], function (err, rows, fields) {
 					if(err){
@@ -761,8 +761,9 @@ app.get('/listaAppuntamentiVenditore/:id', ensureToken, function (req, res) {
 				' FROM APPUNTAMENTI'+
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?)) AND APPUNTAMENTI.ID_VENDITORE=?' ,[from, to, to,id], function (err, rows, fields) {
+				' WHERE ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
+				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) AND APPUNTAMENTI.ID_VENDITORE=?' ,[from, to, to,id], function (err, rows, fields) {
+			
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
@@ -829,8 +830,8 @@ app.get('/listaAppuntamentiOperatore/:id', ensureToken, function (req, res) {
 				' FROM APPUNTAMENTI'+
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?)) AND APPUNTAMENTI.ID_OPERATORE = ?' ,[from, to,to, id], function (err, rows, fields) {
+				' WHERE ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
+				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) AND APPUNTAMENTI.ID_OPERATORE = ?' ,[from, to,to, id], function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);

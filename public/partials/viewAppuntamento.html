@@ -1,4 +1,5 @@
 <div class="container" >
+        <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="viewAppuntamento" >
     <div class="row col-12">
         <div class="col-md-12">
             <h2>Appuntamento {{viewDate.Appuntamento.ID_APPUNTAMENTO}}</h2>
@@ -7,69 +8,69 @@
          
     </div>
         <div class="row col-12" >
-            <div class="form-group  col-xs-12 col-sm-6 col-md-4 mr-2">
-                <label for="dataAppuntamento">Data appuntamento </label>
+            <div class="form-group pb-3   col-xs-12 col-sm-6 col-md-4 mr-2">
+                <label for="dataAppuntamento">Data appuntamento: &nbsp;  </label>
                 <p id="dataAppuntamento" class="input-group datepicker font-weight-bold">
                     {{viewDate.Appuntamento.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
                 </p>
             </div>
-            <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
-                <label for="oraAppuntamento">Ora appuntamento</label>
+            <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-6">
+                <label for="oraAppuntamento">Ora appuntamento: &nbsp;</label>
                 <p id="oraAppuntamento" class="input-group datepicker font-weight-bold">
                     {{viewDate.Appuntamento.ORA_APPUNTAMENTO}}
                 </p>
             </div>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="provinceSelect">Provincia</label>
+            <label for="provinceSelect">Provincia: &nbsp;</label>
             <p id="provinceSelect" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.PROVINCIA}}
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="comuneSelect">Comune</label>
+            <label for="comuneSelect">Comune: &nbsp;</label>
             <p id="comuneSelect" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.COMUNE}}
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="comuneSelect">Indirizzo</label>
+            <label for="comuneSelect">Indirizzo: &nbsp;</label>
             <p id="comuneSelect" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.INDIRIZZO}}
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="Operatore">Operatore</label>
+            <label for="Operatore">Operatore: &nbsp;</label>
             <p id="Operatore" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.COGNOME_OPERATORE}} {{viewDate.Appuntamento.NOME_OPERATORE}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="agente">Agente</label>
+            <label for="agente">Agente: &nbsp;</label>
             <p id="agente" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.COGNOME_VENDITORE}} {{viewDate.Appuntamento.NOME_VENDITORE}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="attivita">Nome azienda / Persona fisica</label>
+            <label for="attivita">Nome azienda / Persona fisica: &nbsp;</label>
             <p id="attivita" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.NOME_ATTIVITA}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="gestore">Gestore attuale</label>
+            <label for="gestore">Gestore attuale: &nbsp;</label>
             <p id="gestore" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.ATTUALE_GESTORE}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="recapiti">Recapiti</label>
+            <label for="recapiti">Recapiti: &nbsp;</label>
             <p id="recapiti" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.RECAPITI}} 
             </p>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="noteOperatore">Note operatore</label>
+            <label for="noteOperatore">Note operatore: &nbsp;</label>
             <textarea id="noteOperatore"  rows="4" cols="50" maxlength="220"  type="text" readonly >{{viewDate.Appuntamento.NOTE_OPERATORE}}  </textarea> 
         </div>
 
@@ -82,32 +83,32 @@
             </div>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="esitoAppuntamento">Esito appuntamento</label>
+            <label for="esitoAppuntamento">Esito appuntamento: &nbsp;</label>
             <p id="esitoAppuntamento" class="input-group datepicker font-weight-bold">
                 {{viewDate.Appuntamento.ESITO}} 
             </p>
         </div>
         <div ng-if="viewDate.hasEsito_OK">
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="numLuce">Numero contratti luce</label>
+                <label for="numLuce">Numero contratti luce: &nbsp; </label>
                 <p id="numLuce" class="input-group datepicker font-weight-bold">
                     {{viewDate.Appuntamento.NUM_LUCE}} 
                 </p>
             </div>  
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                    <label for="numGas">Numero contratti gas</label>
+                    <label for="numGas">Numero contratti gas: &nbsp;</label>
                     <p id="numGas" class="input-group datepicker font-weight-bold">
                         {{viewDate.Appuntamento.NUM_GAS}} 
                     </p>
             </div>  
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                    <label for="codLuce">Codici contratti luce</label>
+                    <label for="codLuce">Codici contratti luce: &nbsp;</label>
                     <p id="codLuce" class="input-group datepicker font-weight-bold">
                         {{viewDate.Appuntamento.CODICI_CONTRATTO_LUCE}} 
                     </p>
             </div>  
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                    <label for="codGas">Codici contratti gas</label>
+                    <label for="codGas">Codici contratti gas: &nbsp;</label>
                     <p id="codGas" class="input-group datepicker font-weight-bold">
                         {{viewDate.Appuntamento.CODICI_CONTRATTO_GAS}} 
                     </p>
@@ -115,12 +116,12 @@
         </div>
 
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-            <label for="noteAgente">Note agente</label>
+            <label for="noteAgente">Note agente: &nbsp;</label>
             <textarea id="noteAgente"  rows="4" cols="50" maxlength="220"  type="text" readonly >{{viewDate.Appuntamento.NOTE_AGENTE}}  </textarea> 
         </div>
 
 
 
     </div>
-   
+   </form>
 </div>

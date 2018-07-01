@@ -1,4 +1,4 @@
-app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routeParams) {
+app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routeParams,$route) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -33,6 +33,10 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
         $scope.editDateAdmin.comuneSelected = $scope.editDateAdmin.Appuntamento.COMUNE;
         $scope.editDateAdmin.indirizzo = $scope.editDateAdmin.Appuntamento.INDIRIZZO;
        
+
+        //NOTE AGENTE 
+        $scope.editDateAdmin.noteAgente = $scope.editDateAdmin.Appuntamento.NOTE_AGENTE;
+        
         
     $http.get('../../utility/province_comuni.json').then((result) => {
         

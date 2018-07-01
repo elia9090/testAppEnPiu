@@ -1,4 +1,4 @@
-app.controller('editDateOperatoreCtrl', function ( $scope, $http, $location,$routeParams) {
+app.controller('editDateOperatoreCtrl', function ($scope, $http, $location,$routeParams,$route) {
     $scope.user = JSON.parse(sessionStorage.user);
    
     if(!$scope.user.TYPE == "OPERATORE"){
@@ -33,6 +33,8 @@ app.controller('editDateOperatoreCtrl', function ( $scope, $http, $location,$rou
         $scope.editDateOperatore.comuneSelected = $scope.editDateOperatore.Appuntamento.COMUNE;
         $scope.editDateOperatore.indirizzo = $scope.editDateOperatore.Appuntamento.INDIRIZZO;
        
+        //NOTE AGENTE 
+        $scope.editDateOperatore.noteAgente = $scope.editDateOperatore.Appuntamento.NOTE_AGENTE;
         
     $http.get('../../utility/province_comuni.json').then((result) => {
         

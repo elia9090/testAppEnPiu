@@ -7,9 +7,8 @@ body {
 }
 body{
 
-  background: #EFEFBB;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to bottom, #D4D3DD, #EFEFBB);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to bottom, #D4D3DD, #EFEFBB); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #A393BF;  /* fallback for old browsers */
+
 padding-bottom: 30px;
 }
 
@@ -191,4 +190,8 @@ select{
 }
 input.ng-invalid-pattern{
 border: 1px solid red;
+}
+
+form p{
+  margin-bottom: 0px;
 }

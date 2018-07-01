@@ -1,4 +1,4 @@
-app.controller('editDateVenditoreCtrl', function ( $scope, $http, $location,$routeParams) {
+app.controller('editDateVenditoreCtrl', function ($scope, $http, $location,$routeParams,$route) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -14,7 +14,7 @@ app.controller('editDateVenditoreCtrl', function ( $scope, $http, $location,$rou
     var idAppuntamento = $routeParams.id;
     
     $scope.editDateVenditore.Appuntamento = {};
-   
+
     $http.get('/appuntamento/'+idAppuntamento).then((result) => {
         //prendo l'appuntamento
         $scope.editDateVenditore.Appuntamento =  result.data.appuntamento;
@@ -22,7 +22,8 @@ app.controller('editDateVenditoreCtrl', function ( $scope, $http, $location,$rou
    
     
     
-    
+         //NOTE AGENTE 
+         $scope.editDateVenditore.noteAgente = $scope.editDateVenditore.Appuntamento.NOTE_AGENTE;
 
 
 //POPOLO GAS E LUCE START

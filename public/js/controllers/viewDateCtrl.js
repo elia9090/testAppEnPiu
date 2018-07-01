@@ -1,4 +1,4 @@
-app.controller('viewDateCtrl', function ( $scope, $http, $location,$route) {
+app.controller('viewDateCtrl', function ( $scope, $http, $location,$route,$routeParams) {
 
     $scope.user = JSON.parse(sessionStorage.user);
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
@@ -15,8 +15,8 @@ app.controller('viewDateCtrl', function ( $scope, $http, $location,$route) {
 
 
         if($scope.viewDate.Appuntamento.ESITO !== null 
-                || $scope.viewDate.Appuntamento.ESITO !== " " 
-                    || $scope.viewDate.Appuntamento.ESITO !== "")
+                && $scope.viewDate.Appuntamento.ESITO !== " " 
+                    && $scope.viewDate.Appuntamento.ESITO !== "")
                     {
                         $scope.viewDate.hasEsito = true;
 
