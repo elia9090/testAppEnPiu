@@ -65,7 +65,9 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
         .when('/editDateVenditore/:id', {
             templateUrl: '../partials/editAppuntamentoVenditore.html',
             controller:'editDateVenditoreCtrl'
-		})
+		}).when('/modificaUtente/:id', {
+            templateUrl: '../partials/modificaUtente.html',
+            controller:'editUserCtrl'})
         .otherwise({redirectTo:'/'});
         
         // Configure all charts
