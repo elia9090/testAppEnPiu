@@ -25,6 +25,7 @@ app.controller('usersListCtrl', function ( $scope, $http, $location,$route) {
   
 
     $scope.modifyUser = function (id) {
+            $location.path('/modificaUtente/'+id);
         
     };
 });

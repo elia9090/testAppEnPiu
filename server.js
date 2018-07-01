@@ -10,11 +10,11 @@ var log4js = require('log4js');
 log4js.configure('./config/log4js.json');
 var log = log4js.getLogger("server");
 
-
+/*
 app.listen(3000,'192.168.1.187' || 'localhost',function() {
     console.log('Application worker  started...');
   }
-  );
+  );*/
 
 
 
@@ -369,6 +369,77 @@ app.get('/listaUtenti', ensureToken, function (req, res) {
 		}
 	});
 });
+
+
+
+
+
+
+
+
+//Modifica utente
+app.get('/edituser/:id', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			var id=req.params.id;
+			
+			pool.getConnection(function (err, connection) {
+				connection.query(
+			'SELECT * from UTENTI '+
+			'LEFT JOIN OPERATORI_VENDITORI OV ON TIPO<>"OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL '+
+			'LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL '+
+			'WHERE ID_UTENTE=?' ,
+				id, function (err, rows, fields) {
+			
+					connection.release();
+					if(err){
+						log.error('ERRORE SQL MODIFICA UTENTE ' + err);
+						res.sendStatus(500);
+					}else{
+						if (rows.length !== 0) {
+							data.utente = rows[0];
+							res.json(data);
+						} else if (rows.length === 0) {
+							//Error code 2 = no rows in db.
+							data["error"] = 2;
+							data.utente = 'Nessun utente trovato';
+							res.status(404).json(data);
+						} else {
+							data["utente"] = 'Errore in fase di reperimento utente';
+							res.status(500).json(data);
+							console.log('Errore in fase di reperimento utente: ' + err);
+							log.error('Errore in fase di reperimento utente: ' + err);
+						}
+					}
+				
+				});
+			
+			});
+		  
+		}
+	});
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // NUOVO APPUNTAMENTO
 app.post('/addNewDate', ensureToken, function (req, res) {

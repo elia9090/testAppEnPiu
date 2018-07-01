@@ -1,0 +1,72 @@
+<div class="container" >
+<form role="form" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" ng-submit="submitAddUser()">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Aggiungi utente</h2>
+            <hr>
+        </div>
+    </div>
+    <div class="form-group">
+      <label for="inputNome">Nome</label>
+      <input required ng-model="nome" type="text" class="form-control" id="inputNome" aria-describedby="Nome" placeholder="Nome">
+     
+    </div>
+    <div class="form-group">
+      <label for="inputCognome">Cognome</label>
+      <input required ng-model="cognome" type="text" class="form-control" id="inputCognome" placeholder="Cognome">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputEmail1">Email</label>
+      <input required ng-model="username" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="Cognome" placeholder="Email">
+     
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Password</label>
+      <input required ng-model="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+    </div>
+    <fieldset class="form-group">
+        <legend>Tipo utente</legend>
+        <div class="form-check">
+          <label class="form-check-label ">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1"  ng-model="userType" value="AGENTE" checked="checked">
+           Agente
+          </label>
+        </div>
+        <div class="form-check">
+        <label class="form-check-label">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" ng-model="userType" value="RESPONSABILE AGENTI">
+            Responsabile agenti
+          </label>
+        </div>
+        <div class="form-check ">
+        <label class="form-check-label">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" ng-model="userType" value="OPERATORE" >
+            Operatore
+          </label>
+        </div>
+      </fieldset>
+      
+    <div class="form-group" ng-show="userType === 'AGENTE' || userType === 'RESPONSABILE AGENTI'">
+      <label for="exampleSelect1">Operatore associato</label>
+      <select class="form-control" name="operatoreAssociatoSelect" id="operatoreAssociatoSelect"  ng-model="operatoreAssociato">
+        <option  ng-selected="operatoreAssociato" ng-repeat="option in operatori" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
+    </select>
+  
+    </div>
+
+    <div class="form-group" ng-show="userType === 'AGENTE'">
+      <label for="exampleSelect2">Responsabile associato</label>
+      <select class="form-control" name="responsabileAssociatoSelect" id="responsabileAssociatoSelect" ng-model="responsabileAssociato">
+        <option ng-selected="responsabileAssociato" ng-repeat="option in responsabili" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
+    </select>
+    </div>
+
+   
+    
+    <button type="submit" class="btn btn-orange btn-addUtente">Salva</button>
+  </form>
+</div>
+
+
+
+
