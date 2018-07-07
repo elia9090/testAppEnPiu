@@ -6,11 +6,13 @@
             <div class="col-md-12">
                 <h2>Ricerca appuntamenti</h2>
                 <hr>
+                <p><i>Di default la ricerca riporta gli appuntamenti del mese di produzione precedente</i></p>
+                <hr>
             </div>
         </div>
 
         <div class="row col-12" >
-            <div class="form-group  col-xs-12 col-sm-6 col-md-3 ">
+            <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoDAL">Data appuntamento DAL</label>
                 <p class="input-group datepicker">
                         <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="searchDate.openDAL()" class="form-control " readonly  uib-datepicker-popup="{{searchDate.format}}" ng-model="searchDate.dataAppuntamentoDAL" value=""  is-open="searchDate.popupDAL.opened" datepicker-options="searchDate.dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
@@ -19,7 +21,7 @@
                         </span>
                     </p>
             </div>
-            <div class="form-group  col-xs-12 col-sm-6 col-md-3 ">
+            <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoAL">Data appuntamento AL</label>
                 <p class="input-group datepicker">
                         <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="searchDate.openAL()" class="form-control " readonly  uib-datepicker-popup="{{searchDate.format}}" ng-model="searchDate.dataAppuntamentoAL" value=""  is-open="searchDate.popupAL.opened" datepicker-options="searchDate.dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
@@ -60,9 +62,17 @@
 
     <div class="row col-12" ng-if="user.TYPE === 'ADMIN'">
         <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+            <label for="operatoriSelect">Operatore</label>
+            <select  name="operatoriSelect" class="form-control"  id="operatoriSelect"   ng-model="searchDate.operatoriSelected">
+                <option value="" ></option>
+                <option ng-repeat="option in searchDate.operatori" ng-value="option.ID_UTENTE"  value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}} {{option.COGNOME}} {{option.NOME}}</option>
+            </select> 
+        </div>   
+        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="venditoreSelect">Agente</label>
             <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.venditoreSelected">
-                <option ng-repeat="option1 in searchDate.venditoriForOperatore" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
+                <option value="" ></option>
+                <option ng-repeat="option1 in searchDate.agenti" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
             </select>
         </div>
     </div>

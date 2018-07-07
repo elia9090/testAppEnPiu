@@ -336,6 +336,39 @@ app.get('/listaOperatoriWS', ensureToken, function (req, res) {
 		}
 	});
 });
+//lsita Agenti non relazionati agli operatori
+app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			var data = {};
+			pool.getConnection(function (err, connection) {
+				connection.query('SELECT * from UTENTI where TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI"' , function (err, rows, fields) {
+					connection.release();
+					if (rows.length !== 0 && !err) {
+						data["agenti"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["agenti"] = 'Nessun agente trovato';
+						res.status(404).json(data);
+					} else {
+						data["agenti"] = 'Errore in fase di reperimento agenti';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento agenti: ' + err);
+						log.error('Errore in fase di reperimento agenti: ' + err);
+					}
+				});
+			
+			});
+		  
+		}
+	});
+});
+
 
 //lsita utenti
 app.get('/listaUtenti', ensureToken, function (req, res) {

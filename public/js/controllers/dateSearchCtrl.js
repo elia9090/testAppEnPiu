@@ -32,6 +32,8 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
     $http.get('../../utility/province_comuni.json').then((result) => {
         $scope.searchDate.provinciaSelected = "";
         $scope.searchDate.province = result.data.province;
+        //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
+        $scope.searchDate.province.splice(0, 0, ({code:"",comuni:"",nome:""}));
     }).catch((err) => {
         alert("Impossibile reperire la lista dei comuni");
     });
@@ -80,6 +82,33 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
 
     if($scope.user.TYPE == "ADMIN"){
         $scope.searchDate.URL = '/searchDateAdmin';
+
+        //LISTA OPERATORI
+        $http.get('/listaOperatoriWS').then((result) => {
+            $scope.searchDate.operatori =  result.data.operatori;
+           
+        }).catch((err) => {
+            if(err.status === 403){
+                alert("Utente non autorizzato");
+                $location.path('/logout');
+                return;
+            }
+            alert("Impossibile reperire la lista degli operatori");
+        });
+        
+        //LISTA AGENTI SENZA RELAZIONI CON GLI OPERATORI
+        $http.get('/listaAgentiNoRelationWithOperatorWS').then((result) => {
+            $scope.searchDate.agenti =  result.data.agenti;
+         
+            
+        }).catch((err) => {
+            if(err.status === 403){
+                alert("Utente non autorizzato");
+                $location.path('/logout');
+                return;
+            }
+            alert("Impossibile reperire la lista degli agenti");
+        });
 
 
     }else if($scope.user.TYPE == "OPERATORE"){
