@@ -1,5 +1,5 @@
 <div class="container" >
-<form role="form" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" ng-submit="submitAddUser()">
+<form role="form" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" ng-submit="editUser.submitAddUser()">
     <div class="row">
         <div class="col-md-12">
             <h2>Aggiungi utente</h2>
@@ -8,56 +8,56 @@
     </div>
     <div class="form-group">
       <label for="inputNome">Nome</label>
-      <input required ng-model="nome" type="text" class="form-control" id="inputNome" aria-describedby="Nome" placeholder="Nome">
+      <input required ng-model="editUser.nome" type="text" class="form-control" id="inputNome" aria-describedby="Nome" placeholder="Nome">
      
     </div>
     <div class="form-group">
       <label for="inputCognome">Cognome</label>
-      <input required ng-model="cognome" type="text" class="form-control" id="inputCognome" placeholder="Cognome">
+      <input required ng-model="editUser.cognome" type="text" class="form-control" id="inputCognome" placeholder="Cognome">
     </div>
     <div class="form-group">
       <label for="exampleInputEmail1">Email</label>
-      <input required ng-model="username" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="Cognome" placeholder="Email">
+      <input required ng-model="editUser.username" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="Cognome" placeholder="Email">
      
     </div>
     <div class="form-group">
       <label for="exampleInputPassword1">Password</label>
-      <input required ng-model="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+      <input required ng-model="editUser.password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
     </div>
     <fieldset class="form-group">
         <legend>Tipo utente</legend>
         <div class="form-check">
           <label class="form-check-label ">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1"  ng-model="userType" value="AGENTE" checked="checked">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1"  ng-model="editUser.userType" value="AGENTE" checked="checked">
            Agente
           </label>
         </div>
         <div class="form-check">
         <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" ng-model="userType" value="RESPONSABILE AGENTI">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" ng-model="editUser.userType" value="RESPONSABILE AGENTI">
             Responsabile agenti
           </label>
         </div>
         <div class="form-check ">
         <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" ng-model="userType" value="OPERATORE" >
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" ng-model="editUser.userType" value="OPERATORE" >
             Operatore
           </label>
         </div>
       </fieldset>
       
-    <div class="form-group" ng-show="userType === 'AGENTE' || userType === 'RESPONSABILE AGENTI'">
+    <div class="form-group" ng-show="editUser.userType === 'AGENTE' || editUser.userType === 'RESPONSABILE AGENTI'">
       <label for="exampleSelect1">Operatore associato</label>
-      <select class="form-control" name="operatoreAssociatoSelect" id="operatoreAssociatoSelect"  ng-model="operatoreAssociato">
-        <option  ng-selected="operatoreAssociato" ng-repeat="option in operatori" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
+      <select class="form-control" name="operatoreAssociatoSelect" id="operatoreAssociatoSelect"  ng-model="editUser.operatoreAssociato">
+        <option  ng-selected="editUser.operatoreAssociato" ng-repeat="option in editUser.operatori" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
     </select>
   
     </div>
 
-    <div class="form-group" ng-show="userType === 'AGENTE'">
+    <div class="form-group" ng-show="editUser.userType === 'AGENTE'">
       <label for="exampleSelect2">Responsabile associato</label>
-      <select class="form-control" name="responsabileAssociatoSelect" id="responsabileAssociatoSelect" ng-model="responsabileAssociato">
-        <option ng-selected="responsabileAssociato" ng-repeat="option in responsabili" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
+      <select class="form-control" name="responsabileAssociatoSelect" id="responsabileAssociatoSelect" ng-model="editUser.responsabileAssociato">
+        <option ng-selected="editUser.responsabileAssociato" ng-repeat="option in editUser.responsabili" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
     </select>
     </div>
 
