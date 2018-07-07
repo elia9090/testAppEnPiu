@@ -152,7 +152,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
     //PAGINATION START
    
     $scope.searchDate.currentPage = 1;
-    $scope.searchDate.itemsPerPage = 2;
+    $scope.searchDate.itemsPerPage = 5;
 
     $scope.searchDate.pageChanged = function() {
         $scope.searchDate.startQuery = ($scope.searchDate.currentPage - 1) * $scope.searchDate.itemsPerPage;
@@ -164,6 +164,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
     //PAGINATION END
 
     $scope.searchDate.submitSearchDate = function(){
+        
         $.blockUI();
         
         if($scope.searchDate.dataAppuntamentoDAL !== undefined){
