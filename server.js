@@ -304,6 +304,293 @@ app.post('/addUser', ensureToken, function (req, res) {
 });
 });
 
+
+
+// UPDATE USER
+app.post('/updateUser', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function (err, data) {
+		if (err) {
+			res.sendStatus(403);
+		} else {
+			console.log("post :: /updateUser");
+			log.info('post Request :: /updateUser');
+
+			var data = {};
+			var userId = req.body.userId;
+			var username = req.body.username;
+			var password = req.body.password;
+			var nome = req.body.nome;
+			var cognome = req.body.cognome;
+			var userType = req.body.userType;
+
+			pool.getConnection(function (err, connection) {
+				connection.beginTransaction(function (errTrans) {
+					if (errTrans) {                  //Transaction Error (Rollback and release connection)
+						connection.rollback(function () {
+							connection.release();
+						});
+						res.sendStatus(500);
+					} else {
+						var querystring = '';
+						var params = [];
+						if (password == '') {
+							queryString = 'UPDATE UTENTI SET  NOME=?, COGNOME=?, TIPO=?, USERNAME=? WHERE ID_UTENTE=?';
+							params = [nome, cognome, userType, username, userId]
+						}
+						else {
+							queryString = 'UPDATE UTENTI SET  NOME=?, COGNOME=?, TIPO=?, USERNAME=?, PASSWORD=SHA1(?) WHERE ID_UTENTE=?';
+							params = [nome, cognome, userType, username, password, userId]
+						}
+						connection.query(queryString, params, function (err, rows, fields) {
+							if (err) {
+								connection.rollback(function () {
+									connection.release();
+									//Failure
+								});
+								log.error('ERRORE SQL INSERT UTENTE: ' + err);
+								//errore username duplicato
+								if (err.errno == 1062) {
+									res.sendStatus(400);
+								} else {
+									res.sendStatus(500);
+
+								}
+
+							} else {
+
+								connection.commit(function (err) {
+									if (err) {
+										connection.rollback(function () {
+											connection.release();
+											//Failure
+										});
+										res.sendStatus(500);
+									} else {
+										connection.release();
+										data["RESULT"] = "OK";
+										res.json(data);
+										//Success
+									}
+								})
+							}
+
+						})
+
+					}
+
+				})
+			})
+
+		}
+
+	})
+});
+	
+
+
+// UPDATE OPERATORE ASSOCIATO ALL'UTENTE MODIFICATO
+app.post('/updateOperatore', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function (err, data) {
+		if (err) {
+			res.sendStatus(403);
+		} else {
+			console.log("post :: /updateUser");
+			log.info('post Request :: /updateUser');
+
+			var data = {};
+			var userId = req.body.userId;
+			var oldOperatore = req.body.oldOperatore;
+			var newOperatore = req.body.newOperatore;
+
+			pool.getConnection(function (err, connection) {
+				connection.beginTransaction(function (errTrans) {
+					if (errTrans) {                  //Transaction Error (Rollback and release connection)
+						connection.rollback(function () {
+							connection.release();
+						});
+						res.sendStatus(500);
+					} else {
+						if (oldOperatore != null) {
+							connection.query('UPDATE OPERATORI_VENDITORI SET  DATA_FINE_ASS=sysdate()  WHERE ID_AGENTE=? and ID_OPERATORE=?  and  DATA_FINE_ASS is null ', [userId, oldOperatore], function (err, rows, fields) {
+								if (err) {
+									connection.rollback(function () {
+										connection.release();
+										//Failure
+									});
+									log.error('ERRORE SQL INSERT UTENTE: ' + err);
+									//errore username duplicato
+									if (err.errno == 1062) {
+										res.sendStatus(400);
+									} else {
+										res.sendStatus(500);
+
+									}
+
+								} else {
+
+									connection.commit(function (err) {
+										if (err) {
+											connection.rollback(function () {
+												connection.release();
+												//Failure
+											});
+											res.sendStatus(500);
+										} else {
+
+										}
+									})
+								}
+
+							})
+						}
+						if (newOperatore != null) {
+							connection.query('INSERT INTO OPERATORI_VENDITORI (ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newOperatore], function (err, rows, fields) {
+								if (err) {
+									connection.rollback(function () {
+										connection.release();
+										//Failure
+									});
+									log.error('ERRORE SQL INSERT UTENTE: ' + err);
+									//errore username duplicato
+									if (err.errno == 1062) {
+										res.sendStatus(400);
+									} else {
+										res.sendStatus(500);
+
+									}
+								} else {
+
+									connection.commit(function (err) {
+										if (err) {
+											connection.rollback(function () {
+												connection.release();
+												//Failure
+											});
+											res.sendStatus(500);
+										} else {
+
+										}
+									})
+								}
+
+							})
+						}
+
+					}
+					connection.release();
+					data["RESULT"] = "OK";
+					res.json(data);
+					//Success
+				})
+			})
+		}
+	})
+});
+
+
+
+// UPDATE RESPONSABILE ASSOCIATO ALL'UTENTE MODIFICATO
+app.post('/updateResponsabile', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function (err, data) {
+		if (err) {
+			res.sendStatus(403);
+		} else {
+			console.log("post :: /updateResponsabile");
+			log.info('post Request :: /updateResponsabile');
+
+			var data = {};
+			var userId = req.body.userId;
+			var oldResponsabile = req.body.oldResponsabile;
+			var newResponsabile = req.body.newResponsabile;
+
+			pool.getConnection(function (err, connection) {
+				connection.beginTransaction(function (errTrans) {
+					if (errTrans) {                  //Transaction Error (Rollback and release connection)
+						connection.rollback(function () {
+							connection.release();
+						});
+						res.sendStatus(500);
+					} else {
+						if (oldResponsabile != null) {
+							connection.query('UPDATE RESPONSABILI_AGENTI SET  DATA_FINE_ASS=sysdate()  WHERE ID_AGENTE=? and ID_RESPONSABILE=? and  DATA_FINE_ASS is null', [userId, oldResponsabile], function (err, rows, fields) {
+								if (err) {
+									connection.rollback(function () {
+										connection.release();
+										//Failure
+									});
+									log.error('ERRORE SQL INSERT UTENTE: ' + err);
+									//errore username duplicato
+									if (err.errno == 1062) {
+										res.sendStatus(400);
+									} else {
+										res.sendStatus(500);
+
+									}
+
+								} else {
+
+									connection.commit(function (err) {
+										if (err) {
+											connection.rollback(function () {
+												connection.release();
+												//Failure
+											});
+											res.sendStatus(500);
+										} else {
+
+										}
+									})
+								}
+
+							})
+						}
+						if (newResponsabile != null) {
+							connection.query('INSERT INTO RESPONSABILI_AGENTI (ID_AGENTE, ID_RESPONSABILE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newResponsabile], function (err, rows, fields) {
+								if (err) {
+									connection.rollback(function () {
+										connection.release();
+										//Failure
+									});
+									log.error('ERRORE SQL INSERT UTENTE: ' + err);
+									//errore username duplicato
+									if (err.errno == 1062) {
+										res.sendStatus(400);
+									} else {
+										res.sendStatus(500);
+
+									}
+
+								} else {
+
+									connection.commit(function (err) {
+										if (err) {
+											connection.rollback(function () {
+												connection.release();
+												//Failure
+											});
+											res.sendStatus(500);
+										} else {
+
+										}
+									})
+								}
+
+							})
+						}
+
+					}
+					connection.release();
+					data["RESULT"] = "OK";
+					res.json(data);
+					//Success
+				})
+			})
+		}
+	})
+});
+
+
+
 //lsita operatori
 app.get('/listaOperatoriWS', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
