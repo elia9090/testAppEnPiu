@@ -156,23 +156,29 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
 
     $scope.searchDate.pageChanged = function() {
         $scope.searchDate.startQuery = ($scope.searchDate.currentPage - 1) * $scope.searchDate.itemsPerPage;
-        $scope.searchDate.submitSearchDate();
+        $scope.searchDate.submitSearchDate("pageChanged");
     };
   
-    $scope.searchDate.startQuery = ($scope.searchDate.currentPage - 1) * $scope.searchDate.itemsPerPage;
+   
     
     //PAGINATION END
 
-    $scope.searchDate.submitSearchDate = function(){
+    $scope.searchDate.submitSearchDate = function(pageChangedOrSubmit){
         
         $.blockUI();
-        
-        if($scope.searchDate.dataAppuntamentoDAL !== undefined){
+
+        if(pageChangedOrSubmit === 'submit'){
+            $scope.searchDate.currentPage = 1;
+        }
+            
+        $scope.searchDate.startQuery = ($scope.searchDate.currentPage - 1) * $scope.searchDate.itemsPerPage;
+
+        if($scope.searchDate.dataAppuntamentoDAL !== undefined && $scope.searchDate.dataAppuntamentoDAL !== '' && $scope.searchDate.dataAppuntamentoAL !== null){
             var dataAppuntamentoFROM = $scope.searchDate.dataAppuntamentoDAL;
             dataAppuntamentoFROM = dataAppuntamentoFROM.getFullYear() +"-"+ (dataAppuntamentoFROM.getMonth()+1) + "-" +dataAppuntamentoFROM.getDate();    
         }
        
-        if($scope.searchDate.dataAppuntamentoDAL !== undefined){
+        if($scope.searchDate.dataAppuntamentoAL !== undefined && $scope.searchDate.dataAppuntamentoAL !== '' && $scope.searchDate.dataAppuntamentoAL !== null){
             var dataAppuntamentoTO = $scope.searchDate.dataAppuntamentoAL;
             dataAppuntamentoTO = dataAppuntamentoTO.getFullYear() +"-"+ (dataAppuntamentoTO.getMonth()+1) + "-" +dataAppuntamentoTO.getDate();
     

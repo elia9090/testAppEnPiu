@@ -1,12 +1,10 @@
 <div class="container" >
      
-    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="searchDateForm" ng-submit="searchDate.submitSearchDate()">
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="searchDateForm" ng-submit="searchDate.submitSearchDate('submit')">
         
         <div class="row col-12">
             <div class="col-md-12">
                 <h2>Ricerca appuntamenti</h2>
-                <hr>
-                <p><i>Di default la ricerca riporta gli appuntamenti del mese di produzione precedente</i></p>
                 <hr>
             </div>
         </div>
@@ -121,7 +119,7 @@
                 </tr>
               </thead>
               <tbody>
-                  <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in searchDate.dateList  | orderBy : ['DATA_APPUNTAMENTO','ORA_APPUNTAMENTO'] " >
+                  <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in searchDate.dateList   " >
                       <td>
                          {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
                       </td> 

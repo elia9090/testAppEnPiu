@@ -1024,27 +1024,17 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
-			
 		} else {
-			var data = {};
-			
-			pool.getConnection(function (err, connection) {
-				connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI', function (err1, rows, fields) {
-					connection.release();
-					if(err1){
-						log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err1);
-						res.sendStatus(500);
-					}else{
-						if (rows.length !== 0) {
-							data["totaleAppuntamenti"] = rows[0].TotalCount;
-							
+			var data = {};	
 							
 							var limit = req.body.limit;
+							//piccolo ANTI HACK
+							if(limit > 200){
+								limit = 100;
+							}
+
 							var offset = req.body.offset;
-							
-						
-
-
+			
 							var dateFrom = req.body.dateFROM;
 							var QdateFrom = " ";
 							if(dateFrom !== '' && dateFrom !== undefined){
@@ -1053,7 +1043,7 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 
 							var dateTo = req.body.dateTO;
 							var QdateTo = " ";
-							if(dateFrom !== '' && dateFrom !== undefined){
+							if(dateTo !== '' && dateTo !== undefined){
 								QdateTo = ' AND DATA_APPUNTAMENTO <= "'+dateTo+'" ';
 							}
 
@@ -1069,50 +1059,48 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 							var agente = req.body.agente;
 							var operatore = req.body.operatore;
 
-							pool.getConnection(function (err, connection1) {
-								connection1.query(
-									'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
-									' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
-									' FROM APPUNTAMENTI'+
-									' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
-									' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-									' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
-									connection1.release();
+							pool.getConnection(function (err, connection) {
+								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
+									connection.release();
 									if(err){
-										log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
+										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
 										res.sendStatus(500);
 									}else{
-										if (rows.length !== 0) {
-											data["appuntamenti"] = rows;
-											res.json(data);
-										} 
-										else{
-											res.sendStatus(500);
-										}
+
+										data["totaleAppuntamenti"] = rows[0].TotalCount;
+
+										pool.getConnection(function (err, connection) {
+											connection.query(
+												'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
+												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
+												' FROM APPUNTAMENTI'+
+												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
+												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
+												connection.release();
+												if(err){
+													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
+													res.sendStatus(500);
+												}else{
+													if (rows.length !== 0) {
+														data["appuntamenti"] = rows;
+														res.json(data);
+													} 
+													else{
+														res.sendStatus(500);
+													}
+												}
+											
+											});
+										
+										});
 									}
-								
 								});
-							
 							});
-							
-							
-						} else if (rows.length === 0) {
-							//Error code 2 = no rows in db.
-							data["error"] = 2;
-							data["appuntamenti"] = 'Nessun appuntamento trovato';
-							res.status(404).json(data);
-						} else {
-							data["appuntamenti"] = 'Errore in fase di ricerca appuntamentI';
-							res.status(500).json(data);
-							console.log('Errore in fase di reperimento appuntamenti: ' + err);
-							log.error('Errore in fase di reperimento appuntamenti: ' + err);
-						}
-					}
-				
-				});
-			
-			});
-		  
+								
+		
+
+						
 		}
 	});
 });
