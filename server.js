@@ -518,7 +518,7 @@ app.post('/updateResponsabile', ensureToken, function (req, res) {
 										connection.release();
 										//Failure
 									});
-									log.error('ERRORE SQL INSERT UTENTE: ' + err);
+									log.error('ERRORE SQL UPDATE RESPONSABILI_AGENTI: ' + err);
 									//errore username duplicato
 									if (err.errno == 1062) {
 										res.sendStatus(400);
@@ -551,7 +551,7 @@ app.post('/updateResponsabile', ensureToken, function (req, res) {
 										connection.release();
 										//Failure
 									});
-									log.error('ERRORE SQL INSERT UTENTE: ' + err);
+									log.error('ERRORE SQL INSERT INTO RESPONSABILI_AGENTI : ' + err);
 									//errore username duplicato
 									if (err.errno == 1062) {
 										res.sendStatus(400);
