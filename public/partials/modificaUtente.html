@@ -2,7 +2,7 @@
 <form role="form" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" ng-submit="editUser.submitAddUser()">
     <div class="row">
         <div class="col-md-12">
-            <h2>Aggiungi utente</h2>
+            <h2>Modifica utente</h2>
             <hr>
         </div>
     </div>
@@ -21,8 +21,8 @@
      
     </div>
     <div class="form-group">
-      <label for="exampleInputPassword1">Password</label>
-      <input required ng-model="editUser.password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+      <label for="exampleInputPassword1">Modifica Password</label>
+      <input  ng-model="editUser.password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
     </div>
     <fieldset class="form-group">
         <legend>Tipo utente</legend>
@@ -48,23 +48,26 @@
       
     <div class="form-group" ng-show="editUser.userType === 'AGENTE' || editUser.userType === 'RESPONSABILE AGENTI'">
       <label for="exampleSelect1">Operatore associato</label>
-      <select class="form-control" name="operatoreAssociatoSelect" id="operatoreAssociatoSelect"  ng-model="editUser.operatoreAssociato">
-        <option  ng-selected="editUser.operatoreAssociato" ng-repeat="option in editUser.operatori" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
+      <select class="form-control" name="operatoreAssociatoSelect" id="operatoreAssociatoSelect" ng-selected="editUser.operatoreAssociato" ng-model="editUser.operatoreAssociato" ng-options='operator.ID_UTENTE as (operator.NOME+" "+operator.COGNOME ) for operator in editUser.operatori'>
+   
     </select>
   
     </div>
 
     <div class="form-group" ng-show="editUser.userType === 'AGENTE'">
       <label for="exampleSelect2">Responsabile associato</label>
-      <select class="form-control" name="responsabileAssociatoSelect" id="responsabileAssociatoSelect" ng-model="editUser.responsabileAssociato">
-        <option ng-selected="editUser.responsabileAssociato" ng-repeat="option in editUser.responsabili" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
+      <select class="form-control" name="responsabileAssociatoSelect" id="responsabileAssociatoSelect" ng-selected="editUser.responsabileAssociato" ng-model="editUser.responsabileAssociato" ng-options='operator.ID_UTENTE as (operator.NOME+" "+operator.COGNOME ) for operator in editUser.responsabili'>
+   
+     
     </select>
     </div>
 
    
     
     <button type="submit" class="btn btn-orange btn-addUtente">Salva</button>
+    <button  ng-click=" cancel()" class="btn btn-orange btn-addUtente float-right">Annulla</button>
   </form>
+ 
 </div>
 
 
