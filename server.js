@@ -1341,10 +1341,35 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 							}
 
 							var comune = req.body.comune;
+							var Qcomune = " ";
+							if(comune !== '' && comune !== undefined){
+								Qcomune = ' AND COMUNE = "'+comune+'" ';
+							}
+
 							var codiceLuce = req.body.codiceLuce;
+							var QcodiceLuce = " ";
+							if(codiceLuce !== '' && codiceLuce !== undefined){
+								QcodiceLuce = ' AND CODICI_CONTRATTO_LUCE LIKE "%'+codiceLuce+'%" ';
+							}
+
 							var codiceGas = req.body.codiceGas;
+							var QcodiceGas = " ";
+							if(codiceGas !== '' && codiceGas !== undefined){
+								QcodiceGas = ' AND CODICI_CONTRATTO_GAS LIKE "%'+codiceGas+'%" ';
+							}
+
 							var agente = req.body.agente;
+							var Qagente = " ";
+							if(agente !== '' && agente !== undefined){
+								Qagente = ' AND ID_VENDITORE = "'+agente+'" ';
+							}
+
 							var operatore = req.body.operatore;
+							var Qoperatore = " ";
+							if(operatore !== '' && operatore !== undefined){
+								Qoperatore = ' AND ID_OPERATORE = "'+operatore+'" ';
+							}
+
 
 							pool.getConnection(function (err, connection) {
 								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
@@ -1363,7 +1388,7 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 												' FROM APPUNTAMENTI'+
 												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
 												connection.release();
 												if(err){
 													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
