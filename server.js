@@ -1372,7 +1372,7 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 
 
 							pool.getConnection(function (err, connection) {
-								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
+								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
 									connection.release();
 									if(err){
 										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
