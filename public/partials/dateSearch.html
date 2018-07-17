@@ -137,13 +137,13 @@
                         {{x.ESITO}}
                     </td>
                     <td>
-                        <button  class="btn btn-orange btn-modifyUtente" ng-click="viewDate(x.ID_APPUNTAMENTO)">
+                        <button  class="btn btn-orange btn-modifyUtente" ng-click="searchDate.viewDate(x.ID_APPUNTAMENTO)">
                             <i class="fas fa-glasses"></i>
                         </button>
                       
                     </td>
-                    <td>
-                        <button ng-if="user.TYPE === 'ADMIN' "  class="btn btn-orange btn-modifyUtente" ng-click="modifyDate(x.ID_APPUNTAMENTO)">
+                    <td ng-if="user.TYPE === 'ADMIN' ">
+                        <button ng-if="user.TYPE === 'ADMIN' "  class="btn btn-orange btn-modifyUtente" ng-click="searchDate.modifyDate(x.ID_APPUNTAMENTO)">
                             <i class="fas fa-pencil-alt"></i>
                         </button>
                       

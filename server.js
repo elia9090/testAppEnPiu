@@ -1346,6 +1346,12 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 								Qcomune = ' AND COMUNE = "'+comune+'" ';
 							}
 
+							var esito = req.body.esito;
+							var Qesito = " ";
+							if(esito !== '' && esito !== undefined){
+								Qesito = ' AND ESITO = "'+esito+'" ';
+							}
+
 							var codiceLuce = req.body.codiceLuce;
 							var QcodiceLuce = " ";
 							if(codiceLuce !== '' && codiceLuce !== undefined){
@@ -1372,7 +1378,7 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 
 
 							pool.getConnection(function (err, connection) {
-								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
+								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+Qesito+ ' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
 									connection.release();
 									if(err){
 										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -1388,7 +1394,7 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 												' FROM APPUNTAMENTI'+
 												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
 												connection.release();
 												if(err){
 													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
@@ -1399,7 +1405,8 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 														res.json(data);
 													} 
 													else{
-														res.sendStatus(500);
+														data["appuntamenti"] = [];
+														res.json(data);
 													}
 												}
 											

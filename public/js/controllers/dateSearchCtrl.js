@@ -120,7 +120,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
 
     }else if($scope.user.TYPE == "OPERATORE"){
         
-        $scope.searchDate.URL = '/searchDateOperatore';
+        $scope.searchDate.URL = '/searchDateAdmin';
         $scope.searchDate.operatoriSelected = $scope.user.Id;
 
         $http.get('/listaUtentiForOperatore/'+$scope.user.Id).then((result) => {
@@ -137,14 +137,14 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             });
         
     }else if( $scope.user.TYPE == "RESPONSABILE_AGENTI"){
-        $scope.searchDate.URL = '/searchDateResponsabileAgenti';
-
+        $scope.searchDate.URL = '/searchDateAdmin';
+        $scope.searchDate.venditoreSelected = $scope.user.Id;
         
     }
     else if( $scope.user.TYPE == "AGENTE"){
         
-        $scope.searchDate.URL = '/searchDateeAgenti';
-        $scope.searchDate.venditoreSelected = $scope.user.Id
+        $scope.searchDate.URL = '/searchDateAdmin';
+        $scope.searchDate.venditoreSelected = $scope.user.Id;
         
     }
 
@@ -198,10 +198,18 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             'agente': $scope.searchDate.venditoreSelected,
 
         }).then((result) => {
-            $scope.searchDate.totalItems = parseInt(result.data.totaleAppuntamenti);
-            $scope.searchDate.dateList = result.data.appuntamenti;
-            $scope.searchDate.showRisultati = true;
-            $.unblockUI();
+
+            if(result.data.appuntamenti.length == 0){
+                $.unblockUI();
+                $scope.searchDate.showRisultati = false;
+                alert("Nessun appuntamento trovato per i parametri selezionati");
+            }else{
+                $scope.searchDate.totalItems = parseInt(result.data.totaleAppuntamenti);
+                $scope.searchDate.dateList = result.data.appuntamenti;
+                $scope.searchDate.showRisultati = true;
+                $.unblockUI();
+            }
+           
         }).catch((err) => {
 
             $.unblockUI();
@@ -210,10 +218,30 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
                 $location.path('/logout');
                 return;
             }
-            alert("Errore nella ricerca appuntamenti");
+            if(err.status === 500){
+                alert("Errore nella ricerca appuntamenti");
+            }
+            
+         
         });
     
     }
    
 
+    $scope.searchDate.viewDate = function (id) {
+        $location.path('/viewDate/'+id);
+    };
+
+    $scope.searchDate.modifyDate = function (id) {
+        if($scope.user.TYPE == "ADMIN"){
+            $location.path('/editDateAdmin/'+id);
+        }
+        else if($scope.user.TYPE == "OPERATORE"){
+            $location.path('/editDateOperatore/'+id);
+        }
+        else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
+            $location.path('/editDateVenditore/'+id);
+        }
+       
+    };
 });

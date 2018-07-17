@@ -74,7 +74,7 @@
             <textarea id="noteOperatore"  rows="4" cols="50" maxlength="220"  type="text" readonly >{{viewDate.Appuntamento.NOTE_OPERATORE}}  </textarea> 
         </div>
 
-    <div ng-if="viewDate.hasEsito">
+    <div ng-if="viewDate.hasEsito" class=" col-12">
         <div class="row col-12">
             <div class="col-md-12">
                 <hr>
@@ -88,26 +88,26 @@
                 {{viewDate.Appuntamento.ESITO}} 
             </p>
         </div>
-        <div ng-if="viewDate.hasEsito_OK">
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <div ng-if="viewDate.hasEsito_OK" class="col-md-12">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                 <label for="numLuce">Numero contratti luce: &nbsp; </label>
                 <p id="numLuce" class="input-group datepicker font-weight-bold">
                     {{viewDate.Appuntamento.NUM_LUCE}} 
                 </p>
             </div>  
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                     <label for="numGas">Numero contratti gas: &nbsp;</label>
                     <p id="numGas" class="input-group datepicker font-weight-bold">
                         {{viewDate.Appuntamento.NUM_GAS}} 
                     </p>
             </div>  
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                     <label for="codLuce">Codici contratti luce: &nbsp;</label>
                     <p id="codLuce" class="input-group datepicker font-weight-bold">
                         {{viewDate.Appuntamento.CODICI_CONTRATTO_LUCE}} 
                     </p>
             </div>  
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                     <label for="codGas">Codici contratti gas: &nbsp;</label>
                     <p id="codGas" class="input-group datepicker font-weight-bold">
                         {{viewDate.Appuntamento.CODICI_CONTRATTO_GAS}} 

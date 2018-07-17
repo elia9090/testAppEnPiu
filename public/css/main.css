@@ -7,7 +7,7 @@ body {
 }
 body{
 
-  background: #A393BF;  /* fallback for old browsers */
+  background: #9284ab;  /* fallback for old browsers */
 
 padding-bottom: 30px;
 }
@@ -334,4 +334,11 @@ li.pagination-page.active a:hover {
 }
 .loaderGIF{
   width: 30px;
+}
+textarea{
+  width: 100%;
+}
+.uib-timepicker{
+  position: relative;
+  top: 10px;
 }
