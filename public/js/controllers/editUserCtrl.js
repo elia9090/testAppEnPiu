@@ -12,7 +12,7 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
     var id = $routeParams.id;
 
     $http.get('/edituser/'+id).then((result) => {
-        $scope,userId=result.data.utente.ID_UTENTE;
+        $scope.userId=result.data.utente.ID_UTENTE;
         $scope.editUser.nome =result.data.utente.NOME;
         $scope.editUser.cognome =result.data.utente.COGNOME;
         $scope.editUser.username =result.data.utente.USERNAME;
@@ -50,6 +50,19 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
     };
 
 
+$scope.delete = function () {
+    var resp=confirm("Vuoi eliminare l'utente?");
+    if (resp==true){
+        $http.post('/deleteUser',{
+        'userId' : $scope.userId
+    }).then((result) => {
+        alert("Utente eliminato");
+        $location.path('/listaUtenti');
+        }).catch((err) => {
+            alert("Impossibile eliminare l'utente");
+        });
+    }
+};
 
 
     $scope.editUser.submitAddUser = function () {
@@ -64,7 +77,7 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
 
         var promises = [];
         promises.push( $http.post('/updateUser', {
-            'userId' : $scope,userId,
+            'userId' : $scope.userId,
             'username' : $scope.editUser.username,
             'password' : $scope.editUser.password,
             'nome': $scope.editUser.nome,
@@ -73,7 +86,7 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
         }));
         if($scope.editUser.operatoreAssociato !== $scope.previousOperatoreAssociato){
             promises.push(   $http.post('/updateOperatore', {
-                'userId' : $scope,userId,
+                'userId' : $scope.userId,
                 'oldOperatore' : $scope.previousOperatoreAssociato,
                 'newOperatore': $scope.editUser.operatoreAssociato,
                 
@@ -83,7 +96,7 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
 
     if($scope.editUser.responsabileAssociato !== $scope.previousResponsabileAssociato){
         promises.push( $http.post('/updateResponsabile', {
-            'userId' : $scope,userId,
+            'userId' : $scope.userId,
             'oldResponsabile' : $scope.previousResponsabileAssociato,
             'newResponsabile': $scope.editUser.responsabileAssociato,
             
