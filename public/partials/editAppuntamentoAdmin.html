@@ -109,7 +109,8 @@
 
 <div class="col-md-12 col-xl-12 mt-3 ">
         <button ng-disabled="editAppuntamentoAdmin.$invalid || (editDateAdmin.esito.value == 'OK' && editDateAdmin.numLuce == 0 && editDateAdmin.numGas == 0 )"  type="submit" class="btn btn-orange ">Salva modifiche</button> 
-</div>
+        <button  ng-click="editDateAdmin.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
+    </div>
     
 </form>
 </div>

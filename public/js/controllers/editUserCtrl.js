@@ -45,15 +45,9 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
             alert("Impossibile reperire l'utente");
         });
 
-
-
-
-   
-
     $scope.cancel = function () {
         $location.path('/listaUtenti');
-    
-};
+    };
 
 
 

@@ -109,7 +109,8 @@
     </div>
 
 <div class="col-md-12 col-xl-12 mt-3 ">
-        <button ng-disabled="editAppuntamentoVenditore.$invalid || (editDateVenditore.esito.value == 'OK' && editDateVenditore.numLuce == 0 && editDateVenditore.numGas == 0 )"  type="submit" class="btn btn-orange ">Salva modifiche</button> 
+        <button ng-disabled="editAppuntamentoVenditore.$invalid || (editDateVenditore.esito.value == 'OK' && editDateVenditore.numLuce == 0 && editDateVenditore.numGas == 0 )"  type="submit" class="btn btn-orange ">Salva modifiche</button>
+        <button  ng-click="editDateVenditore.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
 </div>
     
 </form>
