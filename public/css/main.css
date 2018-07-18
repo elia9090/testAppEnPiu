@@ -23,6 +23,11 @@ button:focus{
    background-color:  #f47320 !important;
    color: #fff;
 }
+.btn-white{
+  background-color:  white !important;
+  color: #f47320 !important;
+  border-color: #f47320 !important;
+}
 .form-control:focus{
     border-color:  rgb(244, 115, 32, 0.1) !important;
     box-shadow: 0 0 0 1px rgb(244, 115, 32, 0.4);
@@ -123,6 +128,13 @@ a:hover{
     width: 100%;
     max-width: 150px;
     margin: 50px 0 20px 0;
+}
+
+
+button.btn-white {
+  width: 100%;
+  max-width: 150px;
+  margin: 50px 0 20px 20px;
 }
 
 button.btn.btn-modifyUtente.btn-orange {

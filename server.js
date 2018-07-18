@@ -590,6 +590,102 @@ app.post('/updateResponsabile', ensureToken, function (req, res) {
 });
 
 
+// DELETE USER
+app.post('/deleteUser', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function (err, data) {
+		if (err) {
+			res.sendStatus(403);
+		} else {
+			console.log("post :: /deleteUser");
+			log.info('post Request :: /deleteUser');
+
+			var data = {};
+			var userId = req.body.userId;
+			
+
+			pool.getConnection(function (err, connection) {
+				connection.beginTransaction(function (errTrans) {
+					if (errTrans) {                  //Transaction Error (Rollback and release connection)
+						connection.rollback(function () {
+							connection.release();
+						});
+						res.sendStatus(500);
+					} else {
+						var querystring = '';
+						var params = [];
+							queryString = 'UPDATE UTENTI SET  UTENTE_ATTIVO=0 WHERE ID_UTENTE=?';
+							params = [ userId]
+						
+						
+						connection.query(queryString, params, function (err, rows, fields) {
+							if (err) {
+								connection.rollback(function () {
+									connection.release();
+									//Failure
+								});
+								log.error('ERRORE SQL INSERT UTENTE: ' + err);
+								//errore username duplicato
+								if (err.errno == 1062) {
+									res.sendStatus(400);
+								} else {
+									res.sendStatus(500);
+
+								}
+
+							} else {
+
+								connection.commit(function (err) {
+									if (err) {
+										connection.rollback(function () {
+											connection.release();
+											//Failure
+										});
+										res.sendStatus(500);
+									} else {
+										connection.release();
+										data["RESULT"] = "OK";
+										res.json(data);
+										//Success
+									}
+								})
+							}
+
+						})
+
+					}
+
+				})
+			})
+
+		}
+
+	})
+});
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //lsita operatori
 app.get('/listaOperatoriWS', ensureToken, function (req, res) {
@@ -666,7 +762,7 @@ app.get('/listaUtenti', ensureToken, function (req, res) {
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI WHERE UTENTE_ATTIVO=1 ' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["utenti"] = rows;
