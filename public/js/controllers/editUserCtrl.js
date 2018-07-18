@@ -25,6 +25,22 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
         $scope.editUser.responsabileAssociato = result.data.utente.ID_RESPONSABILE;
         $scope.previousResponsabileAssociato = result.data.utente.ID_RESPONSABILE;
 
+        if($scope.editUser.userType != 'ADMIN'){
+            $http.get('/listaResponsabiliAgentiWS').then((result) => {
+        
+                $scope.editUser.responsabili = result.data.responsabili;
+                }).catch((err) => {
+                    alert("Impossibile reperire la lista dei responsabili");
+                });
+                $http.get('/listaOperatoriWS').then((result) => {
+                    $scope.editUser.operatori =  result.data.operatori;
+                }).catch((err) => {
+                    alert("Impossibile reperire la lista degli operatori");
+                });
+        }
+
+       
+
         }).catch((err) => {
             alert("Impossibile reperire l'utente");
         });
@@ -32,17 +48,7 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
 
 
 
-    $http.get('/listaResponsabiliAgentiWS').then((result) => {
-        
-    $scope.editUser.responsabili = result.data.responsabili;
-    }).catch((err) => {
-        alert("Impossibile reperire la lista dei responsabili");
-    });
-    $http.get('/listaOperatoriWS').then((result) => {
-        $scope.editUser.operatori =  result.data.operatori;
-    }).catch((err) => {
-        alert("Impossibile reperire la lista degli operatori");
-    });
+   
 
     $scope.cancel = function () {
         $location.path('/listaUtenti');

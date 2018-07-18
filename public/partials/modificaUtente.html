@@ -24,7 +24,7 @@
       <label for="exampleInputPassword1">Modifica Password</label>
       <input  ng-model="editUser.password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
     </div>
-    <fieldset class="form-group">
+    <fieldset ng-if="editUser.userType != 'ADMIN'" class="form-group">
         <legend>Tipo utente</legend>
         <div class="form-check">
           <label class="form-check-label ">
