@@ -171,7 +171,7 @@ $scope.editDateVenditore.createInputGas = function (){
          });
     }
     $scope.editDateVenditore.cancel = function () {
-        $location.path('/listaAppuntamenti');
+        window.history.back();
     };
     
 

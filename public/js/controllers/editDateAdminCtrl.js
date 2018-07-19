@@ -322,6 +322,6 @@ $scope.editDateAdmin.createInputGas = function (){
         }
     
         $scope.editDateAdmin.cancel = function () {
-            $location.path('/listaAppuntamenti');
+            window.history.back();
         };
 });

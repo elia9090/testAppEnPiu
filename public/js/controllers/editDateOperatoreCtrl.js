@@ -249,7 +249,7 @@ $scope.editDateOperatore.Esiti =    [
 
 
     $scope.editDateOperatore.cancel = function () {
-        $location.path('/listaAppuntamenti');
+        window.history.back();
     };
 
 

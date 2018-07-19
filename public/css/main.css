@@ -354,3 +354,16 @@ textarea{
   position: relative;
   top: 10px;
 }
+
+
+@media screen and (max-width: 450px) {
+ .modificaUtenteForm button.btn-white{
+   max-width: 70px;
+ }
+ .modificaUtenteForm button.btn.btn-addUtente.btn-orange{
+  max-width: 70px;
+ }
+ .navbar-brand{
+   margin-right: 0px;
+ }
+}
