@@ -1163,13 +1163,13 @@ app.get('/listaAppuntamentiAdmin', ensureToken, function (req, res) {
 			if(giornoCorrente >= 15){
 				from = annoCorrente+"-"+meseCorrente+"-"+"15";
 				if(meseCorrente == 12){
-					to = (annoCorrente+1)+"-01-"+"18"
+					to = (annoCorrente+1)+"-01-"+"18";
 				}else{
-					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"18"
+					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"18";
 				}
 			}else{
 				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
-				to = annoCorrente+"-"+(meseCorrente)+"-"+"18"
+				to = annoCorrente+"-"+(meseCorrente)+"-"+"18";
 			}
 
 
@@ -1231,13 +1231,13 @@ app.get('/listaAppuntamentiVenditore/:id', ensureToken, function (req, res) {
 			if(giornoCorrente >= 15){
 				from = annoCorrente+"-"+meseCorrente+"-"+"15";
 				if(meseCorrente == 12){
-					to = (annoCorrente+1)+"-01-"+"15"
+					to = (annoCorrente+1)+"-01-"+"18";
 				}else{
-					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"15"
+					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"18";
 				}
 			}else{
 				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
-				to = annoCorrente+"-"+(meseCorrente)+"-"+"15"
+				to = annoCorrente+"-"+(meseCorrente)+"-"+"18";
 			}
 
 
@@ -1300,13 +1300,13 @@ app.get('/listaAppuntamentiOperatore/:id', ensureToken, function (req, res) {
 			if(giornoCorrente >= 15){
 				from = annoCorrente+"-"+meseCorrente+"-"+"15";
 				if(meseCorrente == 12){
-					to = (annoCorrente+1)+"-01-"+"15"
+					to = (annoCorrente+1)+"-01-"+"18";
 				}else{
-					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"15"
+					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"18"
 				}
 			}else{
 				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
-				to = annoCorrente+"-"+(meseCorrente)+"-"+"15"
+				to = annoCorrente+"-"+(meseCorrente)+"-"+"18";
 			}
 
 
@@ -1368,13 +1368,13 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function (req, res) {
 			if(giornoCorrente >= 15){
 				from = annoCorrente+"-"+meseCorrente+"-"+"15";
 				if(meseCorrente == 12){
-					to = (annoCorrente+1)+"-01-"+"15"
+					to = (annoCorrente+1)+"-01-"+"18";
 				}else{
-					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"15"
+					to = annoCorrente+"-"+(meseCorrente+1)+"-"+"18";
 				}
 			}else{
 				from = annoCorrente+"-"+(meseCorrente-1)+"-"+"15";
-				to = annoCorrente+"-"+(meseCorrente)+"-"+"15"
+				to = annoCorrente+"-"+(meseCorrente)+"-"+"18";
 			}
 
 
