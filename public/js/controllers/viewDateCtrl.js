@@ -39,4 +39,11 @@ app.controller('viewDateCtrl', function ( $scope, $http, $location,$route,$route
         alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
     });
 
+    $scope.viewDate.cancel = function () {
+        window.history.back();
+    };
+
+
+
+
 });
