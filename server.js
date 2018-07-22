@@ -25,6 +25,7 @@ app.use(express.static(__dirname + '/public'));
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); // Body parser use JSON data
 app.use(bodyParser.urlencoded({ extended: true }));
+
 /*MY SQL Connection Info*/
 var pool = mysql.createPool({
 	connectionLimit : config.connLimit,
@@ -1850,7 +1851,7 @@ var server = app.listen(8080, function () {
 
   var host = server.address().address;
   var port = server.address().port;
-
-  console.log("dummy app listening at: " + host + ":" + port);
+  var env = process.env.NODE_ENV || 'development';
+  console.log("dummy app listening at: " + host + ":" + port + " " +env);
 
 })
