@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "app appuntamenti",
   "main": "server.js",
+  "env_production" : {
+    "NODE_ENV": "production"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
