@@ -806,7 +806,7 @@ app.get('/edituser/:id', ensureToken, function (req, res) {
 			pool.getConnection(function (err, connection) {
 				connection.query(
 			'SELECT * from UTENTI '+
-			'LEFT JOIN OPERATORI_VENDITORI OV ON TIPO="OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL '+
+			'LEFT JOIN OPERATORI_VENDITORI OV ON TIPO<>"OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL '+
 			'LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL '+
 			'WHERE ID_UTENTE=?' ,
 				id, function (err, rows, fields) {
