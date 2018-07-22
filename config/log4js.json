@@ -9,7 +9,9 @@
    
       "errorFile": {
         "type": "file",
-        "filename": "log/errors.log"
+        "filename": "log/errors.log",
+        "maxLogSize": 20971520,
+        "backups": 1
       },
       "errors": {
         "type": "logLevelFilter",
