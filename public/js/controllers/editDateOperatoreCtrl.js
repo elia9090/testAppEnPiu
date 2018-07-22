@@ -25,6 +25,10 @@ app.controller('editDateOperatoreCtrl', function ($scope, $http, $location,$rout
         dateTime.setHours(ora);
         dateTime.setMinutes(minuti);
         $scope.editDateOperatore.oraAppuntamento=dateTime;
+         //CONTROLLO SE L'ORARIO E' DA DEFINIRE se lo è setto a true la checkbox
+         if($scope.editDateOperatore.Appuntamento.ORA_APPUNTAMENTO == '00:01'){
+            $scope.editDateOperatore.oraDaDefinire = true;
+        }
         $scope.editDateOperatore.dataAppuntamento = new Date($scope.editDateOperatore.Appuntamento.DATA_APPUNTAMENTO);
         //setto data e ora END
 
@@ -187,7 +191,21 @@ $scope.editDateOperatore.Esiti =    [
     $scope.editDateOperatore.hstep = 1;
     $scope.editDateOperatore.mstep = 15;
 
+    //ORARIO DA DEFINIRE
 
+    $scope.editDateOperatore.setOrarioDaDefinire = function(){
+        if($scope.editDateOperatore.oraDaDefinire){
+            var dateTime = new Date();
+            dateTime.setHours(00);
+            dateTime.setMinutes(01);
+            $scope.editDateOperatore.oraAppuntamento = dateTime;
+        }else{
+            var dateTime = new Date();
+            dateTime.setHours(14);
+            dateTime.setMinutes(00);
+            $scope.editDateOperatore.oraAppuntamento = dateTime;
+        }
+    }
    
   
          

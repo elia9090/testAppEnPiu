@@ -19,9 +19,13 @@
                     </span>
                 </p>
         </div>
-        <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
-            <label for="oraAppuntamento">Ora appuntamento*</label>
-            <div uib-timepicker ng-model="editDateOperatore.oraAppuntamento" id="oraAppuntamento" ng-required="true"  show-meridian="false" hour-step="editDateOperatore.hstep" minute-step="editDateOperatore.mstep" ></div>
+        <div ng-if="!editDateOperatore.oraDaDefinire" class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
+                <label for="oraAppuntamento">Ora appuntamento*</label>
+                <div uib-timepicker ng-model="editDateOperatore.oraAppuntamento" id="oraAppuntamento" ng-required="true"  show-meridian="false" hour-step="editDateOperatore.hstep" minute-step="editDateOperatore.mstep" ></div>
+            </div>
+        <div class="form-check checkBoxOraDaDefinire  ">
+                <input class="form-check-input" ng-model="editDateOperatore.oraDaDefinire" ng-click="editDateOperatore.setOrarioDaDefinire()" type="checkbox" value="" id="oraDaDefinire">
+                <label for="oraDaDefinire">Orario da definire</label>
         </div>
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">

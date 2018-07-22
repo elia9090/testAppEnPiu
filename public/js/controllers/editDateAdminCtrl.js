@@ -25,6 +25,10 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
         dateTime.setHours(ora);
         dateTime.setMinutes(minuti);
         $scope.editDateAdmin.oraAppuntamento=dateTime;
+        //CONTROLLO SE L'ORARIO E' DA DEFINIRE se lo è setto a true la checkbox
+        if($scope.editDateAdmin.Appuntamento.ORA_APPUNTAMENTO == '00:01'){
+            $scope.editDateAdmin.oraDaDefinire = true;
+        }
         $scope.editDateAdmin.dataAppuntamento = new Date($scope.editDateAdmin.Appuntamento.DATA_APPUNTAMENTO);
         //setto data e ora END
 
@@ -265,6 +269,21 @@ $scope.editDateAdmin.createInputGas = function (){
     $scope.editDateAdmin.mstep = 15;
 
 
+    //ORARIO DA DEFINIRE
+
+    $scope.editDateAdmin.setOrarioDaDefinire = function(){
+        if($scope.editDateAdmin.oraDaDefinire){
+            var dateTime = new Date();
+            dateTime.setHours(00);
+            dateTime.setMinutes(01);
+            $scope.editDateAdmin.oraAppuntamento = dateTime;
+        }else{
+            var dateTime = new Date();
+            dateTime.setHours(14);
+            dateTime.setMinutes(00);
+            $scope.editDateAdmin.oraAppuntamento = dateTime;
+        }
+    }
    
   
          

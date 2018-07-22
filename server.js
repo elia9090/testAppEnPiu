@@ -338,7 +338,7 @@ app.post('/updateUser', ensureToken, function (req, res) {
 							params = [nome, cognome, userType, username, userId]
 						}
 						else {
-							queryString = 'UPDATE UTENTI SET  NOME=?, COGNOME=?, TIPO=?, USERNAME=?, PASSWORD=SHA1(?) WHERE ID_UTENTE=?';
+							queryString = 'UPDATE UTENTI SET  NOME=?, COGNOME=?, TIPO=?, USERNAME=?, PASSWORD=SHA1(?), EDIT_PASSWORD=1 WHERE ID_UTENTE=?';
 							params = [nome, cognome, userType, username, password, userId]
 						}
 						connection.query(queryString, params, function (err, rows, fields) {
@@ -805,7 +805,7 @@ app.get('/edituser/:id', ensureToken, function (req, res) {
 			pool.getConnection(function (err, connection) {
 				connection.query(
 			'SELECT * from UTENTI '+
-			'LEFT JOIN OPERATORI_VENDITORI OV ON TIPO<>"OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL '+
+			'LEFT JOIN OPERATORI_VENDITORI OV ON TIPO="OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL '+
 			'LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL '+
 			'WHERE ID_UTENTE=?' ,
 				id, function (err, rows, fields) {
