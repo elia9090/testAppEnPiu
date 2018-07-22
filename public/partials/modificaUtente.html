@@ -34,7 +34,7 @@
         </div>
         <div class="form-check">
         <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" ng-model="editUser.userType" value="RESPONSABILE AGENTI">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" ng-model="editUser.userType" value="RESPONSABILE_AGENTI">
             Responsabile agenti
           </label>
         </div>
@@ -46,7 +46,7 @@
         </div>
       </fieldset>
       
-    <div class="form-group" ng-show="editUser.userType === 'AGENTE' || editUser.userType === 'RESPONSABILE AGENTI'">
+    <div class="form-group" ng-show="editUser.userType === 'AGENTE' || editUser.userType === 'RESPONSABILE_AGENTI'">
       <label for="exampleSelect1">Operatore associato</label>
       <select class="form-control" name="operatoreAssociatoSelect" id="operatoreAssociatoSelect" ng-selected="editUser.operatoreAssociato" ng-model="editUser.operatoreAssociato" ng-options='operator.ID_UTENTE as (operator.NOME+" "+operator.COGNOME ) for operator in editUser.operatori'>
    

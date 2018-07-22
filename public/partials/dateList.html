@@ -36,8 +36,11 @@
                 <td>
                     {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
                 </td>
-                <td >
+                <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
                     {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
+                </td>
+                <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
+                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA DEFINIRE</span>
                 </td>
                 <td>
                     {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}

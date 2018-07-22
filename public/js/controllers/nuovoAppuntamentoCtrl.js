@@ -140,6 +140,24 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
 // ATTUALE GESTORE END
 
 
+
+//ORARIO DA DEFINIRE
+
+$scope.newDate.setOrarioDaDefinire = function(){
+    if($scope.newDate.oraDaDefinire){
+        var dateTime = new Date();
+        dateTime.setHours(00);
+        dateTime.setMinutes(01);
+        $scope.newDate.oraAppuntamento = dateTime;
+    }else{
+        var dateTime = new Date();
+        dateTime.setHours(14);
+        dateTime.setMinutes(00);
+        $scope.newDate.oraAppuntamento = dateTime;
+    }
+}
+
+
 // invio form 
 
 $scope.newDate.submitNewDate = function(){

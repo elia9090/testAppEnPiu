@@ -16,7 +16,11 @@ app.controller('dateListGVCtrl', function ( $scope, $http, $location,$route) {
     
     $http.get(url).then((result) => {
         
-    $scope.dateList = result.data.appuntamenti;
+        if(result.data.error){
+            alert("Nessuno appuntamento trovato");
+        }else{
+            $scope.dateList = result.data.appuntamenti;
+        } 
     
     }).catch((err) => {
         if(err.status === 403){
@@ -35,7 +39,7 @@ app.controller('dateListGVCtrl', function ( $scope, $http, $location,$route) {
         else if($scope.user.TYPE == "OPERATORE"){
             $location.path('/editDateOperatore/'+id);
         }
-        else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE AGENTI"){
+        else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
             $location.path('/editDateVenditore/'+id);
         }
        

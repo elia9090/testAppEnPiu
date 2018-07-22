@@ -198,7 +198,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 									//Success
 								}
 							});
-						}else if(userType === 'RESPONSABILE AGENTI'){
+						}else if(userType === 'RESPONSABILE_AGENTI'){
 							var insertedId = rows.insertId;
 							connection.query('INSERT INTO OPERATORI_VENDITORI (ID_ASSOCIAZIONE, ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [insertedId,operatoreAssociato], function (err, rows, fields) {
 								if(err){
@@ -696,7 +696,7 @@ app.get('/listaOperatoriWS', ensureToken, function (req, res) {
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI where TIPO = "OPERATORE" ' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI where TIPO = "OPERATORE" AND UTENTE_ATTIVO = 1' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["operatori"] = rows;
@@ -728,7 +728,7 @@ app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function (req, res)
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI where TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI"' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") AND UTENTE_ATTIVO = 1' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["agenti"] = rows;
@@ -1194,7 +1194,7 @@ app.get('/listaAppuntamentiAdmin', ensureToken, function (req, res) {
 							//Error code 2 = no rows in db.
 							data["error"] = 2;
 							data["appuntamenti"] = 'Nessun appuntamento trovato';
-							res.status(404).json(data);
+							res.json(data);
 						} else {
 							data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
 							res.status(500).json(data);
@@ -1263,7 +1263,7 @@ app.get('/listaAppuntamentiVenditore/:id', ensureToken, function (req, res) {
 							//Error code 2 = no rows in db.
 							data["error"] = 2;
 							data["appuntamenti"] = 'Nessun appuntamento trovato';
-							res.status(404).json(data);
+							res.json(data);
 						} else {
 							data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
 							res.status(500).json(data);
@@ -1331,7 +1331,7 @@ app.get('/listaAppuntamentiOperatore/:id', ensureToken, function (req, res) {
 							//Error code 2 = no rows in db.
 							data["error"] = 2;
 							data["appuntamenti"] = 'Nessun appuntamento trovato';
-							res.status(404).json(data);
+							res.json(data);
 						} else {
 							data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
 							res.status(500).json(data);
@@ -1403,7 +1403,7 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function (req, res) {
 							//Error code 2 = no rows in db.
 							data["error"] = 2;
 							data["appuntamenti"] = 'Nessun appuntamento trovato';
-							res.status(404).json(data);
+							res.json(data);
 						} else {
 							data["appuntamenti"] = 'Errore in fase di reperimento appuntamentI';
 							res.status(500).json(data);
@@ -1485,8 +1485,8 @@ app.get('/appuntamento/:id', ensureToken, function (req, res) {
 	});
 });
 
-//RICERCA APPUNTAMENTI ADMIN
-app.post('/searchDateAdmin', ensureToken, function (req, res) {
+//RICERCA APPUNTAMENTI GENERICA
+app.post('/searchDate', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -1603,6 +1603,122 @@ app.post('/searchDateAdmin', ensureToken, function (req, res) {
 	});
 });
 
+//RICERCA APPUNTAMENTI RESPONSABILE AGENTI
+app.post('/searchDateResponsabile', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+		} else {
+			var data = {};	
+							
+							var limit = req.body.limit;
+							//piccolo ANTI HACK
+							if(limit > 200){
+								limit = 100;
+							}
+
+							var offset = req.body.offset;
+			
+							var dateFrom = req.body.dateFROM;
+							var QdateFrom = " ";
+							if(dateFrom !== '' && dateFrom !== undefined){
+								QdateFrom = ' AND DATA_APPUNTAMENTO >= "'+dateFrom+'" ';
+							}
+
+							var dateTo = req.body.dateTO;
+							var QdateTo = " ";
+							if(dateTo !== '' && dateTo !== undefined){
+								QdateTo = ' AND DATA_APPUNTAMENTO <= "'+dateTo+'" ';
+							}
+
+							var provincia = req.body.provincia;
+							var Qprovincia = " ";
+							if(provincia !== '' && provincia !== undefined){
+								Qprovincia = ' AND PROVINCIA = "'+provincia+'" ';
+							}
+
+							var comune = req.body.comune;
+							var Qcomune = " ";
+							if(comune !== '' && comune !== undefined){
+								Qcomune = ' AND COMUNE = "'+comune+'" ';
+							}
+
+							var esito = req.body.esito;
+							var Qesito = " ";
+							if(esito !== '' && esito !== undefined){
+								Qesito = ' AND ESITO = "'+esito+'" ';
+							}
+
+							var codiceLuce = req.body.codiceLuce;
+							var QcodiceLuce = " ";
+							if(codiceLuce !== '' && codiceLuce !== undefined){
+								QcodiceLuce = ' AND CODICI_CONTRATTO_LUCE LIKE "%'+codiceLuce+'%" ';
+							}
+
+							var codiceGas = req.body.codiceGas;
+							var QcodiceGas = " ";
+							if(codiceGas !== '' && codiceGas !== undefined){
+								QcodiceGas = ' AND CODICI_CONTRATTO_GAS LIKE "%'+codiceGas+'%" ';
+							}
+
+							var agente = req.body.agente;
+							var Qagente = " ";
+							if(agente !== '' && agente !== undefined){
+								Qagente = ' AND ID_VENDITORE = "'+agente+'" ';
+							}
+
+							var idResponsabile = req.body.idResponsabile;
+							
+
+							pool.getConnection(function (err, connection) {
+								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI '+
+								' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL  WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO', [idResponsabile],  function (err, rows, fields) {
+									connection.release();
+									if(err){
+										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
+										res.sendStatus(500);
+									}else{
+
+										data["totaleAppuntamenti"] = rows[0].TotalCount;
+
+										pool.getConnection(function (err, connection) {
+											connection.query(
+												'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
+												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
+												' FROM APPUNTAMENTI'+
+												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
+												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
+												' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL '+
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,limit, offset], function (err, rows, fields) {
+												connection.release();
+												if(err){
+													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
+													res.sendStatus(500);
+												}else{
+													if (rows.length !== 0) {
+														data["appuntamenti"] = rows;
+														res.json(data);
+													} 
+													else{
+														data["appuntamenti"] = [];
+														res.json(data);
+													}
+												}
+											
+											});
+										
+										});
+									}
+								});
+							});
+								
+		
+
+						
+		}
+	});
+});
+
 	
 app.get('/listaUtentiForOperatore/:id', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
@@ -1614,8 +1730,8 @@ app.get('/listaUtentiForOperatore/:id', ensureToken, function (req, res) {
 			pool.getConnection(function (err, connection) {
 				connection.query(  
 					'SELECT * FROM UTENTI AS UT '
-						+' RIGHT JOIN '
-						+' (SELECT * FROM OPERATORI_VENDITORI AS OP WHERE OP.ID_OPERATORE = ? AND OP.DATA_FINE_ASS IS NULL ) AS T ON UT.ID_UTENTE=T.ID_AGENTE' ,[idOperatore], function (err, rows, fields) {
+						+' JOIN '
+						+' (SELECT * FROM OPERATORI_VENDITORI AS OP WHERE OP.ID_OPERATORE = ? AND OP.DATA_FINE_ASS IS NULL ) AS T ON UT.ID_UTENTE=T.ID_AGENTE WHERE UT.UTENTE_ATTIVO = 1' ,[idOperatore], function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["utenti"] = rows;
@@ -1625,6 +1741,41 @@ app.get('/listaUtentiForOperatore/:id', ensureToken, function (req, res) {
 						data["error"] = 2;
 						data["utenti"] = 'Nessun utente trovato';
 						res.status(404).json(data);
+					} else {
+						data["utenti"] = 'Errore in fase di reperimento utente';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento utenti: ' + err);
+						log.error('Errore in fase di reperimento utenti: ' + err);
+					}
+				});
+			
+			});
+		  
+		}
+	});
+});
+
+app.get('/listaAgentiForResponsabile/:id', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+		} else {
+			var idResponsabile = req.params.id;
+			var data = {};
+			pool.getConnection(function (err, connection) {
+				connection.query(  
+					'SELECT * FROM UTENTI AS UT '
+						+' JOIN '
+						+' (SELECT * FROM RESPONSABILI_AGENTI AS RA WHERE RA.ID_RESPONSABILE = ? AND RA.DATA_FINE_ASS IS NULL ) AS T ON UT.ID_UTENTE=T.ID_AGENTE WHERE UT.UTENTE_ATTIVO = 1' ,[idResponsabile], function (err, rows, fields) {
+					connection.release();
+					if (rows.length !== 0 && !err) {
+						data["utenti"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["utenti"] = 'Nessun utente trovato';
+						res.json(data);
 					} else {
 						data["utenti"] = 'Errore in fase di reperimento utente';
 						res.status(500).json(data);
@@ -1650,7 +1801,7 @@ app.get('/listaResponsabiliAgentiWS', ensureToken, function (req, res) {
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE AGENTI" ' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE_AGENTI" AND UTENTE_ATTIVO = 1' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["responsabili"] = rows;
@@ -1674,97 +1825,9 @@ app.get('/listaResponsabiliAgentiWS', ensureToken, function (req, res) {
 	});
 });
 
-//LIST Product by ID
-app.get('/api/list/:id', function (req, res) {
-	var id = req.params.id;
-	var data = {
-        "error": 1,
-        "product": ""
-    };
-	
-	console.log("GET request :: /list/" + id);
-	log.info("GET request :: /list/" + id);
-	pool.getConnection(function (err, connection) {
-		connection.query('SELECT * from products WHERE id = ?', id, function (err, rows, fields) {
-			connection.release();
-			
-			if (rows.length !== 0 && !err) {
-				data["error"] = 0;
-				data["product"] = rows;
-				res.json(data);
-			} else {
-				data["product"] = 'No product Found..';
-				res.json(data);
-				console.log('Error while performing Query: ' + err);
-				log.error('Error while performing Query: ' + err);
-			}
-		});
-	
-	});
-});
 
-//INSERT new product
-app.post('/api/insert', function (req, res) {
-    var name = req.body.name;
-    var description = req.body.description;
-    var price = req.body.price;
-    var data = {
-        "error": 1,
-        "products": ""
-    };
-	console.log('POST Request :: /insert: ');
-	log.info('POST Request :: /insert: ');
-    if (!!name && !!description && !!price) {
-		pool.getConnection(function (err, connection) {
-			connection.query("INSERT INTO products SET name = ?, description = ?, price = ?",[name,  description, price], function (err, rows, fields) {
-				if (!!err) {
-					data["products"] = "Error Adding data";
-					console.log(err);
-					log.error(err);
-				} else {
-					data["error"] = 0;
-					data["products"] = "Product Added Successfully";
-					console.log("Added: " + [name, description, price]);
-					log.info("Added: " + [name, description, price]);
-				}
-				res.json(data);
-			});
-        });
-    } else {
-        data["products"] = "Please provide all required data (i.e : name, desc, price)";
-        res.json(data);
-    }
-});
 
-app.post('/api/delete', function (req, res) {
-    var id = req.body.id;
-    var data = {
-        "error": 1,
-        "product": ""
-    };
-	console.log('DELETE Request :: /delete: ' + id);
-	log.info('DELETE Request :: /delete: ' + id);
-    if (!!id) {
-		pool.getConnection(function (err, connection) {
-			connection.query("DELETE FROM products WHERE id=?",[id],function (err, rows, fields) {
-				if (!!err) {
-					data["product"] = "Error deleting data";
-					console.log(err);
-					log.error(err);
-				} else {
-					data["product"] = 0;
-					data["product"] = "Delete product Successfully";
-					console.log("Deleted: " + id);
-					log.info("Deleted: " + id);
-				}
-				res.json(data);
-			});
-		});
-    } else {
-        data["product"] = "Please provide all required data (i.e : id ) & must be a integer";
-        res.json(data);
-    }
-});
+
 app.all("/*", function(req, res, next) {
 	res.sendfile("index.html", { root: __dirname + "/public" });
 });

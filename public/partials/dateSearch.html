@@ -86,7 +86,13 @@
     </div>
 
     <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">
-       
+            <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                    <label for="venditoreSelect">Agente</label>
+                    <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.venditoreSelected">
+                        <option value="" ></option>
+                        <option ng-repeat="option1 in searchDate.venditoriForResponsabili" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
+                    </select>
+            </div>
     </div>
 
 

@@ -16,7 +16,10 @@
             </div>
             <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-6">
                 <label for="oraAppuntamento">Ora appuntamento: &nbsp;</label>
-                <p id="oraAppuntamento" class="input-group datepicker font-weight-bold">
+                <p ng-if="viewDate.Appuntamento.ORA_APPUNTAMENTO == '00:01'" id="oraAppuntamento" class="input-group datepicker font-weight-bold">
+                    <span style="color: red">DA DEFINIRE</span>
+                </p>
+                <p ng-if="viewDate.Appuntamento.ORA_APPUNTAMENTO != '00:01'" id="oraAppuntamento" class="input-group datepicker font-weight-bold">
                     {{viewDate.Appuntamento.ORA_APPUNTAMENTO}}
                 </p>
             </div>

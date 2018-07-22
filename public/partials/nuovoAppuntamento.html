@@ -20,10 +20,14 @@
                     </span>
                 </p>
         </div>
-        <div class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
+        <div ng-if="!newDate.oraDaDefinire" class="form-group pt-4  col-xs-12 col-sm-6 col-md-6">
             <label for="oraAppuntamento">Ora appuntamento*</label>
             <div uib-timepicker ng-model="newDate.oraAppuntamento" id="oraAppuntamento" ng-required="true"  show-meridian="false" hour-step="newDate.hstep" minute-step="newDate.mstep" ></div>
         </div>
+        <div class="form-check checkBoxOraDaDefinire  ">
+            <input class="form-check-input" ng-model="newDate.oraDaDefinire" ng-click="newDate.setOrarioDaDefinire()" type="checkbox" value="" id="oraDaDefinire">
+            <label for="oraDaDefinire">Orario da definire</label>
+          </div>
     </div>
  
    

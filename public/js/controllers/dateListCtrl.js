@@ -21,9 +21,12 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
 
     
     $http.get(url).then((result) => {
-        
-    $scope.dateList = result.data.appuntamenti;
     
+    if(result.data.error){
+        alert("Nessuno appuntamento trovato");
+    }else{
+        $scope.dateList = result.data.appuntamenti;
+    } 
     }).catch((err) => {
         if(err.status === 403){
             alert("Utente non autorizzato");
@@ -64,6 +67,7 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
         }
         
     };
+    
     $scope.today = new Date().getFullYear() +"-"+ (new Date().getMonth()+1) + "-" + new Date().getDate();
 
     $scope.tdDataClass = function (dataAppuntamento, esito) {
@@ -73,6 +77,11 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,$route) {
         }
         
     };
+    $scope.tdHourToBeDefine = function (oraAppuntamento){
+        if(oraAppuntamento === '01:00'){
+            return 'tdRedBorder';
+        }
+    }
 
 
 });

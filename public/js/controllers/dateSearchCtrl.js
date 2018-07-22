@@ -86,7 +86,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
 
     if($scope.user.TYPE == "ADMIN"){
        
-        $scope.searchDate.URL = '/searchDateAdmin';
+        $scope.searchDate.URL = '/searchDate';
 
         //LISTA OPERATORI
         $http.get('/listaOperatoriWS').then((result) => {
@@ -120,7 +120,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
 
     }else if($scope.user.TYPE == "OPERATORE"){
         
-        $scope.searchDate.URL = '/searchDateAdmin';
+        $scope.searchDate.URL = '/searchDate';
         $scope.searchDate.operatoriSelected = $scope.user.Id;
 
         $http.get('/listaUtentiForOperatore/'+$scope.user.Id).then((result) => {
@@ -133,17 +133,30 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
                     return;
                 }
                 
-                $scope.searchDate.venditoriForOperatore = "NESSUN AGENTE ASSOCIATO";
+                $scope.searchDate.venditoriForOperatore = [];
             });
         
     }else if( $scope.user.TYPE == "RESPONSABILE_AGENTI"){
-        $scope.searchDate.URL = '/searchDateAdmin';
-        $scope.searchDate.venditoreSelected = $scope.user.Id;
+        $scope.searchDate.URL = '/searchDateResponsabile';
+        $scope.searchDate.idResponsabile = $scope.user.Id;
+
+        $http.get('/listaAgentiForResponsabile/'+$scope.user.Id).then((result) => {
+            $scope.searchDate.venditoriForResponsabili = result.data.utenti;
+           
+            }).catch((err) => {
+                if(err.status === 403){
+                    alert("Utente non autorizzato");
+                    $location.path('/logout');
+                    return;
+                }
+                
+                $scope.searchDate.venditoriForResponsabili = [];
+            });
         
     }
     else if( $scope.user.TYPE == "AGENTE"){
         
-        $scope.searchDate.URL = '/searchDateAdmin';
+        $scope.searchDate.URL = '/searchDate';
         $scope.searchDate.venditoreSelected = $scope.user.Id;
         
     }
@@ -183,7 +196,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             dataAppuntamentoTO = dataAppuntamentoTO.getFullYear() +"-"+ (dataAppuntamentoTO.getMonth()+1) + "-" +dataAppuntamentoTO.getDate();
     
         }
-        
+        if($scope.user.TYPE !== "RESPONSABILE_AGENTI"){
         $http.post($scope.searchDate.URL,{
             'limit' :$scope.searchDate.itemsPerPage,
             'offset':$scope.searchDate.startQuery,
@@ -224,6 +237,48 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             
          
         });
+    }else{
+        $http.post($scope.searchDate.URL,{
+            'limit' :$scope.searchDate.itemsPerPage,
+            'offset':$scope.searchDate.startQuery,
+            'dateFROM': dataAppuntamentoFROM,
+            'dateTO': dataAppuntamentoTO,
+            'provincia': $scope.searchDate.provinciaSelected,
+            'comune': $scope.searchDate.comuneSelected,
+            'esito': $scope.searchDate.esito.value,
+            'codiceLuce': $scope.searchDate.codLuce,
+            'codiceGas': $scope.searchDate.codGas,
+            'idResponsabile': $scope.searchDate.idResponsabile,
+            'agente': $scope.searchDate.venditoreSelected,
+
+        }).then((result) => {
+
+            if(result.data.appuntamenti.length == 0){
+                $.unblockUI();
+                $scope.searchDate.showRisultati = false;
+                alert("Nessun appuntamento trovato per i parametri selezionati");
+            }else{
+                $scope.searchDate.totalItems = parseInt(result.data.totaleAppuntamenti);
+                $scope.searchDate.dateList = result.data.appuntamenti;
+                $scope.searchDate.showRisultati = true;
+                $.unblockUI();
+            }
+           
+        }).catch((err) => {
+
+            $.unblockUI();
+            if(err.status === 403){
+                alert("Utente non autorizzato");
+                $location.path('/logout');
+                return;
+            }
+            if(err.status === 500){
+                alert("Errore nella ricerca appuntamenti");
+            }
+            
+         
+        });
+    }
     
     }
    

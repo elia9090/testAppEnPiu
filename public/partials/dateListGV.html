@@ -24,7 +24,7 @@
               <th scope="col">Luogo</th>
               <th scope="col">Esito</th>
               <th scope="col">Visualizza</th>
-              <th scope="col">Modifica</th>
+              
             </tr>
           </thead>
           <tbody>
@@ -36,8 +36,11 @@
                 <td>
                     {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
                 </td>
-                <td >
+                <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
                     {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
+                </td>
+                <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
+                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA DEFINIRE</span>
                 </td>
                 <td>
                     {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
@@ -51,12 +54,7 @@
                     </button>
                   
                 </td>
-                <td>
-                    <button ng-disabled="(user.TYPE == 'OPERATORE' && (x.ESITO == 'KO' || x.ESITO == 'OK')) ||  (user.TYPE == 'AGENTE' && (x.ESITO == 'KO' || x.ESITO == 'OK')) ||  (user.TYPE == 'RESPONSABILE_AGENTI' && (x.ESITO == 'KO' || x.ESITO == 'OK')) "  class="btn btn-orange btn-modifyUtente" ng-click="modifyDate(x.ID_APPUNTAMENTO)">
-                        <i class="fas fa-pencil-alt"></i>
-                    </button>
-                  
-                </td>
+               
               </tr>
           </tbody>
         </table>

@@ -69,7 +69,7 @@ $scope.delete = function () {
         if ($scope.editUser.userType=='OPERATORE'){
             $scope.editUser.operatoreAssociato=null;
             $scope.editUser.responsabileAssociato=null;
-        }else if ($scope.editUser.userType=='RESPONSABILE AGENTI'){
+        }else if ($scope.editUser.userType=='RESPONSABILE_AGENTI'){
             $scope.editUser.responsabileAssociato=null;
         }
 
