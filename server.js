@@ -36,7 +36,7 @@ var pool = mysql.createPool({
 	port : config.DbPort
 });
 
-log.debug('Server is starting....');
+
 
 
 
@@ -752,6 +752,38 @@ app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function (req, res)
 		}
 	});
 });
+//lsita Agenti non relazionati agli operatori E ELIMINATI LOGICAMENTE
+app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			var data = {};
+			pool.getConnection(function (err, connection) {
+				connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") ' , function (err, rows, fields) {
+					connection.release();
+					if (rows.length !== 0 && !err) {
+						data["agenti"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["agenti"] = 'Nessun agente trovato';
+						res.status(404).json(data);
+					} else {
+						data["agenti"] = 'Errore in fase di reperimento agenti';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento agenti: ' + err);
+						log.error('Errore in fase di reperimento agenti: ' + err);
+					}
+				});
+			
+			});
+		  
+		}
+	});
+});
 
 
 //lsita utenti
@@ -1182,7 +1214,7 @@ app.get('/listaAppuntamentiAdmin', ensureToken, function (req, res) {
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 				' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?)' ,[from, to,to], function (err, rows, fields) {
+				' OR ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?)' ,[from, to,to], function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
@@ -1250,7 +1282,7 @@ app.get('/listaAppuntamentiVenditore/:id', ensureToken, function (req, res) {
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 				' WHERE ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) AND APPUNTAMENTI.ID_VENDITORE=?' ,[from, to, to,id], function (err, rows, fields) {
+				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) AND APPUNTAMENTI.ID_VENDITORE=?' ,[from, to, to,id], function (err, rows, fields) {
 			
 					connection.release();
 					if(err){
@@ -1319,7 +1351,7 @@ app.get('/listaAppuntamentiOperatore/:id', ensureToken, function (req, res) {
 				' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 				' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 				' WHERE ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)'+
-				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) AND APPUNTAMENTI.ID_OPERATORE = ?' ,[from, to,to, id], function (err, rows, fields) {
+				' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) AND APPUNTAMENTI.ID_OPERATORE = ?' ,[from, to,to, id], function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
@@ -1389,7 +1421,7 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function (req, res) {
 				   ' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL '+ 
 					' WHERE  '+ 
 					 ' ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?) OR '+ 
-				   ' (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON_VISITATO" '+ 
+				   ' (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO" '+ 
 				   ' OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) ',[id,from, to, to], function (err, rows, fields) {
 			
 					connection.release();

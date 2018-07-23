@@ -66,8 +66,8 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
             //variabile utile per il submit START
             $scope.editDateAdmin.operatoriSelected = idOperatore;
             //variabile utile per il submit END
-            $http.get('/listaUtentiForOperatore/'+idOperatore).then((result) => {
-                $scope.editDateAdmin.venditoriForOperatore = result.data.utenti;
+            $http.get('/listaAgentiNoRelationWithOperatorWS').then((result) => {
+                $scope.editDateAdmin.venditoriForOperatore = result.data.agenti;
                 $scope.editDateAdmin.disabledListaAgenti = false;
                 $scope.editDateAdmin.venditoreSelected = $scope.editDateAdmin.Appuntamento.ID_VENDITORE;
                 }).catch((err) => {

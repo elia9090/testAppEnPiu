@@ -43,9 +43,9 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
         $scope.newDate.operatoriSelected = $scope.user.Id;
         //variabile utile per il submit END
 
-        $http.get('/listaUtentiForOperatore/'+$scope.user.Id).then((result) => {
+        $http.get('/listaAgentiNoRelationWithOperatorWS').then((result) => {
         
-            $scope.newDate.venditoriForOperatore = result.data.utenti;
+            $scope.newDate.venditoriForOperatore = result.data.agenti;
             }).catch((err) => {
                 if(err.status === 403){
                     alert("Utente non autorizzato");
@@ -77,8 +77,8 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
             //variabile utile per il submit START
             $scope.newDate.operatoriSelected = idOperatore;
             //variabile utile per il submit END
-            $http.get('/listaUtentiForOperatore/'+idOperatore).then((result) => {
-                $scope.newDate.venditoriForOperatore = result.data.utenti;
+            $http.get('/listaAgentiNoRelationWithOperatorWS').then((result) => {
+                $scope.newDate.venditoriForOperatore = result.data.agenti;
                 $scope.newDate.disabledListaAgenti = false;
                 }).catch((err) => {
                     if(err.status === 403){

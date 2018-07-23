@@ -101,8 +101,8 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             alert("Impossibile reperire la lista degli operatori");
         });
         
-        //LISTA AGENTI SENZA RELAZIONI CON GLI OPERATORI
-        $http.get('/listaAgentiNoRelationWithOperatorWS').then((result) => {
+        //LISTA AGENTI SENZA RELAZIONI CON GLI OPERATORI E ELIMINATI LOGICAMENTE
+        $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS').then((result) => {
             $scope.searchDate.agenti =  result.data.agenti;
          
             
@@ -123,8 +123,8 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
         $scope.searchDate.URL = '/searchDate';
         $scope.searchDate.operatoriSelected = $scope.user.Id;
 
-        $http.get('/listaUtentiForOperatore/'+$scope.user.Id).then((result) => {
-            $scope.searchDate.venditoriForOperatore = result.data.utenti;
+        $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS').then((result) => {
+            $scope.searchDate.venditoriForOperatore = result.data.agenti;
            
             }).catch((err) => {
                 if(err.status === 403){

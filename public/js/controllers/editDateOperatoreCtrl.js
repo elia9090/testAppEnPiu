@@ -63,8 +63,8 @@ app.controller('editDateOperatoreCtrl', function ($scope, $http, $location,$rout
         //variabile utile per il submit START
         $scope.editDateOperatore.operatoriSelected = idOperatore;
         //variabile utile per il submit END
-        $http.get('/listaUtentiForOperatore/'+idOperatore).then((result) => {
-            $scope.editDateOperatore.venditoriForOperatore = result.data.utenti;
+        $http.get('/listaAgentiNoRelationWithOperatorWS').then((result) => {
+            $scope.editDateOperatore.venditoriForOperatore = result.data.agenti;
             $scope.editDateOperatore.readOnlyListaAgenti = false;
             $scope.editDateOperatore.venditoreSelected = $scope.editDateOperatore.Appuntamento.ID_VENDITORE;
             }).catch((err) => {
