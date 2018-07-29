@@ -359,6 +359,9 @@ textarea{
   border: 1px solid red !important;
 }
 
+.width80{
+  width: 80%;
+}
 
 
 @media screen and (max-width: 450px) {

@@ -10,7 +10,7 @@
       "errorFile": {
         "type": "file",
         "filename": "log/errors.log",
-        "maxLogSize": 20971520,
+        "maxLogSize": 209715200,
         "backups": 1
       },
       "errors": {

@@ -217,10 +217,13 @@ $scope.editDateAdmin.createInputLuce = function (){
 
 }
 }
+
+
 $scope.editDateAdmin.createInputGas = function (){
     var gasLength=$scope.editDateAdmin.inputsGas.length;
 
     var inputNumbers = Math.floor(parseInt($scope.editDateAdmin.numGas) / 3);
+    
     if(parseInt($scope.editDateAdmin.numGas) % 3 > 0){
         inputNumbers = inputNumbers + 1;
     }
@@ -236,6 +239,21 @@ $scope.editDateAdmin.createInputGas = function (){
         $scope.editDateAdmin.inputsGas.pop();
     }
 }
+}
+//aggiungo eventuali codici contrattto non obbligatori
+$scope.editDateAdmin.inputsLuceAdded = [];
+$scope.editDateAdmin.addNewNumContrattoLuce = function(){
+    $scope.editDateAdmin.inputsLuceAdded.push('');
+}
+$scope.editDateAdmin.removeNewNumContrattoLuce = function(){
+    $scope.editDateAdmin.inputsLuceAdded.pop();
+}
+$scope.editDateAdmin.inputsGasAdded = [];
+$scope.editDateAdmin.addNewNumContrattoGas = function(){
+    $scope.editDateAdmin.inputsGasAdded.push('');
+}
+$scope.editDateAdmin.removeNewNumContrattoGas = function(){
+    $scope.editDateAdmin.inputsGasAdded.pop();
 }
 //fine then getAppuntamento
 }).catch((err) => {
@@ -304,6 +322,15 @@ $scope.editDateAdmin.createInputGas = function (){
             var dataAppuntamento = $scope.editDateAdmin.dataAppuntamento;
             dataAppuntamento = dataAppuntamento.getFullYear() +"-"+ (dataAppuntamento.getMonth()+1) + "-" +dataAppuntamento.getDate();
          
+
+            //aggiungo gli inputLuce e input gas in piu agli obbligatori
+
+            for(var i=0; i<$scope.editDateAdmin.inputsLuceAdded.length; i++){
+                $scope.editDateAdmin.inputsLuce.push($scope.editDateAdmin.inputsLuceAdded[i]);
+            }
+            for(var i=0; i<$scope.editDateAdmin.inputsGasAdded.length; i++){
+                $scope.editDateAdmin.inputsGas.push($scope.editDateAdmin.inputsGasAdded[i]);
+            }
 
             $http.post('/editDateAdmin', {
                 'idAppuntamento' :  $scope.editDateAdmin.Appuntamento.ID_APPUNTAMENTO,

@@ -133,6 +133,21 @@ $scope.editDateVenditore.createInputGas = function (){
     }
 }
 }
+//aggiungo eventuali codici contrattto non obbligatori
+$scope.editDateVenditore.inputsLuceAdded = [];
+$scope.editDateVenditore.addNewNumContrattoLuce = function(){
+    $scope.editDateVenditore.inputsLuceAdded.push('');
+}
+$scope.editDateVenditore.removeNewNumContrattoLuce = function(){
+    $scope.editDateVenditore.inputsLuceAdded.pop();
+}
+$scope.editDateVenditore.inputsGasAdded = [];
+$scope.editDateVenditore.addNewNumContrattoGas = function(){
+    $scope.editDateVenditore.inputsGasAdded.push('');
+}
+$scope.editDateVenditore.removeNewNumContrattoGas = function(){
+    $scope.editDateVenditore.inputsGasAdded.pop();
+}
 //fine then getAppuntamento
 }).catch((err) => {
         if(err.status === 403){
@@ -147,6 +162,15 @@ $scope.editDateVenditore.createInputGas = function (){
     //submit del form
    
     $scope.editDateVenditore.submitDateVenditore = function(){
+
+        //aggiungo gli inputLuce e input gas in piu agli obbligatori
+        for(var i=0; i<$scope.editDateVenditore.inputsLuceAdded.length; i++){
+            $scope.editDateVenditore.inputsLuce.push($scope.editDateVenditore.inputsLuceAdded[i]);
+        }
+        for(var i=0; i<$scope.editDateVenditore.inputsGasAdded.length; i++){
+            $scope.editDateVenditore.inputsGas.push($scope.editDateVenditore.inputsGasAdded[i]);
+        }
+
 
         $http.post('/editDateVenditore', {
             'idAppuntamento': $scope.editDateVenditore.Appuntamento.ID_APPUNTAMENTO,

@@ -91,21 +91,40 @@
 </div>
 
 <div ng-if="editDateVenditore.esito.value == 'OK'"  class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
-    <label for="numLuce">Numero contratti luce*</label>
-    <select ng-change="editDateVenditore.createInputLuce()" ng-required="true" ng-model="editDateVenditore.numLuce" id="numLuce" name="numLuce"  class="form-control" ng-options="o as o for o in editDateVenditore.numeriContratto"></select>
-    <div ng-if="editDateVenditore.numLuce > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateVenditore.inputsLuce track by $index">
-            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100" placeholder="Cod. contratto luce" ng-required="true"  ng-model="editDateVenditore.inputsLuce[$index]">
+        <label for="numLuce">Numero contratti luce*</label>
+        <select ng-change="editDateVenditore.createInputLuce()" ng-required="true" ng-model="editDateVenditore.numLuce" id="numLuce" name="numLuce"  class="form-control" ng-options="o as o for o in editDateVenditore.numeriContratto"></select>
+        <div ng-if="editDateVenditore.numLuce > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12 px-0">
+            <div class=" col-xs-12 col-sm-12 col-md-12 col-xl-12">
+                    <button ng-click="editDateVenditore.addNewNumContrattoLuce()"  type="button" class="btn btn-orange mb-3 mr-3"><i class="fas fa-plus"></i></button>
+                    <button ng-show="editDateVenditore.inputsLuceAdded.length > 0" ng-click="editDateVenditore.removeNewNumContrattoLuce()"  type="button" class="btn btn-orange  mb-3"><i class="fas fa-minus"></i></button>
+            </div>
+            
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateVenditore.inputsLuce track by $index">
+                <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100" placeholder="Cod. contratto luce" ng-required="true"  ng-model="editDateVenditore.inputsLuce[$index]">
+            </div>
+    
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuceAdded in editDateVenditore.inputsLuceAdded track by $index">
+                    <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100" placeholder="Cod. contratto luce"   ng-model="editDateVenditore.inputsLuceAdded[$index]">
+            </div>
+    
+          
+            
+        </div>
+        <label for="numGas">Numero contratti gas*</label>
+        <select ng-change="editDateVenditore.createInputGas()" ng-required="true" ng-model="editDateVenditore.numGas" id="numGas" name="numGas"  class="form-control" ng-options="o as o for o in editDateVenditore.numeriContratto"></select>
+        <div ng-if="editDateVenditore.numGas > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12 px-0">
+            <div class=" col-xs-12 col-sm-12 col-md-12 col-xl-12">
+                    <button ng-click="editDateVenditore.addNewNumContrattoGas()"  type="button" class="btn btn-orange mb-3 mr-3"><i class="fas fa-plus"></i></button>
+                    <button ng-show="editDateVenditore.inputsGasAdded.length > 0" ng-click="editDateVenditore.removeNewNumContrattoGas()"  type="button" class="btn btn-orange  mb-3"><i class="fas fa-minus"></i></button>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputGas in editDateVenditore.inputsGas track by $index">
+                <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"  class="form-control w-100 " ng-required="true" placeholder="Cod. contratto gas"  ng-model="editDateVenditore.inputsGas[$index]">
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputGasAdded in editDateVenditore.inputsGasAdded track by $index">
+                    <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100" placeholder="Cod. contratto gas"   ng-model="editDateVenditore.inputsGasAdded[$index]">
+            </div>
         </div>
     </div>
-    <label for="numGas">Numero contratti gas*</label>
-    <select ng-change="editDateVenditore.createInputGas()" ng-required="true" ng-model="editDateVenditore.numGas" id="numGas" name="numGas"  class="form-control" ng-options="o as o for o in editDateVenditore.numeriContratto"></select>
-    <div ng-if="editDateVenditore.numGas > 0"  class="form-group pt-3 col-xs-12 col-sm-12 col-md-12 col-xl-12">
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4" ng-repeat="inputLuce in editDateVenditore.inputsGas track by $index">
-            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"  class="form-control w-100 " ng-required="true" placeholder="Cod. contratto gas"  ng-model="editDateVenditore.inputsGas[$index]">
-        </div>
-    </div>
-</div>
 <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
         <label for="noteAgente">Note Agente</label>
         <textarea  rows="4" cols="50" maxlength="400"  type="text"name="noteAgente" class="form-control w-100" id="noteAgente"  ng-model="editDateVenditore.noteAgente" ></textarea>         
