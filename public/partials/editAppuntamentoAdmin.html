@@ -1,6 +1,6 @@
 <div class="container" >
      
-    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="editAppuntamentoAdmin" ng-submit="editDateAdmin.submitDateAdmin()">
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 editAppuntamentoAdmin" method="POST" name="editAppuntamentoAdmin" ng-submit="editDateAdmin.submitDateAdmin()">
         
         <div class="row col-12">
             <div class="col-md-12">
@@ -111,10 +111,12 @@
         <textarea  rows="4" cols="50" maxlength="400"  type="text"name="noteAgente" class="form-control w-100" id="noteAgente"  ng-model="editDateAdmin.noteAgente" ></textarea>         
     </div>
 
-<div class="col-md-12 col-xl-12 mt-3 ">
-        <button ng-disabled="editAppuntamentoAdmin.$invalid || (editDateAdmin.esito.value == 'OK' && editDateAdmin.numLuce == 0 && editDateAdmin.numGas == 0 )"  type="submit" class="btn btn-orange ">Salva modifiche</button> 
-        <button  ng-click="editDateAdmin.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
-    </div>
+    <div class="col-md-12 col-xl-12 mt-3 buttonAdminGroup">
+        <button ng-disabled="editAppuntamentoAdmin.$invalid || (editDateAdmin.esito.value == 'OK' && editDateAdmin.numLuce == 0 && editDateAdmin.numGas == 0 )"  type="submit" class="btn btn-orange btn-addUtente">Salva</button> 
+        <button  ng-click="editDateAdmin.deleteDate()"  type="button" class="btn btn-white btn-addUtente">Elimina</button>
+        <button  ng-click="editDateAdmin.cancel()"  type="button" class="btn btn-orange btn-addUtente float-right">Annulla</button>
+    </div> 
+    
     
 </form>
 </div>

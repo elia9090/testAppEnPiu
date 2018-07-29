@@ -134,7 +134,7 @@ a:hover{
 button.btn-white {
   width: 100%;
   max-width: 150px;
-  margin: 50px 0 20px 20px;
+  margin: 50px 0 20px 15px;
 }
 
 button.btn.btn-modifyUtente.btn-orange {
@@ -362,12 +362,15 @@ textarea{
 
 
 @media screen and (max-width: 450px) {
- .modificaUtenteForm button.btn-white{
-   max-width: 70px;
+ .modificaUtenteForm button.btn-white, .editAppuntamentoAdmin button.btn-white{
+   max-width: 75px;
  }
- .modificaUtenteForm button.btn.btn-addUtente.btn-orange{
-  max-width: 70px;
+ .modificaUtenteForm button.btn.btn-addUtente.btn-orange, .editAppuntamentoAdmin button.btn.btn-addUtente.btn-orange{
+  max-width: 75px;
  }
+.buttonAdminGroup{
+  padding: 0px; 
+}
  .navbar-brand{
    margin-right: 0px;
  }

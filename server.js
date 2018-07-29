@@ -9,7 +9,7 @@ var config = require('./config');
 var log4js = require('log4js');
 log4js.configure('./config/log4js.json');
 var log = log4js.getLogger("server");
-
+var sha1 = require('sha1');
 /*
 app.listen(3000,'192.168.1.187' || 'localhost',function() {
     console.log('Application worker  started...');
@@ -49,9 +49,10 @@ app.post('/login', function (req, res) {
 	var data = {};
 	
 	var username = req.body.username;
-    var password = req.body.password;
+	var password = sha1(req.body.password);
+	
 	pool.getConnection(function (err, connection) {
-		connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = SHA1(?) and UTENTE_ATTIVO = 1', [username,  password], function (err, rows, fields) {
+		connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = ? and UTENTE_ATTIVO = 1', [username,  password], function (err, rows, fields) {
 			connection.release();
 			if (rows.length !== 0 && !err) {
 				data["utente"] = rows[0];
@@ -91,7 +92,7 @@ app.post('/editPassword', ensureToken, function (req, res) {
 	var data = {};
 	
 	var id = parseInt(req.body.userId);
-	var password = req.body.password;
+	var password = sha1(req.body.password);
 
 	pool.getConnection(function (err, connection) {
 		connection.beginTransaction(function(errTrans) {
@@ -101,7 +102,7 @@ app.post('/editPassword', ensureToken, function (req, res) {
 				});
 				res.sendStatus(500);
 			}else{
-				connection.query('UPDATE UTENTI SET PASSWORD=SHA1(?), EDIT_PASSWORD=0 WHERE ID_UTENTE= ?', [password, id ], function (err, rows, fields) {
+				connection.query('UPDATE UTENTI SET PASSWORD=?, EDIT_PASSWORD=0 WHERE ID_UTENTE= ?', [password, id ], function (err, rows, fields) {
 					if(err){
 						connection.rollback(function() {
 						connection.release();
@@ -152,7 +153,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 	var data = {};
 	
 	var username = req.body.username;
-	var password = req.body.password;
+	var password = sha1(req.body.password);
 	var nome = req.body.nome;
 	var cognome = req.body.cognome;
 	var userType = req.body.userType;
@@ -167,7 +168,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 				});
 				res.sendStatus(500);
 			}else{
-				connection.query('INSERT INTO UTENTI (ID_UTENTE, NOME, COGNOME, TIPO, USERNAME, PASSWORD)VALUES (NULL, ?, ?, ?, ?, SHA1(?))', [nome,cognome,userType,username, password], function (err, rows, fields) {
+				connection.query('INSERT INTO UTENTI (ID_UTENTE, NOME, COGNOME, TIPO, USERNAME, PASSWORD)VALUES (NULL, ?, ?, ?, ?, ?)', [nome,cognome,userType,username, password], function (err, rows, fields) {
 					if(err){
 						connection.rollback(function() {
 						connection.release();
@@ -319,7 +320,7 @@ app.post('/updateUser', ensureToken, function (req, res) {
 			var data = {};
 			var userId = req.body.userId;
 			var username = req.body.username;
-			var password = req.body.password;
+			var password = sha1(req.body.password);
 			var nome = req.body.nome;
 			var cognome = req.body.cognome;
 			var userType = req.body.userType;
@@ -339,7 +340,7 @@ app.post('/updateUser', ensureToken, function (req, res) {
 							params = [nome, cognome, userType, username, userId]
 						}
 						else {
-							queryString = 'UPDATE UTENTI SET  NOME=?, COGNOME=?, TIPO=?, USERNAME=?, PASSWORD=SHA1(?), EDIT_PASSWORD=1 WHERE ID_UTENTE=?';
+							queryString = 'UPDATE UTENTI SET  NOME=?, COGNOME=?, TIPO=?, USERNAME=?, PASSWORD=?, EDIT_PASSWORD=1 WHERE ID_UTENTE=?';
 							params = [nome, cognome, userType, username, password, userId]
 						}
 						connection.query(queryString, params, function (err, rows, fields) {
@@ -1456,7 +1457,63 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function (req, res) {
 
 
 
+//Cancellazione appuntamento
+app.post('/deleteDate', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			var id= req.body.id;
+			var data = {};
+		
 
+
+			pool.getConnection(function (err, connection) {
+				connection.beginTransaction(function(errTrans) {
+					if (errTrans) {                  //Transaction Error (Rollback and release connection)
+						connection.rollback(function() {
+						connection.release();
+						});
+						log.error('ERRORE SQL TRANSACTION CANCELLAZIONE APPUNTAMENTO ' + errTrans);
+						res.sendStatus(500);
+					}else{
+						connection.query('DELETE FROM APPUNTAMENTI WHERE ID_APPUNTAMENTO= ?', [id], function (err, rows, fields) {
+							if(err){
+								connection.rollback(function() {
+								connection.release();
+								//Failure
+								});
+								log.error('ERRORE SQL CANCELLAZIONE APPUNTAMENTO ' + err);
+								res.sendStatus(500);
+									
+							}else{
+								connection.commit(function(err) {
+									if (err) {
+										connection.rollback(function() {
+										connection.release();
+										//Failure
+										});
+										res.sendStatus(500);
+									} else {
+										connection.release();
+										data["RESULT"] = "OK";
+										res.json(data);
+										//Success
+									}
+								});
+							}
+							
+						});
+					}
+				});
+			
+				
+			});
+		  
+		}
+	});
+});
 
 
 

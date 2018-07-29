@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "app appuntamenti",
   "main": "server.js",
-  "env_production" : {
+  "env_production": {
     "NODE_ENV": "production"
   },
   "scripts": {
@@ -26,6 +26,7 @@
     "helmet": "^3.12.1",
     "jsonwebtoken": "^8.2.2",
     "log4js": "^2.7.0",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "sha1": "^1.1.1"
   }
 }

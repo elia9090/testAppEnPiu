@@ -339,6 +339,35 @@ $scope.editDateAdmin.createInputGas = function (){
              });
     
         }
+
+
+        $scope.editDateAdmin.deleteDate = function(){
+            var resp=confirm("Vuoi eliminare l'appuntamento?");
+            if (resp==true){
+        
+                $http.post('/deleteDate', {
+                    
+                    'id': $scope.editDateAdmin.Appuntamento.ID_APPUNTAMENTO
+                
+        
+                }).then((result) => {
+                    alert('Appuntamento eliminato');
+                    window.history.back();
+                }).catch((err) => {
+                    if(err.status === 500){
+                        alert("Impossibile cancellare l'appuntamento");
+                    }
+                    else if(err.status === 403){
+                        alert("Utente non autorizzato");
+                        $location.path('/logout');
+                    }
+                    else{
+                        alert("Impossibile cancellare l'appuntamento");
+                    }
+
+                });
+            }
+        }
     
         $scope.editDateAdmin.cancel = function () {
             window.history.back();
