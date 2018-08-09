@@ -205,7 +205,7 @@ input.ng-invalid-pattern{
 border: 1px solid red;
 }
 
-red-backgroundSPAN{
+.red-backgroundSPAN{
   color:   red !Important;
   
 }
