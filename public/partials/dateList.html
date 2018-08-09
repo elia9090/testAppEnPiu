@@ -17,11 +17,11 @@
         <table class="table  table-bordered">
           <thead>
             <tr>
-              
-              <th scope="col">Agente</th>
-              <th scope="col">Operatore</th>
               <th scope="col">Data</th>
               <th scope="col">Luogo</th>
+              <th scope="col">Agente</th>
+              
+              <th scope="col">Operatore</th>
               <th scope="col">Esito</th>
               <th scope="col">Visualizza</th>
               <th scope="col">Modifica</th>
@@ -29,22 +29,24 @@
           </thead>
           <tbody>
               <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : ['DATA_APPUNTAMENTO','ORA_APPUNTAMENTO'] " >
-                  <td>
+                <td ng-class="tdDataTodayClass(x.DATA_APPUNTAMENTO)" ng-if="x.ORA_APPUNTAMENTO != '00:01'">
+                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
+                </td>
+                <td ng-class="tdDataTodayClass(x.DATA_APPUNTAMENTO)" ng-if="x.ORA_APPUNTAMENTO == '00:01'">
+                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red; font-weight: normal;"><br> ORARIO DA DEFINIRE</span>
+                </td> 
+                
+                <td>
+                    {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                </td>
+                <td>
                      {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
                   </td> 
                   
                 <td>
                     {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
                 </td>
-                <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
-                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
-                </td>
-                <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
-                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA DEFINIRE</span>
-                </td>
-                <td>
-                    {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
-                </td>
+              
                 <td ng-class="tdEsitoClass(x.ESITO)">
                     {{x.ESITO}}
                 </td>

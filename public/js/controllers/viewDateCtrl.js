@@ -1,4 +1,4 @@
-app.controller('viewDateCtrl', function ( $scope, $http, $location,$route,$routeParams) {
+app.controller('viewDateCtrl', function ( $scope, $http, $location,$routeParams, alertify) {
 
     $scope.user = JSON.parse(sessionStorage.user);
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
@@ -32,11 +32,11 @@ app.controller('viewDateCtrl', function ( $scope, $http, $location,$route,$route
 
     }).catch((err) => {
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
             return;
         }
-        alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
+        alertify.alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
     });
 
     $scope.viewDate.cancel = function () {

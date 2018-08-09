@@ -180,6 +180,7 @@ select{
   background-color:  rgba(232,76,61,0.5);
   
 }
+
 .red-background > td{
   vertical-align: middle;
 }
@@ -202,6 +203,11 @@ select{
 }
 input.ng-invalid-pattern{
 border: 1px solid red;
+}
+
+tr.red-backgroundTR td{
+  background-color:  rgba(232,76,61,0.5) !Important;
+  
 }
 
 form p{
@@ -361,6 +367,10 @@ textarea{
 
 .width80{
   width: 80%;
+}
+
+.td-bold{
+  font-weight: bold;
 }
 
 

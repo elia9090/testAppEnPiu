@@ -1,5 +1,5 @@
 
-app.controller('dashboardCtrl', function ( $scope, $http, $location, $window) {
+app.controller('dashboardCtrl', function ( $scope) {
     $scope.height_chart = "";
     if(innerWidth<1000){
         $scope.height_chart = 500;

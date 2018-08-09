@@ -1,4 +1,4 @@
-app.controller('addUserCtrl', function ( $scope, $http, $location,$route) {
+app.controller('addUserCtrl', function ( $scope, $http, $location,$route,alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -26,12 +26,12 @@ app.controller('addUserCtrl', function ( $scope, $http, $location,$route) {
         
     $scope.responsabili = result.data.responsabili;
     }).catch((err) => {
-        alert("Impossibile reperire la lista dei responsabili");
+        alertify.alert("Impossibile reperire la lista dei responsabili");
     });
     $http.get('/listaOperatoriWS').then((result) => {
         $scope.operatori =  result.data.operatori;
     }).catch((err) => {
-        alert("Impossibile reperire la lista degli operatori");
+        alertify.alert("Impossibile reperire la lista degli operatori");
     });
 
     $scope.submitAddUser = function () {
@@ -44,17 +44,17 @@ app.controller('addUserCtrl', function ( $scope, $http, $location,$route) {
             'operatoreAssociato' : $scope.operatoreAssociato,
             'responsabileAssociato' : $scope.responsabileAssociato
         }).then((result) => {
-            alert('Utente creato correttamente');
+            alertify.alert('Utente creato correttamente');
             $route.reload();
         }).catch((err) => {
             if(err.status === 500){
-                alert("Errore nella registrazione utente");
+                alertify.alert("Errore nella registrazione utente");
             }
             if(err.status === 400){
-                alert("Utente già presente: "+ $scope.username);
+                alertify.alert("Utente già presente: "+ $scope.username);
             }
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
             }
         });

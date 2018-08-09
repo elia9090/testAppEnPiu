@@ -1,4 +1,4 @@
-app.controller('editDateVenditoreCtrl', function ($scope, $http, $location,$routeParams,$route) {
+app.controller('editDateVenditoreCtrl', function ($scope, $http, $location,$routeParams,$route, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -151,11 +151,11 @@ $scope.editDateVenditore.removeNewNumContrattoGas = function(){
 //fine then getAppuntamento
 }).catch((err) => {
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
             return;
         }
-        alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
+        alertify.alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
         $location.path('/listaAppuntamenti');
     });
 
@@ -182,14 +182,14 @@ $scope.editDateVenditore.removeNewNumContrattoGas = function(){
             'noteAgente' : $scope.editDateVenditore.noteAgente
      
          }).then((result) => {
-             alert('Appuntamento modificato correttamente');
+             alertify.alert('Appuntamento modificato correttamente');
              $route.reload();
          }).catch((err) => {
              if(err.status === 500){
-                 alert("Errore nella modifica appuntamento");
+                 alertify.alert("Errore nella modifica appuntamento");
              }
              if(err.status === 403){
-                 alert("Utente non autorizzato");
+                 alertify.alert("Utente non autorizzato");
                  $location.path('/logout');
              }
          });

@@ -1,4 +1,4 @@
-app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routeParams,$route) {
+app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routeParams,$route, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -49,7 +49,7 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
        
         
     }).catch((err) => {
-        alert("Impossibile reperire la lista dei comuni");
+        alertify.alert("Impossibile reperire la lista dei comuni");
     });
     $scope.editDateAdmin.comuniPerProvincia = "";
     $scope.editDateAdmin.disabledComuni = false;
@@ -72,11 +72,11 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
                 $scope.editDateAdmin.venditoreSelected = $scope.editDateAdmin.Appuntamento.ID_VENDITORE;
                 }).catch((err) => {
                     if(err.status === 403){
-                        alert("Utente non autorizzato");
+                        alertify.alert("Utente non autorizzato");
                         $location.path('/logout');
                         return;
                     }
-                    alert("L'operatore selezionato non ha agenti associati");
+                    alertify.alert("L'operatore selezionato non ha agenti associati");
                     $scope.editDateAdmin.disabledListaAgenti = true;
                     $scope.editDateAdmin.venditoriForOperatore = "";
                 });
@@ -86,11 +86,11 @@ app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routePa
         
     }).catch((err) => {
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
             return;
         }
-        alert("Impossibile reperire la lista degli operatori");
+        alertify.alert("Impossibile reperire la lista degli operatori");
     });
     
     
@@ -134,7 +134,7 @@ $http.get('../../utility/gestori.json').then((result) => {
    $scope.editDateAdmin.inserisciNuovoGestore($scope.editDateAdmin.Appuntamento.ATTUALE_GESTORE);
 
 }).catch((err) => {
-    alert("Impossibile reperire la lista dei gestori");
+    alertify.alert("Impossibile reperire la lista dei gestori");
 });
 
 $scope.editDateAdmin.inserisciNuovoGestore = function (newValue) {
@@ -258,11 +258,11 @@ $scope.editDateAdmin.removeNewNumContrattoGas = function(){
 //fine then getAppuntamento
 }).catch((err) => {
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
             return;
         }
-        alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
+        alertify.alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
         $location.path('/listaAppuntamenti');
     });
    
@@ -353,14 +353,14 @@ $scope.editDateAdmin.removeNewNumContrattoGas = function(){
                 'noteAgente' : $scope.editDateAdmin.noteAgente
     
              }).then((result) => {
-                 alert('Appuntamento modificato correttamente');
+                 alertify.alert('Appuntamento modificato correttamente');
                  $route.reload();
              }).catch((err) => {
                  if(err.status === 500){
-                     alert("Errore nella modifica appuntamento");
+                     alertify.alert("Errore nella modifica appuntamento");
                  }
                  if(err.status === 403){
-                     alert("Utente non autorizzato");
+                     alertify.alert("Utente non autorizzato");
                      $location.path('/logout');
                  }
              });
@@ -369,31 +369,30 @@ $scope.editDateAdmin.removeNewNumContrattoGas = function(){
 
 
         $scope.editDateAdmin.deleteDate = function(){
-            var resp=confirm("Vuoi eliminare l'appuntamento?");
-            if (resp==true){
-        
+            alertify.confirm("Vuoi eliminare l'appuntamento "+$scope.editDateAdmin.Appuntamento.ID_APPUNTAMENTO+"?", function(){ 
                 $http.post('/deleteDate', {
                     
                     'id': $scope.editDateAdmin.Appuntamento.ID_APPUNTAMENTO
                 
         
                 }).then((result) => {
-                    alert('Appuntamento eliminato');
+                    alertify.alert('Appuntamento eliminato');
                     window.history.back();
                 }).catch((err) => {
                     if(err.status === 500){
-                        alert("Impossibile cancellare l'appuntamento");
+                        alertify.alert("Impossibile cancellare l'appuntamento");
                     }
                     else if(err.status === 403){
-                        alert("Utente non autorizzato");
+                        alertify.alert("Utente non autorizzato");
                         $location.path('/logout');
                     }
                     else{
-                        alert("Impossibile cancellare l'appuntamento");
+                        alertify.alert("Impossibile cancellare l'appuntamento");
                     }
 
                 });
-            }
+                });
+            
         }
     
         $scope.editDateAdmin.cancel = function () {

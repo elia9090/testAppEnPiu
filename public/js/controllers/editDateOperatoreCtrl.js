@@ -1,4 +1,4 @@
-app.controller('editDateOperatoreCtrl', function ($scope, $http, $location,$routeParams,$route) {
+app.controller('editDateOperatoreCtrl', function ($scope, $http, $location,$routeParams,$route, alertify) {
     $scope.user = JSON.parse(sessionStorage.user);
    
     if(!$scope.user.TYPE == "OPERATORE"){
@@ -47,7 +47,7 @@ app.controller('editDateOperatoreCtrl', function ($scope, $http, $location,$rout
        
         
     }).catch((err) => {
-        alert("Impossibile reperire la lista dei comuni");
+        alertify.alert("Impossibile reperire la lista dei comuni");
     });
     $scope.editDateOperatore.comuniPerProvincia = "";
     $scope.editDateOperatore.disabledComuni = false;
@@ -69,11 +69,11 @@ app.controller('editDateOperatoreCtrl', function ($scope, $http, $location,$rout
             $scope.editDateOperatore.venditoreSelected = $scope.editDateOperatore.Appuntamento.ID_VENDITORE;
             }).catch((err) => {
                 if(err.status === 403){
-                    alert("Utente non autorizzato");
+                    alertify.alert("Utente non autorizzato");
                     $location.path('/logout');
                     return;
                 }
-                alert("L'operatore non ha agenti associati");
+                alertify.alert("L'operatore non ha agenti associati");
                 $scope.editDateOperatore.readOnlyListaAgenti = true;
                 $scope.editDateOperatore.venditoriForOperatore = "";
             });
@@ -112,7 +112,7 @@ $http.get('../../utility/gestori.json').then((result) => {
    $scope.editDateOperatore.inserisciNuovoGestore($scope.editDateOperatore.Appuntamento.ATTUALE_GESTORE);
 
 }).catch((err) => {
-    alert("Impossibile reperire la lista dei gestori");
+    alertify.alert("Impossibile reperire la lista dei gestori");
 });
 
 $scope.editDateOperatore.inserisciNuovoGestore = function (newValue) {
@@ -163,11 +163,11 @@ $scope.editDateOperatore.Esiti =    [
 //fine then getAppuntamento
 }).catch((err) => {
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
             return;
         }
-        alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
+        alertify.alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
         $location.path('/listaAppuntamenti');
 });
    
@@ -251,14 +251,14 @@ $scope.editDateOperatore.Esiti =    [
             'noteAgente' : $scope.editDateOperatore.noteAgente
 
          }).then((result) => {
-             alert('Appuntamento modificato correttamente');
+             alertify.alert('Appuntamento modificato correttamente');
              $route.reload();
          }).catch((err) => {
              if(err.status === 500){
-                 alert("Errore nella modifica appuntamento");
+                 alertify.alert("Errore nella modifica appuntamento");
              }
              if(err.status === 403){
-                 alert("Utente non autorizzato");
+                 alertify.alert("Utente non autorizzato");
                  $location.path('/logout');
              }
          });

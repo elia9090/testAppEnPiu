@@ -1,5 +1,5 @@
 
-app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $window, $route) {
+app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location,  $route, alertify) {
     
     $scope.user = JSON.parse(sessionStorage.user);
     // CREO LO SCOPE PER IL CONTROLLER DEL FORM altrimenti con ng-if crea uno scope child e non prende il valore assegnato
@@ -48,11 +48,11 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
             $scope.newDate.venditoriForOperatore = result.data.agenti;
             }).catch((err) => {
                 if(err.status === 403){
-                    alert("Utente non autorizzato");
+                    alertify.alert("Utente non autorizzato");
                     $location.path('/logout');
                     return;
                 }
-                alert("Impossibile reperire la lista degli agenti associati");
+                alertify.alert("Impossibile reperire la lista degli agenti associati");
             });
            
     }
@@ -65,11 +65,11 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
             $scope.newDate.operatori =  result.data.operatori;
         }).catch((err) => {
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
                 return;
             }
-            alert("Impossibile reperire la lista degli operatori");
+            alertify.alert("Impossibile reperire la lista degli operatori");
         });
         
         
@@ -82,11 +82,11 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
                 $scope.newDate.disabledListaAgenti = false;
                 }).catch((err) => {
                     if(err.status === 403){
-                        alert("Utente non autorizzato");
+                        alertify.alert("Utente non autorizzato");
                         $location.path('/logout');
                         return;
                     }
-                    alert("L'operatore selezionato non ha agenti associati");
+                    alertify.alert("L'operatore selezionato non ha agenti associati");
                     $scope.newDate.disabledListaAgenti = true;
                     $scope.newDate.venditoriForOperatore = "";
                 });
@@ -101,7 +101,7 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
         $scope.newDate.provinciaSelected = "";
         $scope.newDate.province = result.data.province;
     }).catch((err) => {
-        alert("Impossibile reperire la lista dei comuni");
+        alertify.alert("Impossibile reperire la lista dei comuni");
     });
     $scope.newDate.comuniPerProvincia = "";
     $scope.newDate.disabledComuni = true;
@@ -120,7 +120,7 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location, $wi
     $http.get('../../utility/gestori.json').then((result) => {
        $scope.newDate.Groups = result.data.GESTORI;
     }).catch((err) => {
-        alert("Impossibile reperire la lista dei gestori");
+        alertify.alert("Impossibile reperire la lista dei gestori");
     });
 
     $scope.newDate.inserisciNuovoGestore = function (newValue) {
@@ -187,14 +187,14 @@ $scope.newDate.submitNewDate = function(){
        'recapiti': $scope.newDate.recapiti,
        'noteOperatore': $scope.newDate.noteOperatore,
     }).then((result) => {
-        alert('Appuntamento creato correttamente');
+        alertify.alert('Appuntamento creato correttamente');
         $route.reload();
     }).catch((err) => {
         if(err.status === 500){
-            alert("Errore nella registrazione appuntamento");
+            alertify.alert("Errore nella registrazione appuntamento");
         }
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
         }
     });

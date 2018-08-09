@@ -56,8 +56,14 @@ app.post('/login', function (req, res) {
 			connection.release();
 			if (rows.length !== 0 && !err) {
 				data["utente"] = rows[0];
-				const user = rows[0];
-				const token = jwt.sign({ user: rows[0].ID_UTENTE }, config.secretKey,{expiresIn: "8h"});
+				
+				var token;
+				if(rows[0].TIPO == 'ADMIN'){
+					 token = jwt.sign({ user: rows[0].ID_UTENTE, role:'ADMIN' }, config.secretKey,{expiresIn: "8h"});
+				}else{
+					 token = jwt.sign({ user: rows[0].ID_UTENTE, role:'OTHER' }, config.secretKey,{expiresIn: "8h"});
+				}
+		
 				data["token"] = token;
 				if(rows[0].EDIT_PASSWORD == 1){
 					data["editPassword"] = "1";
@@ -142,7 +148,7 @@ app.post('/editPassword', ensureToken, function (req, res) {
 
 
 // INSERT USER
-app.post('/addUser', ensureToken, function (req, res) {
+app.post('/addUser', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -309,7 +315,7 @@ app.post('/addUser', ensureToken, function (req, res) {
 
 
 // UPDATE USER
-app.post('/updateUser', ensureToken, function (req, res) {
+app.post('/updateUser', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function (err, data) {
 		if (err) {
 			res.sendStatus(403);
@@ -391,7 +397,7 @@ app.post('/updateUser', ensureToken, function (req, res) {
 
 
 // UPDATE OPERATORE ASSOCIATO ALL'UTENTE MODIFICATO
-app.post('/updateOperatore', ensureToken, function (req, res) {
+app.post('/updateOperatore', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function (err, data) {
 		if (err) {
 			res.sendStatus(403);
@@ -492,7 +498,7 @@ app.post('/updateOperatore', ensureToken, function (req, res) {
 
 
 // UPDATE RESPONSABILE ASSOCIATO ALL'UTENTE MODIFICATO
-app.post('/updateResponsabile', ensureToken, function (req, res) {
+app.post('/updateResponsabile', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function (err, data) {
 		if (err) {
 			res.sendStatus(403);
@@ -593,7 +599,7 @@ app.post('/updateResponsabile', ensureToken, function (req, res) {
 
 
 // DELETE USER
-app.post('/deleteUser', ensureToken, function (req, res) {
+app.post('/deleteUser', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function (err, data) {
 		if (err) {
 			res.sendStatus(403);
@@ -788,7 +794,7 @@ app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS', ensureToken, funct
 
 
 //lsita utenti
-app.get('/listaUtenti', ensureToken, function (req, res) {
+app.get('/listaUtenti', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -828,7 +834,7 @@ app.get('/listaUtenti', ensureToken, function (req, res) {
 
 
 //Modifica utente
-app.get('/edituser/:id', ensureToken, function (req, res) {
+app.get('/edituser/:id', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -960,7 +966,7 @@ app.post('/addNewDate', ensureToken, function (req, res) {
 });
 
 
-app.post('/editDateAdmin', ensureToken, function (req, res) {
+app.post('/editDateAdmin', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -1177,7 +1183,7 @@ app.post('/editDateOperatore', ensureToken, function (req, res) {
 });
 
 //lsita appuntamenti admin
-app.get('/listaAppuntamentiAdmin', ensureToken, function (req, res) {
+app.get('/listaAppuntamentiAdmin', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -1458,7 +1464,7 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function (req, res) {
 
 
 //Cancellazione appuntamento
-app.post('/deleteDate', ensureToken, function (req, res) {
+app.post('/deleteDate', ensureToken,requireAdmin, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -1614,6 +1620,11 @@ app.post('/searchDate', ensureToken, function (req, res) {
 							if(comune !== '' && comune !== undefined){
 								Qcomune = ' AND COMUNE = "'+comune+'" ';
 							}
+							var ragioneSociale = req.body.ragioneSociale;
+							var QragioneSociale = " ";
+							if(ragioneSociale !== '' && ragioneSociale !== undefined){
+								QragioneSociale = ' AND LOWER(NOME_ATTIVITA) LIKE LOWER("%'+ragioneSociale+'%") ';
+							}
 
 							var esito = req.body.esito;
 							var Qesito = " ";
@@ -1647,7 +1658,7 @@ app.post('/searchDate', ensureToken, function (req, res) {
 
 
 							pool.getConnection(function (err, connection) {
-								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+Qesito+ ' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
+								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+Qesito+ ' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
 									connection.release();
 									if(err){
 										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -1663,7 +1674,7 @@ app.post('/searchDate', ensureToken, function (req, res) {
 												' FROM APPUNTAMENTI'+
 												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qoperatore+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
 												connection.release();
 												if(err){
 													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
@@ -1733,6 +1744,12 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 								Qcomune = ' AND COMUNE = "'+comune+'" ';
 							}
 
+							var ragioneSociale = req.body.ragioneSociale;
+							var QragioneSociale = " ";
+							if(ragioneSociale !== '' && ragioneSociale !== undefined){
+								QragioneSociale = ' AND LOWER(NOME_ATTIVITA) LIKE LOWER("%'+ragioneSociale+'%") ';
+							}
+
 							var esito = req.body.esito;
 							var Qesito = " ";
 							if(esito !== '' && esito !== undefined){
@@ -1762,7 +1779,7 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 
 							pool.getConnection(function (err, connection) {
 								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI '+
-								' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL  WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO', [idResponsabile],  function (err, rows, fields) {
+								' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL  WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO', [idResponsabile],  function (err, rows, fields) {
 									connection.release();
 									if(err){
 										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -1779,7 +1796,7 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
 												' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL '+
-												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,limit, offset], function (err, rows, fields) {
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,limit, offset], function (err, rows, fields) {
 												connection.release();
 												if(err){
 													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
@@ -1922,7 +1939,16 @@ app.all("/*", function(req, res, next) {
 	res.sendfile("index.html", { root: __dirname + "/public" });
 });
 
-
+function requireAdmin(request, response, next) {
+    
+	var test = jwt.decode(request.token);
+	if (test.role != 'ADMIN') {
+        response.sendStatus(403);
+	}
+    else {
+        next();
+	}
+}
 function ensureToken(req, res, next) {
 	const bearerHeader = req.headers["authorization"];
 	if (typeof bearerHeader !== 'undefined') {

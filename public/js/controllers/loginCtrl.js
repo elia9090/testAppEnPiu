@@ -1,5 +1,5 @@
 
-app.controller('loginCtrl', function ($scope, $http, $location, $window) {
+app.controller('loginCtrl', function ($scope, $http, $location, alertify) {
 
     $scope.submitLogin = function () {
         $http.post('/login', {
@@ -23,10 +23,10 @@ app.controller('loginCtrl', function ($scope, $http, $location, $window) {
            
         }).catch((err) => {
             if(err.status === 404){
-                alert("Nome utente o password errati!");
+                alertify.alert("Nome utente o password errati!");
             }
             if(err.status === 500){
-                alert("Servizio di login non è disponibile");
+                alertify.alert("Servizio di login non è disponibile");
             }
         });
     };

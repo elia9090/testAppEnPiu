@@ -1,4 +1,4 @@
-app.controller('dateListGVCtrl', function ( $scope, $http, $location,$route) {
+app.controller('dateListGVCtrl', function ( $scope, $http, $location,alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -17,18 +17,18 @@ app.controller('dateListGVCtrl', function ( $scope, $http, $location,$route) {
     $http.get(url).then((result) => {
         
         if(result.data.error){
-            alert("Nessuno appuntamento trovato");
+            alertify.alert("Nessuno appuntamento trovato");
         }else{
             $scope.dateList = result.data.appuntamenti;
         } 
     
     }).catch((err) => {
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
             return;
         }
-        alert("Impossibile reperire la lista degli appuntamenti");
+        alertify.alert("Impossibile reperire la lista degli appuntamenti");
     });
   
 
@@ -65,12 +65,22 @@ app.controller('dateListGVCtrl', function ( $scope, $http, $location,$route) {
     $scope.today = new Date().getFullYear() +"-"+ (new Date().getMonth()+1) + "-" + new Date().getDate();
 
     $scope.tdDataClass = function (dataAppuntamento, esito) {
-
-        if((new Date(dataAppuntamento) < new Date($scope.today)) && (esito == null || esito.trim() == '')){
-            return 'red-background'
+        dataAppuntamento = dataAppuntamento.split("T")[0];
+        if((new Date(dataAppuntamento).setUTCHours(0, 0, 0, 0) < new Date($scope.today).setUTCHours(0, 0, 0, 0)) && (esito == null || esito.trim() == '')){
+            return 'red-backgroundTR'
         }
         
     };
+
+    $scope.tdDataTodayClass = function (dataAppuntamento) {
+        dataAppuntamento = dataAppuntamento.split("T")[0];
+        if(new Date(dataAppuntamento).setUTCHours(0, 0, 0, 0) == new Date($scope.today).setUTCHours(0, 0, 0, 0)){
+            return 'td-bold '
+        }
+        
+    };
+    
+    
 
 
 });

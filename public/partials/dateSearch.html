@@ -42,8 +42,13 @@
                     <option ng-repeat="option in searchDate.comuniPerProvincia"  value="{{option.nome}}">{{option.nome}}</option>
             </select>
         </div>
+       
     </div>
     <div class="row col-12" >
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="ragioneSociale">Rag.Sociale/Nome cliente</label>
+                <input type="text" id="ragioneSociale"   class="form-control w-100"    ng-model="searchDate.ragioneSociale">
+        </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
             <label for="esitoAppuntamento">Esito appuntamento</label>
             <select   ng-model="searchDate.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in searchDate.Esiti"></select>      
@@ -114,11 +119,11 @@
             <table class="table  table-bordered">
               <thead>
                 <tr>
-                  
+                    <th scope="col">Data</th>
+                    <th scope="col">Luogo</th>
                   <th scope="col">Agente</th>
                   <th scope="col">Operatore</th>
-                  <th scope="col">Data</th>
-                  <th scope="col">Luogo</th>
+                  
                   <th scope="col">Esito</th>
                   <th scope="col">Visualizza</th>
                   <th ng-if="user.TYPE === 'ADMIN' " scope="col">Modifica</th>
@@ -126,13 +131,6 @@
               </thead>
               <tbody>
                   <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in searchDate.dateList   " >
-                      <td>
-                         {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
-                      </td> 
-                      
-                    <td>
-                        {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
-                    </td>
                     <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
                         {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
                     </td>
@@ -141,7 +139,16 @@
                     </td>
                     <td>
                         {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                    </td> 
+                    
+                    <td>
+                         {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
+                      </td> 
+                      
+                    <td>
+                        {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
                     </td>
+                    
                     <td ng-class="tdEsitoClass(x.ESITO)">
                         {{x.ESITO}}
                     </td>

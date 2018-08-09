@@ -1,4 +1,4 @@
-app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$routeParams, $q) {
+app.controller('editUserCtrl', function ( $scope, $http, $location,$routeParams, $q, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -30,19 +30,19 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
         
                 $scope.editUser.responsabili = result.data.responsabili;
                 }).catch((err) => {
-                    alert("Impossibile reperire la lista dei responsabili");
+                    alertify.alert("Impossibile reperire la lista dei responsabili");
                 });
                 $http.get('/listaOperatoriWS').then((result) => {
                     $scope.editUser.operatori =  result.data.operatori;
                 }).catch((err) => {
-                    alert("Impossibile reperire la lista degli operatori");
+                    alertify.alert("Impossibile reperire la lista degli operatori");
                 });
         }
 
        
 
         }).catch((err) => {
-            alert("Impossibile reperire l'utente");
+            alertify.alert("Impossibile reperire l'utente");
         });
 
     $scope.cancel = function () {
@@ -51,19 +51,19 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$route,$route
 
 
 $scope.delete = function () {
-    var resp=confirm("Vuoi eliminare l'utente?");
-    if (resp==true){
+    alertify.confirm("Vuoi eliminare l'utente ?", function(){ 
+    
         $http.post('/deleteUser',{
         'userId' : $scope.userId
     }).then((result) => {
-        alert("Utente eliminato");
+        alertify.alert("Utente eliminato");
         $location.path('/listaUtenti');
         }).catch((err) => {
-            alert("Impossibile eliminare l'utente");
+            alertify.alert("Impossibile eliminare l'utente");
         });
-    }
-};
-
+    
+});
+}
 
     $scope.editUser.submitAddUser = function () {
         if ($scope.editUser.userType=='OPERATORE'){
@@ -106,16 +106,16 @@ $scope.delete = function () {
 
 
     $q.all(promises).then((result) => {
-        alert('Dati utente modificati correttamente');
+        alertify.alert('Dati utente modificati correttamente');
         $location.path('/listaUtenti');
        
     }).catch((err) => {
         if(err.status === 500){
-            alert("Errore nella maodifica utente");
+            alertify.alert("Errore nella maodifica utente");
         };
 
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
         }
     });
@@ -136,15 +136,15 @@ $scope.delete = function () {
             'cognome':$scope.editUser.cognome,
             'userType': $scope.editUser.userType
         }).then((result) => {
-            alert('Utente creato correttamente');
+            alertify.alert('Utente creato correttamente');
            
         }).catch((err) => {
             if(err.status === 500){
-                alert("Errore nella registrazione utente");
+                alertify.alert("Errore nella registrazione utente");
             }
 
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
             }
         });
@@ -156,15 +156,15 @@ $scope.delete = function () {
             'newOperatore': $scope.editUser.operatoreAssociato,
             
         }).then((result) => {
-            alert('Relazione operatore modificata correttamente');
+            alertify.alert('Relazione operatore modificata correttamente');
           
         }).catch((err) => {
             if(err.status === 500){
-                alert("Errore nella modifica operatore");
+                alertify.alert("Errore nella modifica operatore");
             }
 
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
             }
         });
@@ -180,15 +180,15 @@ $scope.delete = function () {
             'newResponsabile': $scope.editUser.responsabileAssociato,
             
         }).then((result) => {
-            alert('Relazione operatore modificata correttamente');
+            alertify.alert('Relazione operatore modificata correttamente');
            
         }).catch((err) => {
             if(err.status === 500){
-                alert("Errore nella modifica operatore");
+                alertify.alert("Errore nella modifica operatore");
             }
 
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
             }
         });

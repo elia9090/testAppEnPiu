@@ -1,4 +1,4 @@
-app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParams,$route) {
+app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
 
     $scope.user = JSON.parse(sessionStorage.user);
 
@@ -35,7 +35,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
         $scope.searchDate.province.splice(0, 0, ({code:"",comuni:"",nome:""}));
     }).catch((err) => {
-        alert("Impossibile reperire la lista dei comuni");
+        alertify.alert("Impossibile reperire la lista dei comuni");
     });
     $scope.searchDate.comuniPerProvincia = "";
     $scope.searchDate.disabledComuni = true;
@@ -94,11 +94,11 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
            
         }).catch((err) => {
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
                 return;
             }
-            alert("Impossibile reperire la lista degli operatori");
+            alertify.alert("Impossibile reperire la lista degli operatori");
         });
         
         //LISTA AGENTI SENZA RELAZIONI CON GLI OPERATORI E ELIMINATI LOGICAMENTE
@@ -108,11 +108,11 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             
         }).catch((err) => {
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
                 return;
             }
-            alert("Impossibile reperire la lista degli agenti");
+            alertify.alert("Impossibile reperire la lista degli agenti");
         });
 
 
@@ -128,7 +128,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
            
             }).catch((err) => {
                 if(err.status === 403){
-                    alert("Utente non autorizzato");
+                    alertify.alert("Utente non autorizzato");
                     $location.path('/logout');
                     return;
                 }
@@ -145,7 +145,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
            
             }).catch((err) => {
                 if(err.status === 403){
-                    alert("Utente non autorizzato");
+                    alertify.alert("Utente non autorizzato");
                     $location.path('/logout');
                     return;
                 }
@@ -204,6 +204,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             'dateTO': dataAppuntamentoTO,
             'provincia': $scope.searchDate.provinciaSelected,
             'comune': $scope.searchDate.comuneSelected,
+            'ragioneSociale':$scope.searchDate.ragioneSociale,
             'esito': $scope.searchDate.esito.value,
             'codiceLuce': $scope.searchDate.codLuce,
             'codiceGas': $scope.searchDate.codGas,
@@ -215,7 +216,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             if(result.data.appuntamenti.length == 0){
                 $.unblockUI();
                 $scope.searchDate.showRisultati = false;
-                alert("Nessun appuntamento trovato per i parametri selezionati");
+                alertify.alert("Nessun appuntamento trovato per i parametri selezionati");
             }else{
                 $scope.searchDate.totalItems = parseInt(result.data.totaleAppuntamenti);
                 $scope.searchDate.dateList = result.data.appuntamenti;
@@ -227,12 +228,12 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
 
             $.unblockUI();
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
                 return;
             }
             if(err.status === 500){
-                alert("Errore nella ricerca appuntamenti");
+                alertify.alert("Errore nella ricerca appuntamenti");
             }
             
          
@@ -245,6 +246,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             'dateTO': dataAppuntamentoTO,
             'provincia': $scope.searchDate.provinciaSelected,
             'comune': $scope.searchDate.comuneSelected,
+            'ragioneSociale':$scope.searchDate.ragioneSociale,
             'esito': $scope.searchDate.esito.value,
             'codiceLuce': $scope.searchDate.codLuce,
             'codiceGas': $scope.searchDate.codGas,
@@ -256,7 +258,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
             if(result.data.appuntamenti.length == 0){
                 $.unblockUI();
                 $scope.searchDate.showRisultati = false;
-                alert("Nessun appuntamento trovato per i parametri selezionati");
+                alertify.alert("Nessun appuntamento trovato per i parametri selezionati");
             }else{
                 $scope.searchDate.totalItems = parseInt(result.data.totaleAppuntamenti);
                 $scope.searchDate.dateList = result.data.appuntamenti;
@@ -268,12 +270,12 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,$routeParam
 
             $.unblockUI();
             if(err.status === 403){
-                alert("Utente non autorizzato");
+                alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
                 return;
             }
             if(err.status === 500){
-                alert("Errore nella ricerca appuntamenti");
+                alertify.alert("Errore nella ricerca appuntamenti");
             }
             
          

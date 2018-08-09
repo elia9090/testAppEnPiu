@@ -1,4 +1,4 @@
-app.controller('usersListCtrl', function ( $scope, $http, $location,$route) {
+app.controller('usersListCtrl', function ( $scope, $http, $location, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -16,11 +16,11 @@ app.controller('usersListCtrl', function ( $scope, $http, $location,$route) {
     
     }).catch((err) => {
         if(err.status === 403){
-            alert("Utente non autorizzato");
+            alertify.alert("Utente non autorizzato");
             $location.path('/logout');
             return;
         }
-        alert("Impossibile reperire la lista degli utenti");
+        alertify.alert("Impossibile reperire la lista degli utenti");
     });
   
 
