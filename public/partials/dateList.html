@@ -28,7 +28,7 @@
             </tr>
           </thead>
           <tbody>
-              <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : ['DATA_APPUNTAMENTO','ORA_APPUNTAMENTO'] " >
+              <tr   ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : ['DATA_APPUNTAMENTO','ORA_APPUNTAMENTO'] " >
                 <td ng-class="tdDataTodayClass(x.DATA_APPUNTAMENTO)" ng-if="x.ORA_APPUNTAMENTO != '00:01'">
                     {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
                 </td>
@@ -37,7 +37,7 @@
                 </td> 
                 
                 <td>
-                    {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                    <span ng-class="tdDataClass(x.DATA_APPUNTAMENTO)">{{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}</span>
                 </td>
                 <td>
                      {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
