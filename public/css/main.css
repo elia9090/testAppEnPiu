@@ -206,7 +206,7 @@ border: 1px solid red;
 }
 
 tr.red-backgroundTR td{
-  background-color:  rgba(232,76,61,0.5) !Important;
+  color:   red !Important;
   
 }
 
