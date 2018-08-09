@@ -73,7 +73,7 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,alertify) {
     $scope.tdDataClass = function (dataAppuntamento, esito) {
         dataAppuntamento = dataAppuntamento.split("T")[0];
         if((new Date(dataAppuntamento).setUTCHours(0, 0, 0, 0) < new Date($scope.today).setUTCHours(0, 0, 0, 0)) && (esito == null || esito.trim() == '')){
-            return 'red-backgroundSPAN'
+            return 'red-backgroundTR'
         }
         
     };
