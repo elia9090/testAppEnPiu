@@ -68,7 +68,7 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,alertify) {
         
     };
     
-    $scope.today = new Date().getFullYear() +"-"+ (new Date().getMonth()+1) + "-" + new Date().getDate();
+    $scope.today = new Date().getFullYear() +"/"+ (new Date().getMonth()+1) + "/" + new Date().getDate();
 
     $scope.tdDataClass = function (dataAppuntamento, esito) {
         if((new Date(dataAppuntamento) < new Date($scope.today)) && (esito == null || esito.trim() == '')){
