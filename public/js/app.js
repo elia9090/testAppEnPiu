@@ -12,6 +12,16 @@ app.run(['$rootScope', '$location', function($rootScope, $location, ) {
             $rootScope.userType = JSON.parse(sessionStorage.user).TYPE;
             $rootScope.userEditedPassword = JSON.parse(sessionStorage.user).editPassword === "0" ? true : false;
         }
+        //svuoto il local storage dei parametri di ricerca
+        if(prevRoute && currRoute && currRoute.$$route.controller=="dateSearchCtrl" && 
+                (prevRoute.$$route.controller != "editDateAdminCtrl") 
+                    && prevRoute.$$route.controller != "editDateOperatoreCtrl"
+                        && prevRoute.$$route.controller != "editDateVenditoreCtrl"
+                            && prevRoute.$$route.controller != "viewDateCtrl"){
+                            //rimuovo il local storage dei parametri di ricerca
+                            localStorage.removeItem("searchParam");
+
+        }
     });
 
 }]);

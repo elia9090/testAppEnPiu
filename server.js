@@ -1599,60 +1599,60 @@ app.post('/searchDate', ensureToken, function (req, res) {
 			
 							var dateFrom = req.body.dateFROM;
 							var QdateFrom = " ";
-							if(dateFrom !== '' && dateFrom !== undefined){
+							if(dateFrom !== '' && dateFrom !== undefined && dateFrom !=null){
 								QdateFrom = ' AND DATA_APPUNTAMENTO >= "'+dateFrom+'" ';
 							}
 
 							var dateTo = req.body.dateTO;
 							var QdateTo = " ";
-							if(dateTo !== '' && dateTo !== undefined){
+							if(dateTo !== '' && dateTo !== undefined && dateTo !=null){
 								QdateTo = ' AND DATA_APPUNTAMENTO <= "'+dateTo+'" ';
 							}
 
 							var provincia = req.body.provincia;
 							var Qprovincia = " ";
-							if(provincia !== '' && provincia !== undefined){
+							if(provincia !== '' && provincia !== undefined && provincia !=null){
 								Qprovincia = ' AND PROVINCIA = "'+provincia+'" ';
 							}
 
 							var comune = req.body.comune;
 							var Qcomune = " ";
-							if(comune !== '' && comune !== undefined){
+							if(comune !== '' && comune !== undefined && comune !=null){
 								Qcomune = ' AND COMUNE = "'+comune+'" ';
 							}
 							var ragioneSociale = req.body.ragioneSociale;
 							var QragioneSociale = " ";
-							if(ragioneSociale !== '' && ragioneSociale !== undefined){
+							if(ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale !=null){
 								QragioneSociale = ' AND LOWER(NOME_ATTIVITA) LIKE LOWER("%'+ragioneSociale+'%") ';
 							}
 
 							var esito = req.body.esito;
 							var Qesito = " ";
-							if(esito !== '' && esito !== undefined){
+							if(esito !== '' && esito !== undefined && esito !=null){
 								Qesito = ' AND ESITO = "'+esito+'" ';
 							}
 
 							var codiceLuce = req.body.codiceLuce;
 							var QcodiceLuce = " ";
-							if(codiceLuce !== '' && codiceLuce !== undefined){
+							if(codiceLuce !== '' && codiceLuce !== undefined && codiceLuce !=null){
 								QcodiceLuce = ' AND CODICI_CONTRATTO_LUCE LIKE "%'+codiceLuce+'%" ';
 							}
 
 							var codiceGas = req.body.codiceGas;
 							var QcodiceGas = " ";
-							if(codiceGas !== '' && codiceGas !== undefined){
+							if(codiceGas !== '' && codiceGas !== undefined && codiceGas !=null){
 								QcodiceGas = ' AND CODICI_CONTRATTO_GAS LIKE "%'+codiceGas+'%" ';
 							}
 
 							var agente = req.body.agente;
 							var Qagente = " ";
-							if(agente !== '' && agente !== undefined){
+							if(agente !== '' && agente !== undefined && agente!= null){
 								Qagente = ' AND ID_VENDITORE = "'+agente+'" ';
 							}
 
 							var operatore = req.body.operatore;
 							var Qoperatore = " ";
-							if(operatore !== '' && operatore !== undefined){
+							if(operatore !== '' && operatore !== undefined && operatore != null){
 								Qoperatore = ' AND ID_OPERATORE = "'+operatore+'" ';
 							}
 
@@ -1722,55 +1722,54 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 			
 							var dateFrom = req.body.dateFROM;
 							var QdateFrom = " ";
-							if(dateFrom !== '' && dateFrom !== undefined){
+							if(dateFrom !== '' && dateFrom !== undefined && dateFrom !=null){
 								QdateFrom = ' AND DATA_APPUNTAMENTO >= "'+dateFrom+'" ';
 							}
 
 							var dateTo = req.body.dateTO;
 							var QdateTo = " ";
-							if(dateTo !== '' && dateTo !== undefined){
+							if(dateTo !== '' && dateTo !== undefined && dateTo !=null){
 								QdateTo = ' AND DATA_APPUNTAMENTO <= "'+dateTo+'" ';
 							}
 
 							var provincia = req.body.provincia;
 							var Qprovincia = " ";
-							if(provincia !== '' && provincia !== undefined){
+							if(provincia !== '' && provincia !== undefined && provincia !=null){
 								Qprovincia = ' AND PROVINCIA = "'+provincia+'" ';
 							}
 
 							var comune = req.body.comune;
 							var Qcomune = " ";
-							if(comune !== '' && comune !== undefined){
+							if(comune !== '' && comune !== undefined && comune !=null){
 								Qcomune = ' AND COMUNE = "'+comune+'" ';
 							}
-
 							var ragioneSociale = req.body.ragioneSociale;
 							var QragioneSociale = " ";
-							if(ragioneSociale !== '' && ragioneSociale !== undefined){
+							if(ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale !=null){
 								QragioneSociale = ' AND LOWER(NOME_ATTIVITA) LIKE LOWER("%'+ragioneSociale+'%") ';
 							}
 
 							var esito = req.body.esito;
 							var Qesito = " ";
-							if(esito !== '' && esito !== undefined){
+							if(esito !== '' && esito !== undefined && esito !=null){
 								Qesito = ' AND ESITO = "'+esito+'" ';
 							}
 
 							var codiceLuce = req.body.codiceLuce;
 							var QcodiceLuce = " ";
-							if(codiceLuce !== '' && codiceLuce !== undefined){
+							if(codiceLuce !== '' && codiceLuce !== undefined && codiceLuce !=null){
 								QcodiceLuce = ' AND CODICI_CONTRATTO_LUCE LIKE "%'+codiceLuce+'%" ';
 							}
 
 							var codiceGas = req.body.codiceGas;
 							var QcodiceGas = " ";
-							if(codiceGas !== '' && codiceGas !== undefined){
+							if(codiceGas !== '' && codiceGas !== undefined && codiceGas !=null){
 								QcodiceGas = ' AND CODICI_CONTRATTO_GAS LIKE "%'+codiceGas+'%" ';
 							}
 
 							var agente = req.body.agente;
 							var Qagente = " ";
-							if(agente !== '' && agente !== undefined){
+							if(agente !== '' && agente !== undefined && agente!= null){
 								Qagente = ' AND ID_VENDITORE = "'+agente+'" ';
 							}
 

@@ -1,73 +1,78 @@
-<div class="container" >
- <div class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+<div class="container">
+    <div class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
         <div class="col-md-12">
             <h2>Lista appuntamenti gruppo vendita</h2>
             <hr>
         </div>
-        
-          <div class="input-group mb-3 col-md-4">
 
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id=""><i class="fas fa-search"></i></span>
-                  </div>
-                  <input  type="text" class="form-control" placeholder="Cerca" ng-model="filtraAppuntamenti" >
-         
-          </div>
-          <div class="table-responsive">
-        <table class="table  table-bordered">
-          <thead>
-            <tr>
-              
-                <th scope="col">Data</th>
-                <th scope="col">Luogo</th>
-                <th scope="col">Agente</th>
-                
-                <th scope="col">Operatore</th>
-                <th scope="col">Esito</th>
-                <th scope="col">Visualizza</th>
-                
-              
-            </tr>
-          </thead>
-          <tbody>
-              <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : ['DATA_APPUNTAMENTO','ORA_APPUNTAMENTO'] " >
-                <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
-                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
-                </td>
-                <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
-                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA DEFINIRE</span>
-                </td>
-                <td>
-                    {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
-                </td>
-                
-                <td>
-                     {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
-                  </td> 
-                  
-                <td>
-                    {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
-                </td>
-              
-                <td ng-class="tdEsitoClass(x.ESITO)">
-                    {{x.ESITO}}
-                </td>
-                <td>
-                    <button  class="btn btn-orange btn-modifyUtente" ng-click="viewDate(x.ID_APPUNTAMENTO)">
-                        <i class="fas fa-glasses"></i>
-                    </button>
-                  
-                </td>
-               
-              </tr>
-          </tbody>
-        </table>
-      </div>
-    
-   
-  </div>
+        <div class="input-group mb-3 col-md-4">
+
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="">
+                    <i class="fas fa-search"></i>
+                </span>
+            </div>
+            <input type="text" class="form-control" placeholder="Cerca" ng-model="filtraAppuntamenti">
+
+        </div>
+        <div class="table-responsive">
+            <table class="table  table-bordered">
+                <thead>
+                    <tr>
+
+                        <th scope="col">Data</th>
+                        <th scope="col">Azienda/cliente</th>
+                        <th scope="col">Luogo</th>
+
+                        <th scope="col">Agente</th>
+
+                        <th scope="col">Operatore</th>
+                        <th scope="col">Esito</th>
+                        <th scope="col">Visualizza</th>
+
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)" ng-repeat="x in dateList | filter : filtraAppuntamenti  | orderBy : ['DATA_APPUNTAMENTO','ORA_APPUNTAMENTO'] ">
+                        <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
+                            {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
+                        </td>
+                        <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
+                            {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} -
+                            <span style="color: red;">
+                                <br> ORARIO DA DEFINIRE</span>
+                        </td>
+                        <td>
+                            {{x.NOME_ATTIVITA}}
+                        </td>
+                        <td>
+                            {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                        </td>
+
+                        <td>
+                            {{x.COGNOME_VENDITORE}} {{x.NOME_VENDITORE}}
+                        </td>
+
+                        <td>
+                            {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}}
+                        </td>
+
+                        <td ng-class="tdEsitoClass(x.ESITO)">
+                            {{x.ESITO}}
+                        </td>
+                        <td>
+                            <button class="btn btn-orange btn-modifyUtente" ng-click="viewDate(x.ID_APPUNTAMENTO)">
+                                <i class="fas fa-glasses"></i>
+                            </button>
+
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
 </div>
-
-
-
-

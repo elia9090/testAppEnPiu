@@ -13,18 +13,18 @@
             <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoDAL">Data appuntamento DAL</label>
                 <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="searchDate.openDAL()" class="form-control " readonly  uib-datepicker-popup="{{searchDate.format}}" ng-model="searchDate.dataAppuntamentoDAL" value=""  is-open="searchDate.popupDAL.opened" datepicker-options="searchDate.dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="searchDate.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-orange" ng-click="searchDate.openDAL()"><i class="far fa-calendar-alt"></i></button>
+                            <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
                         </span>
                     </p>
             </div>
             <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoAL">Data appuntamento AL</label>
                 <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="searchDate.openAL()" class="form-control " readonly  uib-datepicker-popup="{{searchDate.format}}" ng-model="searchDate.dataAppuntamentoAL" value=""  is-open="searchDate.popupAL.opened" datepicker-options="searchDate.dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="searchDate.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-orange" ng-click="searchDate.openAL()"><i class="far fa-calendar-alt"></i></button>
+                            <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
                         </span>
                     </p>
             </div>
@@ -33,6 +33,7 @@
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
             <label for="provinceSelect">Provincia</label>
             <select  name="provinceSelect" class="form-control" id="provinceSelect" ng-change="searchDate.showComuni()" ng-model="searchDate.provinciaSelected">
+                
                 <option ng-repeat="option in searchDate.province" value="{{option.nome}}">{{option.nome}}</option>
             </select>
         </div>
@@ -120,7 +121,9 @@
               <thead>
                 <tr>
                     <th scope="col">Data</th>
+                    <th scope="col">Azienda/cliente</th>
                     <th scope="col">Luogo</th>
+
                   <th scope="col">Agente</th>
                   <th scope="col">Operatore</th>
                   
@@ -137,6 +140,9 @@
                     <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
                         {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA DEFINIRE</span>
                     </td>
+                    <td>
+                        {{x.NOME_ATTIVITA}}
+                    </td> 
                     <td>
                         {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
                     </td> 
@@ -168,7 +174,7 @@
               </tbody>
             </table>
           </div>
-          <ul ng-if="searchDate.totalItems > searchDate.itemsPerPage" uib-pagination items-per-page="searchDate.itemsPerPage" total-items="searchDate.totalItems" ng-model="searchDate.currentPage" ng-change="searchDate.pageChanged()"></ul>
+          <ul ng-if="searchDate.totalItems > searchDate.itemsPerPage" uib-pagination items-per-page="searchDate.itemsPerPage" total-items="searchDate.totalItems" ng-model="searchDate.currentPage" ng-change="pageChanged()"></ul>
        
       </div>
 </div>

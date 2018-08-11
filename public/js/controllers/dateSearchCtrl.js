@@ -3,34 +3,34 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
     $scope.user = JSON.parse(sessionStorage.user);
 
     $scope.searchDate = {};
-
+  
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
      //DATEPICKER
   
-      $scope.searchDate.dateOptions = {
+      $scope.dateOptions = {
         startingDay: 1,
         showWeeks:false,
         placement:"auto bottom-right"
       };
-      $scope.searchDate.altInputFormats = ['M!/d!/yyyy'];
-    $scope.searchDate.format="dd/MM/yyyy";
+      $scope.altInputFormats = ['M!/d!/yyyy'];
+    $scope.format="dd/MM/yyyy";
 
-    $scope.searchDate.openDAL = function() {
-        $scope.searchDate.popupDAL.opened = true;
+    $scope.openDAL = function() {
+        $scope.popupDAL.opened = true;
     };
-    $scope.searchDate.popupDAL = {
+    $scope.popupDAL = {
         opened: false
     };
-    $scope.searchDate.openAL = function() {
-        $scope.searchDate.popupAL.opened = true;
+    $scope.openAL = function() {
+        $scope.popupAL.opened = true;
     };
-    $scope.searchDate.popupAL = {
+    $scope.popupAL = {
         opened: false
     };
 
     $http.get('../../utility/province_comuni.json').then((result) => {
-        $scope.searchDate.provinciaSelected = "";
+       // $scope.searchDate.provinciaSelected = "";
         $scope.searchDate.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
         $scope.searchDate.province.splice(0, 0, ({code:"",comuni:"",nome:""}));
@@ -38,6 +38,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
         alertify.alert("Impossibile reperire la lista dei comuni");
     });
     $scope.searchDate.comuniPerProvincia = "";
+
     $scope.searchDate.disabledComuni = true;
     
     $scope.searchDate.showComuni = function(){
@@ -45,6 +46,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
             return el.nome ===  $scope.searchDate.provinciaSelected;
           });
         $scope.searchDate.comuniPerProvincia = newArray[0].comuni;
+        $scope.searchDate.comuniPerProvincia.splice(0, 0, ({code:"",comuni:"",nome:""}));
         $scope.searchDate.disabledComuni = false;
     }
     
@@ -91,6 +93,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
         //LISTA OPERATORI
         $http.get('/listaOperatoriWS').then((result) => {
             $scope.searchDate.operatori =  result.data.operatori;
+            
            
         }).catch((err) => {
             if(err.status === 403){
@@ -104,7 +107,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
         //LISTA AGENTI SENZA RELAZIONI CON GLI OPERATORI E ELIMINATI LOGICAMENTE
         $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS').then((result) => {
             $scope.searchDate.agenti =  result.data.agenti;
-         
+           
             
         }).catch((err) => {
             if(err.status === 403){
@@ -167,13 +170,33 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
     $scope.searchDate.currentPage = 1;
     $scope.searchDate.itemsPerPage = 10;
 
-    $scope.searchDate.pageChanged = function() {
+    $scope.pageChanged = function() {
         $scope.searchDate.startQuery = ($scope.searchDate.currentPage - 1) * $scope.searchDate.itemsPerPage;
         $scope.searchDate.submitSearchDate("pageChanged");
     };
   
-   
-    
+    $scope.searchDate.previousSearch = {};
+
+    //CONTROLLO SE CI SONO PARAMETRI DI RICERCA
+
+    if(localStorage.getItem("searchParam")){
+        $scope.searchDate = angular.fromJson(localStorage.getItem("searchParam"));
+        if($scope.searchDate.venditoreSelected){
+            $scope.searchDate.venditoreSelected = parseInt($scope.searchDate.venditoreSelected);
+        }
+        if($scope.searchDate.operatoriSelected){
+            $scope.searchDate.operatoriSelected = parseInt($scope.searchDate.operatoriSelected);
+        }
+        if($scope.searchDate.dataAppuntamentoDAL){
+            $scope.searchDate.dataAppuntamentoDAL = new Date($scope.searchDate.dataAppuntamentoDAL);
+        }
+        if($scope.searchDate.dataAppuntamentoAL){
+            $scope.searchDate.dataAppuntamentoAL = new Date($scope.searchDate.dataAppuntamentoAL);
+        }     
+    }
+
+
+
     //PAGINATION END
 
     $scope.searchDate.submitSearchDate = function(pageChangedOrSubmit){
@@ -186,22 +209,19 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
             
         $scope.searchDate.startQuery = ($scope.searchDate.currentPage - 1) * $scope.searchDate.itemsPerPage;
 
-        if($scope.searchDate.dataAppuntamentoDAL !== undefined && $scope.searchDate.dataAppuntamentoDAL !== '' && $scope.searchDate.dataAppuntamentoAL !== null){
-            var dataAppuntamentoFROM = $scope.searchDate.dataAppuntamentoDAL;
-            dataAppuntamentoFROM = dataAppuntamentoFROM.getFullYear() +"-"+ (dataAppuntamentoFROM.getMonth()+1) + "-" +dataAppuntamentoFROM.getDate();    
-        }
-       
-        if($scope.searchDate.dataAppuntamentoAL !== undefined && $scope.searchDate.dataAppuntamentoAL !== '' && $scope.searchDate.dataAppuntamentoAL !== null){
-            var dataAppuntamentoTO = $scope.searchDate.dataAppuntamentoAL;
-            dataAppuntamentoTO = dataAppuntamentoTO.getFullYear() +"-"+ (dataAppuntamentoTO.getMonth()+1) + "-" +dataAppuntamentoTO.getDate();
-    
-        }
+        //SALVO I PARAMETRI DI RICERCA START
+        localStorage.removeItem("searchParam");
+
+        localStorage.setItem("searchParam",angular.toJson($scope.searchDate) );
+
+         //SALVO I PARAMETRI DI RICERCA END
+
         if($scope.user.TYPE !== "RESPONSABILE_AGENTI"){
         $http.post($scope.searchDate.URL,{
             'limit' :$scope.searchDate.itemsPerPage,
             'offset':$scope.searchDate.startQuery,
-            'dateFROM': dataAppuntamentoFROM,
-            'dateTO': dataAppuntamentoTO,
+            'dateFROM': $scope.searchDate.dataAppuntamentoDAL,
+            'dateTO': $scope.searchDate.dataAppuntamentoAL,
             'provincia': $scope.searchDate.provinciaSelected,
             'comune': $scope.searchDate.comuneSelected,
             'ragioneSociale':$scope.searchDate.ragioneSociale,
@@ -242,8 +262,8 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
         $http.post($scope.searchDate.URL,{
             'limit' :$scope.searchDate.itemsPerPage,
             'offset':$scope.searchDate.startQuery,
-            'dateFROM': dataAppuntamentoFROM,
-            'dateTO': dataAppuntamentoTO,
+            'dateFROM': $scope.searchDate.dataAppuntamentoDAL,
+            'dateTO': $scope.searchDate.dataAppuntamentoAL,
             'provincia': $scope.searchDate.provinciaSelected,
             'comune': $scope.searchDate.comuneSelected,
             'ragioneSociale':$scope.searchDate.ragioneSociale,
@@ -282,6 +302,11 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
         });
     }
     
+    }
+
+    //se c'è l'oggetto searchParam in local storage rifaccio la query e mi metto nella paginazione corretta
+    if(localStorage.getItem("searchParam")){
+        $scope.searchDate.submitSearchDate("pageChanged");
     }
    
 

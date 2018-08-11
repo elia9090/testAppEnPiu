@@ -83,8 +83,6 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,alertify) {
         if(new Date(dataAppuntamento).setUTCHours(0, 0, 0, 0) == new Date($scope.today).setUTCHours(0, 0, 0, 0)){
             return 'td-bold '
         }
-    
-        
     };
 
 

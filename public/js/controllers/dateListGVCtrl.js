@@ -62,21 +62,22 @@ app.controller('dateListGVCtrl', function ( $scope, $http, $location,alertify) {
         }
         
     };
-    $scope.today = new Date().getFullYear() +"-"+ (new Date().getMonth()+1) + "-" + new Date().getDate();
+    $scope.today = new Date().getFullYear() +"/"+ (new Date().getMonth()+1) + "/" + new Date().getDate();
 
     $scope.tdDataClass = function (dataAppuntamento, esito) {
-        dataAppuntamento = dataAppuntamento.split("T")[0];
-        if((new Date(dataAppuntamento).setUTCHours(0, 0, 0, 0) < new Date($scope.today).setUTCHours(0, 0, 0, 0)) && (esito == null || esito.trim() == '')){
-            return 'red-backgroundTR'
+        if((new Date(dataAppuntamento) < new Date($scope.today)) && (esito == null || esito.trim() == '')){
+             return 'red-backgroundTR'
         }
         
     };
 
     $scope.tdDataTodayClass = function (dataAppuntamento) {
+        
         dataAppuntamento = dataAppuntamento.split("T")[0];
         if(new Date(dataAppuntamento).setUTCHours(0, 0, 0, 0) == new Date($scope.today).setUTCHours(0, 0, 0, 0)){
             return 'td-bold '
         }
+    
         
     };
     

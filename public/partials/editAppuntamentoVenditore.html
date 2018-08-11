@@ -126,8 +126,8 @@
         </div>
     </div>
 <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
-        <label for="noteAgente">Note Agente</label>
-        <textarea  rows="4" cols="50" maxlength="400"  type="text"name="noteAgente" class="form-control w-100" id="noteAgente"  ng-model="editDateVenditore.noteAgente" ></textarea>         
+        <label for="noteAgente">Note Agente<span ng-show="editAppuntamentoVenditore.esito.value == 'KO'" style="color:#f47320;">*</span></label>
+        <textarea  rows="4" cols="50" maxlength="400" ng-required="editAppuntamentoVenditore.esito.value == 'KO'"  type="text"name="noteAgente" class="form-control w-100" id="noteAgente"  ng-model="editDateVenditore.noteAgente" ></textarea>         
     </div>
 
 <div class="col-md-12 col-xl-12 mt-3 ">
