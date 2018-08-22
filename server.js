@@ -1777,8 +1777,8 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 							
 
 							pool.getConnection(function (err, connection) {
-								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI '+
-								' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL  WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO', [idResponsabile],  function (err, rows, fields) {
+								connection.query('SELECT COUNT(DISTINCT(APPUNTAMENTI.ID_APPUNTAMENTO)) AS TotalCount from APPUNTAMENTI  '+
+								'  JOIN RESPONSABILI_AGENTI ON (APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL) OR (RESPONSABILI_AGENTI.ID_RESPONSABILE=APPUNTAMENTI.ID_VENDITORE AND APPUNTAMENTI.ID_VENDITORE=?  )  WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ '  ORDER BY DATA_APPUNTAMENTO', [idResponsabile, idResponsabile],  function (err, rows, fields) {
 									connection.release();
 									if(err){
 										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -1794,8 +1794,8 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 												' FROM APPUNTAMENTI'+
 												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-												' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL '+
-												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,limit, offset], function (err, rows, fields) {
+												' JOIN RESPONSABILI_AGENTI ON (APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL) OR (RESPONSABILI_AGENTI.ID_RESPONSABILE=APPUNTAMENTI.ID_VENDITORE AND APPUNTAMENTI.ID_VENDITORE=?  )'+
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ '  GROUP BY APPUNTAMENTI.ID_APPUNTAMENTO ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,idResponsabile,limit, offset], function (err, rows, fields) {
 												connection.release();
 												if(err){
 													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);

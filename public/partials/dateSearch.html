@@ -96,6 +96,7 @@
                     <label for="venditoreSelect">Agente</label>
                     <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.venditoreSelected">
                         <option value="" ></option>
+                        <option value="{{user.Id}}" >{{user.Id}} - {{user.SURNAME}} {{user.NAME}}</option>
                         <option ng-repeat="option1 in searchDate.venditoriForResponsabili" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
                     </select>
             </div>
