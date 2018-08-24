@@ -1723,62 +1723,66 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 							var dateFrom = req.body.dateFROM;
 							var QdateFrom = " ";
 							if(dateFrom !== '' && dateFrom !== undefined && dateFrom !=null){
-								QdateFrom = ' AND DATA_APPUNTAMENTO >= "'+dateFrom+'" ';
+								QdateFrom = ' AND APPUNTAMENTI.DATA_APPUNTAMENTO >= "'+dateFrom+'" ';
 							}
 
 							var dateTo = req.body.dateTO;
 							var QdateTo = " ";
 							if(dateTo !== '' && dateTo !== undefined && dateTo !=null){
-								QdateTo = ' AND DATA_APPUNTAMENTO <= "'+dateTo+'" ';
+								QdateTo = ' AND APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateTo+'" ';
 							}
 
 							var provincia = req.body.provincia;
 							var Qprovincia = " ";
 							if(provincia !== '' && provincia !== undefined && provincia !=null){
-								Qprovincia = ' AND PROVINCIA = "'+provincia+'" ';
+								Qprovincia = ' AND APPUNTAMENTI.PROVINCIA = "'+provincia+'" ';
 							}
 
 							var comune = req.body.comune;
 							var Qcomune = " ";
 							if(comune !== '' && comune !== undefined && comune !=null){
-								Qcomune = ' AND COMUNE = "'+comune+'" ';
+								Qcomune = ' AND APPUNTAMENTI.COMUNE = "'+comune+'" ';
 							}
 							var ragioneSociale = req.body.ragioneSociale;
 							var QragioneSociale = " ";
 							if(ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale !=null){
-								QragioneSociale = ' AND LOWER(NOME_ATTIVITA) LIKE LOWER("%'+ragioneSociale+'%") ';
+								QragioneSociale = ' AND LOWER(APPUNTAMENTI.NOME_ATTIVITA) LIKE LOWER("%'+ragioneSociale+'%") ';
 							}
 
 							var esito = req.body.esito;
 							var Qesito = " ";
 							if(esito !== '' && esito !== undefined && esito !=null){
-								Qesito = ' AND ESITO = "'+esito+'" ';
+								Qesito = ' AND APPUNTAMENTI.ESITO = "'+esito+'" ';
 							}
 
 							var codiceLuce = req.body.codiceLuce;
 							var QcodiceLuce = " ";
 							if(codiceLuce !== '' && codiceLuce !== undefined && codiceLuce !=null){
-								QcodiceLuce = ' AND CODICI_CONTRATTO_LUCE LIKE "%'+codiceLuce+'%" ';
+								QcodiceLuce = ' AND APPUNTAMENTI.CODICI_CONTRATTO_LUCE LIKE "%'+codiceLuce+'%" ';
 							}
 
 							var codiceGas = req.body.codiceGas;
 							var QcodiceGas = " ";
 							if(codiceGas !== '' && codiceGas !== undefined && codiceGas !=null){
-								QcodiceGas = ' AND CODICI_CONTRATTO_GAS LIKE "%'+codiceGas+'%" ';
+								QcodiceGas = ' AND APPUNTAMENTI.CODICI_CONTRATTO_GAS LIKE "%'+codiceGas+'%" ';
 							}
 
 							var agente = req.body.agente;
 							var Qagente = " ";
 							if(agente !== '' && agente !== undefined && agente!= null){
-								Qagente = ' AND ID_VENDITORE = "'+agente+'" ';
+								Qagente = ' AND APPUNTAMENTI.ID_VENDITORE = "'+agente+'" ';
 							}
 
 							var idResponsabile = req.body.idResponsabile;
-							
+						
 
 							pool.getConnection(function (err, connection) {
-								connection.query('SELECT COUNT(DISTINCT(APPUNTAMENTI.ID_APPUNTAMENTO)) AS TotalCount from APPUNTAMENTI  '+
-								'  JOIN RESPONSABILI_AGENTI ON (APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL) OR (RESPONSABILI_AGENTI.ID_RESPONSABILE=APPUNTAMENTI.ID_VENDITORE AND APPUNTAMENTI.ID_VENDITORE=?  )  WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ '  ORDER BY DATA_APPUNTAMENTO', [idResponsabile, idResponsabile],  function (err, rows, fields) {
+								connection.query('SELECT COUNT(*) AS TotalCount  FROM( SELECT  APPUNTAMENTI.ID_APPUNTAMENTO  '+
+								' FROM APPUNTAMENTI JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL  LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE ' +
+								' WHERE 1=1 ' +QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+
+								' UNION '+
+								' SELECT   APPUNTAMENTI.ID_APPUNTAMENTO FROM APPUNTAMENTI LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE '+
+								'  WHERE VENDITORE.ID_UTENTE=? ' +QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ') SOMMA_APPUNTAMENTI', [idResponsabile, idResponsabile],  function (err, rows, fields) {
 									connection.release();
 									if(err){
 										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -1789,13 +1793,21 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 
 										pool.getConnection(function (err, connection) {
 											connection.query(
-												'SELECT DISTINCT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
-												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
+												'SELECT  OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
+												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.* '+
 												' FROM APPUNTAMENTI'+
+												'  JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL '+
 												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-												' JOIN RESPONSABILI_AGENTI ON (APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL) OR (RESPONSABILI_AGENTI.ID_RESPONSABILE=APPUNTAMENTI.ID_VENDITORE AND APPUNTAMENTI.ID_VENDITORE=?  )'+
-												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,idResponsabile,limit, offset], function (err, rows, fields) {
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+
+												' UNION '+ 
+												' SELECT  OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE, '+
+												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.* '+
+												'  FROM APPUNTAMENTI '+
+												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE '+
+												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE '+
+												' WHERE VENDITORE.ID_UTENTE=? '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+
+												' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,idResponsabile,limit, offset], function (err, rows, fields) {
 												connection.release();
 												if(err){
 													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
