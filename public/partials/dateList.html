@@ -36,10 +36,12 @@
                     {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red; font-weight: normal;"><br> ORARIO DA DEFINIRE</span>
                 </td> 
                 <td>
-                    {{x.NOME_ATTIVITA}}
+                        {{x.NOME_ATTIVITA}} 
+                        
                 </td> 
                 <td>
-                    {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                        <a class="colorBlack" target="blank" href="https://www.google.com/maps/search/?api=1&query={{x.NOME_ATTIVITA}} {{x.INDIRIZZO}} {{x.COMUNE}} {{x.PROVINCIA}}"><i class="fas fa-map-marker-alt orangeText"></i> {{x.INDIRIZZO}} {{x.COMUNE}} {{x.PROVINCIA}}  </a>
+                    
                 </td>
                 
                 <td>

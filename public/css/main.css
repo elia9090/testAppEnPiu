@@ -167,6 +167,9 @@ button.uib-datepicker-current {
 .orangeText{
   color: #f47320;
 }
+.colorBlack{
+  color: #000;
+}
 select{
   width: 100% !important;
 }
