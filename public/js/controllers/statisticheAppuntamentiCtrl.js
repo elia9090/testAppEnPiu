@@ -74,11 +74,13 @@ app.controller('statisticheAppuntamentiCtrl', function ( $scope, $http, $locatio
     else if($scope.user.TYPE == "OPERATORE"){
 
         $scope.statsDate.URL = "/dateStats";
+        $scope.statsDate.operatoriSelected = $scope.user.Id; 
         
     }
     else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
         
         $scope.statsDate.URL = "/dateStats";
+        $scope.statsDate.venditoreSelected = $scope.user.Id; 
 
     }
 

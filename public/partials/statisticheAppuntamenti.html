@@ -28,10 +28,6 @@
                         </span>
                     </p>
             </div>
-           
-        
-        
-       
     </div>
   
 
@@ -60,11 +56,15 @@
     </form>
     
     <div ng-if= "statsDate.showRisultati" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
-            <div class="col-md-12">
-                <h2>Risultato statistiche appuntamenti</h2>
-                <hr>
-            </div>
+            
+            
+            <!--
+                ##########################################
+                                #ADMIN#
+                ##########################################
 
+            -->
+            <div ng-if="user.TYPE === 'ADMIN'">
             <div class="col-md-12 mt-5">
                 <h4>Statistiche appuntamenti venditori</h4>
                 <hr>
@@ -111,27 +111,27 @@
                         <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
                     </td>
                     <td>
-                        <span class="bold">{{X.OK}}</span> </br> {{X.OK_PERC}}%
+                        <span class="bold">{{X.OK}}</span> <br> {{X.OK_PERC}}%
                     </td>
                  
                     <td>
-                        <span class="bold">{{X.KO}}</span> </br> {{X.KO_PERC}}%
+                        <span class="bold">{{X.KO}}</span> <br> {{X.KO_PERC}}%
                     </td>
                   
                     <td>
-                        <span class="bold">{{X.VALUTA}}</span> </br> {{X.VALUTA_PERC}}%
+                        <span class="bold">{{X.VALUTA}}</span> <br> {{X.VALUTA_PERC}}%
                     </td>
                  
                     <td>
-                        <span class="bold">{{X.ASSENTE}}</span> </br> {{X.ASSENTE_PERC}}%
+                        <span class="bold">{{X.ASSENTE}}</span> <br> {{X.ASSENTE_PERC}}%
                     </td>
                  
                     <td>
-                        <span class="bold">{{X.NON_VISITATO}}</span> </br> {{X.NON_VISITATO_PERC}}%
+                        <span class="bold">{{X.NON_VISITATO}}</span> <br> {{X.NON_VISITATO_PERC}}%
                     </td>
                     
                     <td>
-                        <span class="bold">{{X.DA_ESITARE}}</span> </br> {{X.DA_ESITARE_PERC}}%
+                        <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
                     </td>
                    
 
@@ -169,7 +169,7 @@
             </tr>
           </thead>
           <tbody>
-              <tr  ng-repeat="X in statsDate.statsOperatori" >
+              <tr  ng-repeat="X in statsDate.statsOperatori">
                 <td>
                     {{X.COGNOME}}
                 </td>
@@ -186,33 +186,184 @@
                     <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
                 </td>
                 <td>
-                    <span class="bold">{{X.OK}}</span> </br> {{X.OK_PERC}}%
+                    <span class="bold">{{X.OK}}</span> <br> {{X.OK_PERC}}%
                 </td>
              
                 <td>
-                    <span class="bold">{{X.KO}}</span> </br> {{X.KO_PERC}}%
+                    <span class="bold">{{X.KO}}</span> <br> {{X.KO_PERC}}%
                 </td>
               
                 <td>
-                    <span class="bold">{{X.VALUTA}}</span> </br> {{X.VALUTA_PERC}}%
+                    <span class="bold">{{X.VALUTA}}</span> <br> {{X.VALUTA_PERC}}%
                 </td>
              
                 <td>
-                    <span class="bold">{{X.ASSENTE}}</span> </br> {{X.ASSENTE_PERC}}%
+                    <span class="bold">{{X.ASSENTE}}</span> <br> {{X.ASSENTE_PERC}}%
                 </td>
              
                 <td>
-                    <span class="bold">{{X.NON_VISITATO}}</span> </br> {{X.NON_VISITATO_PERC}}%
+                    <span class="bold">{{X.NON_VISITATO}}</span> <br> {{X.NON_VISITATO_PERC}}%
                 </td>
                 
                 <td>
-                    <span class="bold">{{X.DA_ESITARE}}</span> </br> {{X.DA_ESITARE_PERC}}%
+                    <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
                 </td>
                
 
               </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+    <div ng-if="user.TYPE === 'AGENTE || user.TYPE === 'RESPONSABILE_AGENTI '">
+        <div class="col-md-12 mt-5">
+            <h4>Statistiche appuntamenti personali</h4>
+            <hr>
+        </div>
+        
+        <div  class="table-responsive">
+        <table class="table  table-bordered">
+          <thead>
+            <tr>
+                <th scope="col">Cognome</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Appuntamenti</th>
+                <th scope="col">Contratti</th>
+                <th scope="col">% Contratti</th>
+                <th scope="col">OK</th>
+                
+                <th scope="col">KO</th>
+                
+                <th scope="col">VALUTA</th>
+                
+                <th scope="col">ASSENTE</th>
+                
+                <th scope="col">NON VISITATO</th>
+                
+                <th scope="col">DA ESITARE</th>
+                
+            </tr>
+          </thead>
+          <tbody>
+              <tr  ng-repeat="X in statsDate.statsVenditori" >
+                <td>
+                    {{X.COGNOME}}
+                </td>
+                <td>
+                    {{X.NOME}}
+                </td>
+                <td>
+                    <span class="bold">{{X.APPUNTAMENTI}}</span>
+                </td>
+                <td>
+                    <span class="bold">{{X.CONTRATTI}}</span>
+                </td>
+                <td>
+                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
+                </td>
+                <td>
+                    <span class="bold">{{X.OK}}</span> <br> {{X.OK_PERC}}%
+                </td>
+             
+                <td>
+                    <span class="bold">{{X.KO}}</span> <br> {{X.KO_PERC}}%
+                </td>
+              
+                <td>
+                    <span class="bold">{{X.VALUTA}}</span> <br> {{X.VALUTA_PERC}}%
+                </td>
+             
+                <td>
+                    <span class="bold">{{X.ASSENTE}}</span> <br> {{X.ASSENTE_PERC}}%
+                </td>
+             
+                <td>
+                    <span class="bold">{{X.NON_VISITATO}}</span> <br> {{X.NON_VISITATO_PERC}}%
+                </td>
+                
+                <td>
+                    <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
+                </td>
+               
+
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+
+      <div ng-if="user.TYPE === 'OPERATORE'">
+        <div class="col-md-12 mt-5">
+            <h4>Statistiche appuntamenti personali</h4>
+            <hr>
+        </div>
+        
+        <div  class="table-responsive">
+            <table class="table  table-bordered">
+              <thead>
+                <tr>
+                    <th scope="col">Cognome</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Appuntamenti</th>
+                    <th scope="col">% Chiusure</th>
+                    <th scope="col">OK</th>
+                    
+                    <th scope="col">KO</th>
+                    
+                    <th scope="col">VALUTA</th>
+                    
+                    <th scope="col">ASSENTE</th>
+                    
+                    <th scope="col">NON VISITATO</th>
+                    
+                    <th scope="col">DA ESITARE</th>
+                    
+                </tr>
+              </thead>
+              <tbody>
+                  <tr  ng-repeat="X in statsDate.statsOperatori">
+                    <td>
+                        {{X.COGNOME}}
+                    </td>
+                    <td>
+                        {{X.NOME}}
+                    </td>
+                    <td>
+                        <span class="bold">{{X.APPUNTAMENTI}}</span>
+                    </td>
+                   
+                    <td>
+                        <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
+                    </td>
+                    <td>
+                        <span class="bold">{{X.OK}}</span> <br> {{X.OK_PERC}}%
+                    </td>
+                 
+                    <td>
+                        <span class="bold">{{X.KO}}</span> <br> {{X.KO_PERC}}%
+                    </td>
+                  
+                    <td>
+                        <span class="bold">{{X.VALUTA}}</span> <br> {{X.VALUTA_PERC}}%
+                    </td>
+                 
+                    <td>
+                        <span class="bold">{{X.ASSENTE}}</span> <br> {{X.ASSENTE_PERC}}%
+                    </td>
+                 
+                    <td>
+                        <span class="bold">{{X.NON_VISITATO}}</span> <br> {{X.NON_VISITATO_PERC}}%
+                    </td>
+                    
+                    <td>
+                        <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
+                    </td>
+                   
+    
+                  </tr>
+              </tbody>
+            </table>
+          </div>
       </div>
           
        
