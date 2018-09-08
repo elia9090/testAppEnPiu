@@ -52,28 +52,6 @@
         </div>
     </div>
 
-    <div class="row col-12" ng-if="user.TYPE === 'OPERATORE'">
-        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-            <label for="venditoreSelect">Agente</label>
-            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="statsDate.venditoreSelected">
-                <option value="" ></option>
-                <option ng-repeat="option1 in statsDate.venditoriForOperatore" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">
-            <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-                    <label for="venditoreSelect">Agente</label>
-                    <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="statsDate.venditoreSelected">
-                        <option value="" ></option>
-                        <option ng-value="user.Id" value="{{user.Id}}" >{{user.Id}} - {{user.SURNAME}} {{user.NAME}}</option>
-                        <option ng-repeat="option1 in statsDate.venditoriForResponsabili" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
-                    </select>
-            </div>
-    </div>
-
-
     <div class="row col-12" >
         <div class="col-md-12 col-xl-12 mt-3 ">
             <button ng-disabled="statsDateForm.$invalid "  type="submit" class="btn btn-orange ">Ricerca appuntamenti</button> 
@@ -88,7 +66,7 @@
             </div>
             <div ng-if= "statsDate.totalItems == 0"><h3>Nessun appuntamento trovato, modificare i parametri di ricerca</h3></div>
             
-              <div ng-if= "statsDate.totalItems > 0" class="table-responsive">
+            <div ng-if= "statsDate.totalItems > 0" class="table-responsive">
             <table class="table  table-bordered">
               <thead>
                 <tr>
