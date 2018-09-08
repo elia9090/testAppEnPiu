@@ -375,6 +375,9 @@ textarea{
 .td-bold{
   font-weight: bold;
 }
+.bold{
+  font-weight: bold;
+}
 
 
 @media screen and (max-width: 450px) {

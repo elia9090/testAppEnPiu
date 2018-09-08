@@ -8,6 +8,8 @@ app.controller('statisticheAppuntamentiCtrl', function ( $scope, $http, $locatio
     
     $scope.statsDate.URL = "";
 
+    $scope.statsDate.showRisultati = false;
+
     //DATEPICKER
   
     $scope.dateOptions = {
@@ -88,10 +90,10 @@ app.controller('statisticheAppuntamentiCtrl', function ( $scope, $http, $locatio
         var dateFROM = "";
         var dateTO = "";
 
-        if(typeof $scope.statsDate.dataAppuntamentoDAL != undefined){
+        if(typeof $scope.statsDate.dataAppuntamentoDAL != 'undefined'){
             dateFROM = $scope.statsDate.dataAppuntamentoDAL.getFullYear() + "-" + ($scope.statsDate.dataAppuntamentoDAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoDAL.getDate();
         }
-        if(typeof $scope.statsDate.dataAppuntamentoAL != undefined){
+        if(typeof $scope.statsDate.dataAppuntamentoAL != 'undefined'){
             dateTO = $scope.statsDate.dataAppuntamentoAL.getFullYear() + "-" + ($scope.statsDate.dataAppuntamentoAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoAL.getDate();
         }
 
@@ -111,13 +113,19 @@ app.controller('statisticheAppuntamentiCtrl', function ( $scope, $http, $locatio
             $scope.statsDate.statsOperatori = $scope.statsDate.statsDateArray.filter(function (utente) {
                 return (utente.TIPO == "OPERATORE");
             });
-
+            $scope.statsDate.showRisultati = true;
             $.unblockUI();
 
             }).catch((err) => {
                 if(err.status === 403){
                     alertify.alert("Utente non autorizzato");
+                    $.unblockUI();
                     $location.path('/logout');
+                    return;
+                }
+                if(err.status === 404){
+                    $.unblockUI();
+                    alertify.alert("Non ci sono statistiche per i parametri selezionati");
                     return;
                 }
                 $.unblockUI();

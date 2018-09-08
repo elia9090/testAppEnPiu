@@ -1902,7 +1902,7 @@ app.post('/dateStats', ensureToken, function (req, res) {
 					left join UTENTI ON  APPUNTAMENTI.ID_VENDITORE=UTENTI.ID_UTENTE
 					
 					WHERE 1=1 ${QdateFrom} ${QdateTo} ${Qagente} ${Qoperatore}
-					group by APPUNTAMENTI.ID_VENDITORE 
+					group by UTENTI.ID_UTENTE 
 					
 					UNION
 					
@@ -1933,7 +1933,7 @@ app.post('/dateStats', ensureToken, function (req, res) {
 
 					WHERE 1=1 ${QdateFrom} ${QdateTo} ${Qagente} ${Qoperatore}
 					
-					group by APPUNTAMENTI.ID_OPERATORE`, function (err, rows, fields) {
+					group by UTENTI.ID_UTENTE`, function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL STATS ADMIN: --> ' + err);
@@ -1945,7 +1945,7 @@ app.post('/dateStats', ensureToken, function (req, res) {
 					} else if (rows.length === 0) {
 						//Error code 2 = no rows in db.
 						data["error"] = 2;
-						data["stats"] = 'Nessun utente trovato';
+						data["stats"] = 'Nessuna statistica trovata';
 						res.status(404).json(data);
 					} else {
 						data["stats"] = 'Errore in fase di reperimento utente';
