@@ -1,0 +1,152 @@
+<div class="container" >
+     
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="statsDateForm" ng-submit="statsDate.submitstatsDate()">
+        
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Statistiche appuntamenti</h2>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row col-12" >
+            <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
+                <label for="dataAppuntamentoDAL">Data riferimento DAL</label>
+                <p class="input-group datepicker">
+                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="statsDate.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
+                        </span>
+                    </p>
+            </div>
+            <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
+                <label for="dataAppuntamentoAL">Data riferimento AL</label>
+                <p class="input-group datepicker">
+                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="statsDate.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
+                        </span>
+                    </p>
+            </div>
+           
+        
+        
+       
+    </div>
+  
+
+    <div class="row col-12" ng-if="user.TYPE === 'ADMIN'">
+        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+            <label for="operatoriSelect">Operatore</label>
+            <select  name="operatoriSelect" class="form-control"  id="operatoriSelect"   ng-model="statsDate.operatoriSelected">
+                <option value="" ></option>
+                <option ng-repeat="option in statsDate.operatori" ng-value="option.ID_UTENTE"  value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}} {{option.COGNOME}} {{option.NOME}}</option>
+            </select> 
+        </div>   
+        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+            <label for="venditoreSelect">Agente</label>
+            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="statsDate.venditoreSelected">
+                <option value="" ></option>
+                <option ng-repeat="option1 in statsDate.agenti" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row col-12" ng-if="user.TYPE === 'OPERATORE'">
+        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+            <label for="venditoreSelect">Agente</label>
+            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="statsDate.venditoreSelected">
+                <option value="" ></option>
+                <option ng-repeat="option1 in statsDate.venditoriForOperatore" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">
+            <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                    <label for="venditoreSelect">Agente</label>
+                    <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="statsDate.venditoreSelected">
+                        <option value="" ></option>
+                        <option ng-value="user.Id" value="{{user.Id}}" >{{user.Id}} - {{user.SURNAME}} {{user.NAME}}</option>
+                        <option ng-repeat="option1 in statsDate.venditoriForResponsabili" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
+                    </select>
+            </div>
+    </div>
+
+
+    <div class="row col-12" >
+        <div class="col-md-12 col-xl-12 mt-3 ">
+            <button ng-disabled="statsDateForm.$invalid "  type="submit" class="btn btn-orange ">Ricerca appuntamenti</button> 
+        </div>
+    </div>
+    </form>
+    
+    <div ng-if= "statsDate.showRisultati" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+            <div class="col-md-12">
+                <h2>Risultato statistiche appuntamenti</h2>
+                <hr>
+            </div>
+            <div ng-if= "statsDate.totalItems == 0"><h3>Nessun appuntamento trovato, modificare i parametri di ricerca</h3></div>
+            
+              <div ng-if= "statsDate.totalItems > 0" class="table-responsive">
+            <table class="table  table-bordered">
+              <thead>
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Azienda/cliente</th>
+                    <th scope="col">Luogo</th>
+
+                  <th scope="col">Agente</th>
+                  <th scope="col">Operatore</th>
+                  
+                  <th scope="col">Esito</th>
+                  <th scope="col">Visualizza</th>
+                  <th ng-if="user.TYPE === 'ADMIN' " scope="col">Modifica</th>
+                </tr>
+              </thead>
+              <tbody>
+                  <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in statsDate.dateList   " >
+                    <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
+                        {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
+                    </td>
+                    <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
+                        {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA DEFINIRE</span>
+                    </td>
+                    <td>
+                        {{x.NOME_ATTIVITA}}
+                    </td> 
+                    <td>
+                        {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                    </td> 
+                    
+                    <td>
+                         {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
+                      </td> 
+                      
+                    <td>
+                        {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
+                    </td>
+                    
+                    <td ng-class="tdEsitoClass(x.ESITO)">
+                        {{x.ESITO}}
+                    </td>
+                    <td>
+                        <button  class="btn btn-orange btn-modifyUtente" ng-click="statsDate.viewDate(x.ID_APPUNTAMENTO)">
+                            <i class="fas fa-glasses"></i>
+                        </button>
+                      
+                    </td>
+                    <td ng-if="user.TYPE === 'ADMIN' ">
+                        <button ng-if="user.TYPE === 'ADMIN' "  class="btn btn-orange btn-modifyUtente" ng-click="statsDate.modifyDate(x.ID_APPUNTAMENTO)">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                      
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+          <ul ng-if="statsDate.totalItems > statsDate.itemsPerPage" uib-pagination items-per-page="statsDate.itemsPerPage" total-items="statsDate.totalItems" ng-model="statsDate.currentPage" ng-change="pageChanged()"></ul>
+       
+      </div>
+</div>
