@@ -383,6 +383,9 @@ textarea{
   text-align: center;
 }
 
+
+
+
 @media screen and (max-width: 450px) {
  .modificaUtenteForm button.btn-white, .editAppuntamentoAdmin button.btn-white{
    max-width: 75px;
@@ -397,3 +400,4 @@ textarea{
    margin-right: 0px;
  }
 }
+

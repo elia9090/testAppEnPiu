@@ -115,6 +115,7 @@ app.controller('statisticheAppuntamentiCtrl', function ( $scope, $http, $locatio
             $scope.statsDate.statsOperatori = $scope.statsDate.statsDateArray.filter(function (utente) {
                 return (utente.TIPO == "OPERATORE");
             });
+            
             $scope.statsDate.showRisultati = true;
             $.unblockUI();
 
