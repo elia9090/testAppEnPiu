@@ -92,10 +92,10 @@ app.controller('statisticheAppuntamentiCtrl', function ( $scope, $http, $locatio
         var dateFROM = "";
         var dateTO = "";
 
-        if(typeof $scope.statsDate.dataAppuntamentoDAL != 'undefined'){
+        if(typeof $scope.statsDate.dataAppuntamentoDAL != 'undefined' && $scope.statsDate.dataAppuntamentoDAL){
             dateFROM = $scope.statsDate.dataAppuntamentoDAL.getFullYear() + "-" + ($scope.statsDate.dataAppuntamentoDAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoDAL.getDate();
         }
-        if(typeof $scope.statsDate.dataAppuntamentoAL != 'undefined'){
+        if(typeof $scope.statsDate.dataAppuntamentoAL != 'undefined' && $scope.statsDate.dataAppuntamentoAL){
             dateTO = $scope.statsDate.dataAppuntamentoAL.getFullYear() + "-" + ($scope.statsDate.dataAppuntamentoAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoAL.getDate();
         }
 

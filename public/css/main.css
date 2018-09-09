@@ -379,6 +379,9 @@ textarea{
   font-weight: bold;
 }
 
+.statsContainer td{
+  text-align: center;
+}
 
 @media screen and (max-width: 450px) {
  .modificaUtenteForm button.btn-white, .editAppuntamentoAdmin button.btn-white{

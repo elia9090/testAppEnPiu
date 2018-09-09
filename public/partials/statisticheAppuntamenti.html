@@ -1,4 +1,4 @@
-<div class="container" >
+<div class="container statsContainer" >
      
     <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="statsDateForm" ng-submit="statsDate.submitstatsDate()">
         
@@ -215,7 +215,7 @@
         </table>
       </div>
     </div>
-    <div ng-if="user.TYPE === 'AGENTE || user.TYPE === 'RESPONSABILE_AGENTI '">
+    <div ng-if="user.TYPE === 'AGENTE' || user.TYPE === 'RESPONSABILE_AGENTI '">
         <div class="col-md-12 mt-5">
             <h4>Statistiche appuntamenti personali</h4>
             <hr>
@@ -359,7 +359,6 @@
                         <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
                     </td>
                    
-    
                   </tr>
               </tbody>
             </table>
