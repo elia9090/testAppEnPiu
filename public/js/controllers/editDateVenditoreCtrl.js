@@ -171,6 +171,14 @@ $scope.editDateVenditore.removeNewNumContrattoGas = function(){
             $scope.editDateVenditore.inputsGas.push($scope.editDateVenditore.inputsGasAdded[i]);
         }
 
+        //SE L'ESITO PRECENDENTE NON ERA OK E ORA E' OK ALLORA SETTO LA DATA DI CHIUSURA
+
+        var setterClousureDate = "";
+        if($scope.editDateVenditore.Appuntamento && $scope.editDateVenditore.Appuntamento.ESITO != null
+             && $scope.editDateVenditore.Appuntamento.ESITO != 'OK' && $scope.editDateVenditore.esito.value != null
+              && $scope.editDateVenditore.esito.value == 'OK'){
+            setterClousureDate = "OK";
+        }
 
         $http.post('/editDateVenditore', {
             'idAppuntamento': $scope.editDateVenditore.Appuntamento.ID_APPUNTAMENTO,
@@ -179,7 +187,8 @@ $scope.editDateVenditore.removeNewNumContrattoGas = function(){
             'numGas' : $scope.editDateVenditore.numGas,
             'codici_contratto_gas': $scope.editDateVenditore.inputsGas.join(";"),
             'codici_contratto_luce': $scope.editDateVenditore.inputsLuce.join(";"),
-            'noteAgente' : $scope.editDateVenditore.noteAgente
+            'noteAgente' : $scope.editDateVenditore.noteAgente,
+            'data_ok' : setterClousureDate
      
          }).then((result) => {
              alertify.alert('Appuntamento modificato correttamente');

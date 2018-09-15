@@ -996,6 +996,15 @@ app.post('/editDateAdmin', ensureToken,requireAdmin, function (req, res) {
 		  //VERIFICARE SE SONO NULL O VUOTI COME LI GESTISCE VISTO CHE IL CAMPO è INT
 		 var codici_contratto_luce = req.body.codici_contratto_luce ;
 		 var codici_contratto_gas = req.body.codici_contratto_gas;
+		 var date_ok = null;
+		 // SE LO STATO PRECEDENTE NON ERA OK E LO STATO ATTUALE E' OK ALLORA SETTO LA DATA DI CHIUSURA
+		 if(req.body.data_ok == 'OK'){
+		  var today = new Date();
+		  var meseCorrente = today.getMonth()+1;
+		  var giornoCorrenteMenoUno = today.getDate();
+		  var annoCorrente = today.getFullYear();
+		  var date_ok = annoCorrente+"-"+meseCorrente+"-"+giornoCorrenteMenoUno;
+		 }
 		
 
 	pool.getConnection(function (err, connection) {
@@ -1009,8 +1018,8 @@ app.post('/editDateAdmin', ensureToken,requireAdmin, function (req, res) {
 				connection.query('UPDATE APPUNTAMENTI SET DATA_APPUNTAMENTO = ?, ORA_APPUNTAMENTO = ?, '
 				+' PROVINCIA = ?, COMUNE = ?, INDIRIZZO = ?, ID_OPERATORE = ?, ID_VENDITORE = ?, NOME_ATTIVITA = ?, NOTE_OPERATORE = ?, '
 				+' ATTUALE_GESTORE = ?, RECAPITI = ?, ESITO = ?, NOTE_AGENTE = ?, '
-				+' NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ? '
-				+'  WHERE ID_APPUNTAMENTO = ? ', [dataAppuntamento,oraAppuntamento,provincia,comune,indirizzo,idOperatore, idAgente,nomeAttivita,noteOperatore,gestoreAttuale,recapiti, esitoAppuntamento, noteAgente, numLuce, numGas, codici_contratto_luce, codici_contratto_gas  ,idAppuntamento], function (err, rows, fields) {
+				+' NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, DATA_OK = ? '
+				+'  WHERE ID_APPUNTAMENTO = ? ', [dataAppuntamento,oraAppuntamento,provincia,comune,indirizzo,idOperatore, idAgente,nomeAttivita,noteOperatore,gestoreAttuale,recapiti, esitoAppuntamento, noteAgente, numLuce, numGas, codici_contratto_luce, codici_contratto_gas,date_ok  ,idAppuntamento], function (err, rows, fields) {
 					if(err){
 						connection.rollback(function() {
 						connection.release();
@@ -1066,6 +1075,15 @@ app.post('/editDateVenditore', ensureToken, function (req, res) {
 	   var codici_contratto_luce = req.body.codici_contratto_luce ;
 	   var codici_contratto_gas = req.body.codici_contratto_gas;
 	   var noteAgente = req.body.noteAgente;
+	   var date_ok = null;
+	   // SE LO STATO PRECEDENTE NON ERA OK E LO STATO ATTUALE E' OK ALLORA SETTO LA DATA DI CHIUSURA
+	   if(req.body.data_ok == 'OK'){
+		var today = new Date();
+		var meseCorrente = today.getMonth()+1;
+		var giornoCorrenteMenoUno = today.getDate();
+		var annoCorrente = today.getFullYear();
+		var date_ok = annoCorrente+"-"+meseCorrente+"-"+giornoCorrenteMenoUno;
+	   }
 
 	pool.getConnection(function (err, connection) {
 		connection.beginTransaction(function(errTrans) {
@@ -1075,7 +1093,7 @@ app.post('/editDateVenditore', ensureToken, function (req, res) {
 				});
 				res.sendStatus(500);
 			}else{
-				connection.query('UPDATE APPUNTAMENTI SET ESITO = ?, NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, NOTE_AGENTE = ? WHERE ID_APPUNTAMENTO = ?', [esitoAppuntamento, numLuce, numGas, codici_contratto_luce, codici_contratto_gas, noteAgente, idAppuntamento], function (err, rows, fields) {
+				connection.query('UPDATE APPUNTAMENTI SET ESITO = ?, NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, NOTE_AGENTE = ?, DATA_OK = ? WHERE ID_APPUNTAMENTO = ?', [esitoAppuntamento, numLuce, numGas, codici_contratto_luce, codici_contratto_gas, noteAgente,date_ok, idAppuntamento], function (err, rows, fields) {
 					if(err){
 						connection.rollback(function() {
 						connection.release();
@@ -1851,13 +1869,23 @@ app.post('/dateStats', ensureToken, function (req, res) {
 			var dateFrom = req.body.dateFROM;
 			var QdateFrom = " ";
 			if(dateFrom !== '' && dateFrom !== undefined && dateFrom !=null){
-				QdateFrom = ' AND APPUNTAMENTI.DATA_APPUNTAMENTO >= "'+dateFrom+'" ';
+				QdateFrom = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO >= "'+dateFrom+'" OR APPUNTAMENTI.DATA_OK >= "'+dateFrom+'" )';
 			}
 
 			var dateTo = req.body.dateTO;
 			var QdateTo = " ";
 			if(dateTo !== '' && dateTo !== undefined && dateTo !=null){
-				QdateTo = ' AND APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateTo+'" ';
+				QdateTo = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateTo+'" OR APPUNTAMENTI.DATA_OK <= "'+dateTo+'" )';
+			}else{
+				// SE NO NON HO SETTATO LA DATE_TO LA SETTO AD UN GIORNO PRIMA RISPETTO IL GIORNO CORRENTE
+				var today = new Date();
+				var meseCorrente = today.getMonth()+1;
+				var giornoCorrenteMenoUno = today.getDate()-1;
+				var annoCorrente = today.getFullYear();
+				var dateToTodayMenoUno = annoCorrente+"-"+meseCorrente+"-"+giornoCorrenteMenoUno;
+
+				QdateTo = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateToTodayMenoUno+'" OR APPUNTAMENTI.DATA_OK <= "'+dateToTodayMenoUno+'" )';
+
 			}
 
 			

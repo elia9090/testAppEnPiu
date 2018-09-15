@@ -332,6 +332,13 @@ $scope.editDateAdmin.removeNewNumContrattoGas = function(){
                 $scope.editDateAdmin.inputsGas.push($scope.editDateAdmin.inputsGasAdded[i]);
             }
 
+            var setterClousureDate = "";
+            if($scope.editDateAdmin.Appuntamento && $scope.editDateAdmin.Appuntamento.ESITO != null
+                 && $scope.editDateAdmin.Appuntamento.ESITO != 'OK' && $scope.editDateAdmin.esito.value != null
+                  && $scope.editDateAdmin.esito.value == 'OK'){
+                setterClousureDate = "OK";
+            }
+
             $http.post('/editDateAdmin', {
                 'idAppuntamento' :  $scope.editDateAdmin.Appuntamento.ID_APPUNTAMENTO,
                 'dataAppuntamento':dataAppuntamento ,
@@ -350,7 +357,8 @@ $scope.editDateAdmin.removeNewNumContrattoGas = function(){
                 'numGas' : $scope.editDateAdmin.numGas,
                 'codici_contratto_gas': $scope.editDateAdmin.inputsGas.join(";"),
                 'codici_contratto_luce': $scope.editDateAdmin.inputsLuce.join(";"),
-                'noteAgente' : $scope.editDateAdmin.noteAgente
+                'noteAgente' : $scope.editDateAdmin.noteAgente,
+                'data_ok' : setterClousureDate
     
              }).then((result) => {
                  alertify.alert('Appuntamento modificato correttamente');
