@@ -2029,6 +2029,108 @@ app.get('/listaUtentiForOperatore/:id', ensureToken, function (req, res) {
 	});
 });
 
+//STATISTICHE APPUNTAMENTI GRUPPO VENDITA
+app.post('/dateStatsGruppoVendita', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+		} else {
+			var data = {};	
+			var idResponsabile = req.body.idResponsabile;
+			var dateFrom = req.body.dateFROM;
+			var QdateFrom = " ";
+			if(dateFrom !== '' && dateFrom !== undefined && dateFrom !=null){
+				QdateFrom = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO >= "'+dateFrom+'" OR APPUNTAMENTI.DATA_OK >= "'+dateFrom+'" )';
+			}
+
+			var dateTo = req.body.dateTO;
+			var QdateTo = " ";
+			if(dateTo !== '' && dateTo !== undefined && dateTo !=null){
+				QdateTo = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateTo+'" OR APPUNTAMENTI.DATA_OK <= "'+dateTo+'" )';
+			}else{
+				// SE NO NON HO SETTATO LA DATE_TO LA SETTO AD UN GIORNO PRIMA RISPETTO IL GIORNO CORRENTE
+				var today = new Date();
+				var meseCorrente = today.getMonth()+1;
+				var giornoCorrenteMenoUno = today.getDate()-1;
+				var annoCorrente = today.getFullYear();
+				var dateToTodayMenoUno = annoCorrente+"-"+meseCorrente+"-"+giornoCorrenteMenoUno;
+
+				QdateTo = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateToTodayMenoUno+'" OR APPUNTAMENTI.DATA_OK <= "'+dateToTodayMenoUno+'" )';
+
+			}
+
+			
+
+			var agente = req.body.agente;
+			var Qagente = " ";
+			if(agente !== '' && agente !== undefined && agente!= null){
+				Qagente = ' AND APPUNTAMENTI.ID_VENDITORE = "'+agente+'" ';
+			}
+
+
+			pool.getConnection(function (err, connection) {
+				connection.query(  
+					`select
+					UTENTI.ID_UTENTE,
+					UTENTI.COGNOME,
+					UTENTI.NOME,
+					UTENTI.TIPO,
+					COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) AS APPUNTAMENTI,
+					SUM(IFNULL(APPUNTAMENTI.NUM_LUCE,0))+SUM(IFNULL(APPUNTAMENTI.NUM_GAS,0))  AS CONTRATTI,
+					ROUND((SUM(IFNULL(APPUNTAMENTI.NUM_LUCE,0))+SUM(IFNULL(APPUNTAMENTI.NUM_GAS,0)))/COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0) AS PERC_CONTRATTI_O_APPUNTAMENTI,
+					COUNT(IF(APPUNTAMENTI.ESITO='OK',1, null)) AS OK,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='OK',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS OK_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='KO',1, null)) AS KO,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='KO',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS KO_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='VALUTA',1, null)) AS VALUTA,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='VALUTA',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS VALUTA_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='ASSENTE',1, null)) AS ASSENTE,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='ASSENTE',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS ASSENTE_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='NON VISITATO',1, null)) AS NON_VISITATO,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='NON VISITATO',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS NON_VISITATO_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO IS NULL,1, null)) AS DA_ESITARE,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO IS NULL,1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS DA_ESITARE_PERC 
+					
+					from APPUNTAMENTI 
+
+					inner join RESPONSABILI_AGENTI ON RESPONSABILI_AGENTI.ID_RESPONSABILE = ? AND RESPONSABILI_AGENTI.ID_AGENTE = APPUNTAMENTI.ID_VENDITORE
+
+					left join UTENTI ON  APPUNTAMENTI.ID_VENDITORE=UTENTI.ID_UTENTE
+
+					WHERE 1=1  ${QdateFrom} ${QdateTo} ${Qagente} 
+					
+					group by APPUNTAMENTI.ID_VENDITORE `,[idResponsabile], function (err, rows, fields) {
+					connection.release();
+					if(err){
+						log.error('ERRORE SQL STATS ADMIN: --> ' + err);
+						res.sendStatus(500);
+					}else{	
+						if (rows.length !== 0 && !err) {
+						data["stats"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["stats"] = 'Nessuna statistica trovata';
+						res.status(404).json(data);
+					} else {
+						data["stats"] = 'Errore in fase di reperimento utente';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento utenti: ' + err);
+						log.error('Errore in fase di reperimento utenti: ' + err);
+					}}
+				
+				});
+			
+			});
+				
+		
+
+						
+		}
+	});
+});
+
 app.get('/listaAgentiForResponsabile/:id', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {

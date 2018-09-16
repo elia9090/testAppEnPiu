@@ -79,6 +79,10 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
             templateUrl: '../partials/statisticheAppuntamenti.html',
             controller:'statisticheAppuntamentiCtrl'
         })
+        .when('/statisticheAppuntamentiGruppoVendita', {
+            templateUrl: '../partials/statisticheAppuntamentiGruppoVendita.html',
+            controller:'statisticheAppuntamentiGruppoVenditaCtrl'
+        })
         .when('/editDateVenditore/:id', {
             templateUrl: '../partials/editAppuntamentoVenditore.html',
             controller:'editDateVenditoreCtrl'
