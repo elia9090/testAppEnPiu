@@ -24,6 +24,8 @@ app.controller('editUserCtrl', function ( $scope, $http, $location,$routeParams,
         $scope.previousOperatoreAssociato = result.data.utente.ID_OPERATORE;
         $scope.editUser.responsabileAssociato = result.data.utente.ID_RESPONSABILE;
         $scope.previousResponsabileAssociato = result.data.utente.ID_RESPONSABILE;
+        $scope.editUser.supervisoreAssociato = result.data.utente.ID_SUPERVISORE;
+        $scope.previousSupervisoreAssociato = result.data.utente.ID_SUPERVISORE;
 
         if($scope.editUser.userType != 'ADMIN'){
             $http.get('/listaResponsabiliAgentiWS').then((result) => {
@@ -69,6 +71,7 @@ $scope.delete = function () {
         if ($scope.editUser.userType=='OPERATORE'){
             $scope.editUser.operatoreAssociato=null;
             $scope.editUser.responsabileAssociato=null;
+            $scope.editUser.supervisoreAssociato=null;
         }else if ($scope.editUser.userType=='RESPONSABILE_AGENTI'){
             $scope.editUser.responsabileAssociato=null;
         }
@@ -102,7 +105,16 @@ $scope.delete = function () {
             
         }));
 
-    }
+    };
+    if($scope.editUser.supervisoreAssociato !== $scope.previousSupervisoreAssociato){
+        promises.push( $http.post('/updateSupervisore', {
+            'userId' : $scope.userId,
+            'oldSupervisore' : $scope.previousSupervisoreAssociato,
+            'newSupervisore': $scope.editUser.supervisoreAssociato,
+            
+        }));
+
+    };
 
 
     $q.all(promises).then((result) => {

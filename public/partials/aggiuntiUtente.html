@@ -60,6 +60,13 @@
         <option ng-repeat="option in responsabili" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
     </select>
     </div>
+    <div class="form-group" ng-show="userType === 'RESPONSABILE_AGENTI'">
+      <label for="exampleSelect2">Supervisionato da</label>
+      <select class="form-control" name="supervisoreAssociatoSelect" id="supervisoreAssociatoSelect" ng-model="supervisoreAssociato">
+        <option ng-repeat="option in responsabili" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
+        <option value=""></option>
+    </select>
+    </div>
 
    
     

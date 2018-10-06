@@ -57,11 +57,15 @@
     <div class="form-group" ng-show="editUser.userType === 'AGENTE'">
       <label for="exampleSelect2">Responsabile associato</label>
       <select class="form-control" name="responsabileAssociatoSelect" id="responsabileAssociatoSelect" ng-selected="editUser.responsabileAssociato" ng-model="editUser.responsabileAssociato" ng-options='operator.ID_UTENTE as (operator.NOME+" "+operator.COGNOME ) for operator in editUser.responsabili'>
-   
-     
-    </select>
+      </select>
     </div>
 
+    <div class="form-group" ng-show="editUser.userType === 'RESPONSABILE_AGENTI'">
+      <label for="exampleSelect2">Supervisionato da</label>
+      <select class="form-control" name="supervisoreAssociatoSelect" id="supervisoreAssociatoSelect" ng-selected="editUser.supervisoreAssociato" ng-model="editUser.supervisoreAssociato" ng-options='operator.ID_UTENTE as (operator.NOME+" "+operator.COGNOME ) for operator in editUser.responsabili'>
+      <option value=""></option>
+      </select>
+    </div>
    
     
     <button type="submit" class="btn btn-orange btn-addUtente">Salva</button>

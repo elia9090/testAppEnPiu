@@ -165,6 +165,7 @@ app.post('/addUser', ensureToken,requireAdmin, function (req, res) {
 	var userType = req.body.userType;
 	var operatoreAssociato = req.body.operatoreAssociato;
 	var responsabileAssociato = req.body.responsabileAssociato;
+	var supervisoreAssociato = req.body.supervisoreAssociato;
 
 	pool.getConnection(function (err, connection) {
 		connection.beginTransaction(function(errTrans) {
@@ -224,23 +225,42 @@ app.post('/addUser', ensureToken,requireAdmin, function (req, res) {
 									}
 										
 								}else{
-								connection.commit(function(err) {
-									if (err) {
-										connection.rollback(function() {
-										connection.release();
-										//Failure
+									if(supervisoreAssociato){
+										connection.query('INSERT INTO SUPERVISORE_RESPONSABILI (ID_ASSOCIAZIONE, ID_SUPERVISORE, ID_RESPONSABILE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [supervisoreAssociato,insertedId], function (err, rows, fields) {
+											if(err){
+												connection.rollback(function() {
+												connection.release();
+												//Failure
+												});
+												log.error('ERRORE SQL INSERT UTENTE: ' + err);
+												//errore username duplicato
+												if(err.errno == 1062){
+													res.sendStatus(400);
+												}else{
+													res.sendStatus(500);
+												}
+													
+											}
 										});
-										res.sendStatus(500);
-									} else {
-										connection.release();
-										data["RESULT"] = "OK";
-										res.json(data);
-										//Success
 									}
-								});
+							
 							}
+							connection.commit(function(err) {
+								if (err) {
+									connection.rollback(function() {
+									connection.release();
+									//Failure
+									});
+									res.sendStatus(500);
+								} else {
+									connection.release();
+									data["RESULT"] = "OK";
+									res.json(data);
+									//Success
+								}
 							});
-						}
+						});
+					}
 						else if(userType === 'AGENTE'){
 							if(operatoreAssociato){
 							var insertedId = rows.insertId;
@@ -326,7 +346,10 @@ app.post('/updateUser', ensureToken,requireAdmin, function (req, res) {
 			var data = {};
 			var userId = req.body.userId;
 			var username = req.body.username;
-			var password = sha1(req.body.password);
+			var password = "";
+			if(req.body.password !== ''){
+				password = sha1(req.body.password);
+			}
 			var nome = req.body.nome;
 			var cognome = req.body.cognome;
 			var userType = req.body.userType;
@@ -560,6 +583,105 @@ app.post('/updateResponsabile', ensureToken,requireAdmin, function (req, res) {
 										//Failure
 									});
 									log.error('ERRORE SQL INSERT INTO RESPONSABILI_AGENTI : ' + err);
+									//errore username duplicato
+									if (err.errno == 1062) {
+										res.sendStatus(400);
+									} else {
+										res.sendStatus(500);
+
+									}
+
+								} else {
+
+									connection.commit(function (err) {
+										if (err) {
+											connection.rollback(function () {
+												connection.release();
+												//Failure
+											});
+											res.sendStatus(500);
+										} else {
+
+										}
+									})
+								}
+
+							})
+						}
+
+					}
+					connection.release();
+					data["RESULT"] = "OK";
+					res.json(data);
+					//Success
+				})
+			})
+		}
+	})
+});
+//UPDATE SUPERVISORE
+app.post('/updateSupervisore', ensureToken,requireAdmin, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function (err, data) {
+		if (err) {
+			res.sendStatus(403);
+		} else {
+			console.log("post :: /updateSupervisore");
+			log.info('post Request :: /updateSupervisore');
+
+			var data = {};
+			var userId = req.body.userId;
+			var oldSupervisore = req.body.oldSupervisore;
+			var newSupervisore = req.body.newSupervisore;
+
+			pool.getConnection(function (err, connection) {
+				connection.beginTransaction(function (errTrans) {
+					if (errTrans) {                  //Transaction Error (Rollback and release connection)
+						connection.rollback(function () {
+							connection.release();
+						});
+						res.sendStatus(500);
+					} else {
+						if (oldSupervisore != null) {
+							connection.query('UPDATE SUPERVISORE_RESPONSABILI SET  DATA_FINE_ASS=sysdate()  WHERE ID_RESPONSABILE=? and ID_SUPERVISORE=? and  DATA_FINE_ASS is null', [userId, oldSupervisore], function (err, rows, fields) {
+								if (err) {
+									connection.rollback(function () {
+										connection.release();
+										//Failure
+									});
+									log.error('ERRORE SQL UPDATE SUPERVISORE_RESPONSABILI: ' + err);
+									//errore username duplicato
+									if (err.errno == 1062) {
+										res.sendStatus(400);
+									} else {
+										res.sendStatus(500);
+
+									}
+
+								} else {
+
+									connection.commit(function (err) {
+										if (err) {
+											connection.rollback(function () {
+												connection.release();
+												//Failure
+											});
+											res.sendStatus(500);
+										} else {
+
+										}
+									})
+								}
+
+							})
+						}
+						if (newSupervisore != null) {
+							connection.query('INSERT INTO SUPERVISORE_RESPONSABILI (ID_RESPONSABILE, ID_SUPERVISORE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newSupervisore], function (err, rows, fields) {
+								if (err) {
+									connection.rollback(function () {
+										connection.release();
+										//Failure
+									});
+									log.error('ERRORE SQL INSERT INTO SUPERVISORE_RESPONSABILI : ' + err);
 									//errore username duplicato
 									if (err.errno == 1062) {
 										res.sendStatus(400);
@@ -847,8 +969,8 @@ app.get('/edituser/:id', ensureToken,requireAdmin, function (req, res) {
 			'SELECT * from UTENTI '+
 			'LEFT JOIN OPERATORI_VENDITORI OV ON TIPO<>"OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL '+
 			'LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL '+
-			'WHERE ID_UTENTE=?' ,
-				id, function (err, rows, fields) {
+			'LEFT JOIN SUPERVISORE_RESPONSABILI SR ON TIPO="RESPONSABILE_AGENTI" AND SR.ID_RESPONSABILE=UTENTI.ID_UTENTE AND SR.DATA_FINE_ASS IS NULL  '+
+			'WHERE ID_UTENTE=?' ,id, function (err, rows, fields) {
 			
 					connection.release();
 					if(err){
@@ -1438,16 +1560,47 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function (req, res) {
 
 			pool.getConnection(function (err, connection) {
 				connection.query(
-					' SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE, '+ 
-					' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.* '+ 
-					' FROM APPUNTAMENTI  '+ 
-					' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE '+ 
-				   ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE '+ 
-				   ' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL '+ 
-					' WHERE  '+ 
-					 ' ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?) OR '+ 
-				   ' (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO" '+ 
-				   ' OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) ',[id,from, to, to], function (err, rows, fields) {
+					` SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,  
+					VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*  
+					FROM APPUNTAMENTI   
+					LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  
+				   LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE  
+				   JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND RESPONSABILI_AGENTI.DATA_FINE_ASS IS NULL  
+					WHERE   
+					 ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?) OR  
+				   (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO"  
+				   OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) 
+		   
+				   
+				   UNION
+				   
+			SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,  
+					VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*  
+					FROM APPUNTAMENTI   
+					LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  
+				   LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE 
+					JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE  AND RESPONSABILI_AGENTI.DATA_FINE_ASS IS NULL   
+				   JOIN  SUPERVISORE_RESPONSABILI ON RESPONSABILI_AGENTI.ID_RESPONSABILE = SUPERVISORE_RESPONSABILI.ID_RESPONSABILE AND SUPERVISORE_RESPONSABILI.ID_SUPERVISORE=? AND SUPERVISORE_RESPONSABILI.DATA_FINE_ASS IS NULL  
+				   
+					WHERE   
+					 ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?) OR  
+				   (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO"  
+				   OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) 
+				   
+					 UNION
+				   
+			SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,  
+					VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*  
+					FROM APPUNTAMENTI   
+					LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  
+				   LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE 
+					
+				   JOIN  SUPERVISORE_RESPONSABILI ON SUPERVISORE_RESPONSABILI.ID_RESPONSABILE = VENDITORE.ID_UTENTE AND SUPERVISORE_RESPONSABILI.ID_SUPERVISORE=? AND SUPERVISORE_RESPONSABILI.DATA_FINE_ASS IS NULL  
+					 
+					WHERE   
+					 ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?) OR  
+				   (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO"  
+				   OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) `,[id,from, to, to,id,from, to, to,id,from, to, to], function (err, rows, fields) {
 			
 					connection.release();
 					if(err){
@@ -1801,7 +1954,31 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 								' WHERE 1=1 ' +QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+
 								' UNION '+
 								' SELECT   APPUNTAMENTI.ID_APPUNTAMENTO FROM APPUNTAMENTI LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE '+
-								'  WHERE VENDITORE.ID_UTENTE=? ' +QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ') SOMMA_APPUNTAMENTI', [idResponsabile, idResponsabile],  function (err, rows, fields) {
+								'  WHERE VENDITORE.ID_UTENTE=? ' +QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+ ' '+
+
+								' UNION '+
+												
+								' SELECT APPUNTAMENTI.ID_APPUNTAMENTO '+ 
+								' FROM APPUNTAMENTI  '+  
+								' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  '+ 
+								' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE  '+
+								' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE  AND RESPONSABILI_AGENTI.DATA_FINE_ASS IS NULL  '+  
+								' JOIN  SUPERVISORE_RESPONSABILI ON RESPONSABILI_AGENTI.ID_RESPONSABILE = SUPERVISORE_RESPONSABILI.ID_RESPONSABILE AND SUPERVISORE_RESPONSABILI.ID_SUPERVISORE=? AND SUPERVISORE_RESPONSABILI.DATA_FINE_ASS IS NULL  '+
+							   
+								' WHERE  1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+' '+
+								
+								' UNION '+
+
+								' SELECT APPUNTAMENTI.ID_APPUNTAMENTO   '+
+								' FROM APPUNTAMENTI  '+
+								' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  '+ 
+								' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE  '+
+								
+								' JOIN  SUPERVISORE_RESPONSABILI ON SUPERVISORE_RESPONSABILI.ID_RESPONSABILE = VENDITORE.ID_UTENTE AND SUPERVISORE_RESPONSABILI.ID_SUPERVISORE=? AND SUPERVISORE_RESPONSABILI.DATA_FINE_ASS IS NULL   '+
+								
+								' WHERE  1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+' '+
+
+								' ) SOMMA_APPUNTAMENTI', [idResponsabile, idResponsabile,idResponsabile, idResponsabile],  function (err, rows, fields) {
 									connection.release();
 									if(err){
 										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -1818,15 +1995,40 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 												'  JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL '+
 												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
 												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
-												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+' '+
 												' UNION '+ 
 												' SELECT  OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE, '+
 												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.* '+
 												'  FROM APPUNTAMENTI '+
 												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE '+
 												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE '+
-												' WHERE VENDITORE.ID_UTENTE=? '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+
-												' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,idResponsabile,limit, offset], function (err, rows, fields) {
+												' WHERE VENDITORE.ID_UTENTE=? '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+' '+
+												
+												' UNION '+
+												
+												' SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE, '+  
+												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*  '+ 
+												' FROM APPUNTAMENTI  '+  
+												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  '+ 
+												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE  '+
+												' JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE  AND RESPONSABILI_AGENTI.DATA_FINE_ASS IS NULL  '+  
+												' JOIN  SUPERVISORE_RESPONSABILI ON RESPONSABILI_AGENTI.ID_RESPONSABILE = SUPERVISORE_RESPONSABILI.ID_RESPONSABILE AND SUPERVISORE_RESPONSABILI.ID_SUPERVISORE=? AND SUPERVISORE_RESPONSABILI.DATA_FINE_ASS IS NULL  '+
+											   
+												' WHERE  1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+' '+
+												
+												' UNION '+
+
+												' SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,  '+ 
+												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*   '+
+												' FROM APPUNTAMENTI  '+
+												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  '+ 
+												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE  '+
+												
+												' JOIN  SUPERVISORE_RESPONSABILI ON SUPERVISORE_RESPONSABILI.ID_RESPONSABILE = VENDITORE.ID_UTENTE AND SUPERVISORE_RESPONSABILI.ID_SUPERVISORE=? AND SUPERVISORE_RESPONSABILI.DATA_FINE_ASS IS NULL   '+
+												
+												' WHERE  1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+QragioneSociale+QcodiceLuce+QcodiceGas+Qagente+Qesito+' '+
+												
+												' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[idResponsabile,idResponsabile, idResponsabile,idResponsabile,limit, offset], function (err, rows, fields) {
 												connection.release();
 												if(err){
 													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
@@ -2070,7 +2272,7 @@ app.post('/dateStatsGruppoVendita', ensureToken, function (req, res) {
 
 			pool.getConnection(function (err, connection) {
 				connection.query(  
-					`select
+					`					select
 					UTENTI.ID_UTENTE,
 					UTENTI.COGNOME,
 					UTENTI.NOME,
@@ -2096,10 +2298,72 @@ app.post('/dateStatsGruppoVendita', ensureToken, function (req, res) {
 					inner join RESPONSABILI_AGENTI ON RESPONSABILI_AGENTI.ID_RESPONSABILE = ? AND RESPONSABILI_AGENTI.ID_AGENTE = APPUNTAMENTI.ID_VENDITORE
 
 					left join UTENTI ON  APPUNTAMENTI.ID_VENDITORE=UTENTI.ID_UTENTE
-
 					WHERE 1=1  ${QdateFrom} ${QdateTo} ${Qagente} 
+					group by APPUNTAMENTI.ID_VENDITORE
 					
-					group by APPUNTAMENTI.ID_VENDITORE `,[idResponsabile], function (err, rows, fields) {
+					UNION
+					
+						select
+					VENDITORE.ID_UTENTE,
+					VENDITORE.COGNOME,
+					VENDITORE.NOME,
+					VENDITORE.TIPO,
+					COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) AS APPUNTAMENTI,
+					SUM(IFNULL(APPUNTAMENTI.NUM_LUCE,0))+SUM(IFNULL(APPUNTAMENTI.NUM_GAS,0))  AS CONTRATTI,
+					ROUND((SUM(IFNULL(APPUNTAMENTI.NUM_LUCE,0))+SUM(IFNULL(APPUNTAMENTI.NUM_GAS,0)))/COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0) AS PERC_CONTRATTI_O_APPUNTAMENTI,
+					COUNT(IF(APPUNTAMENTI.ESITO='OK',1, null)) AS OK,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='OK',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS OK_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='KO',1, null)) AS KO,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='KO',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS KO_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='VALUTA',1, null)) AS VALUTA,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='VALUTA',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS VALUTA_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='ASSENTE',1, null)) AS ASSENTE,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='ASSENTE',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS ASSENTE_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='NON VISITATO',1, null)) AS NON_VISITATO,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='NON VISITATO',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS NON_VISITATO_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO IS NULL,1, null)) AS DA_ESITARE,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO IS NULL,1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS DA_ESITARE_PERC 
+					
+					from APPUNTAMENTI 
+					
+					LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  
+				    LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE 
+					 JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE  AND RESPONSABILI_AGENTI.DATA_FINE_ASS IS NULL   
+				    JOIN  SUPERVISORE_RESPONSABILI ON RESPONSABILI_AGENTI.ID_RESPONSABILE = SUPERVISORE_RESPONSABILI.ID_RESPONSABILE AND SUPERVISORE_RESPONSABILI.ID_SUPERVISORE=? AND SUPERVISORE_RESPONSABILI.DATA_FINE_ASS IS NULL  
+				WHERE 1=1  ${QdateFrom} ${QdateTo} ${Qagente} 
+					group by APPUNTAMENTI.ID_VENDITORE
+					
+						
+					UNION
+					
+						select
+					VENDITORE.ID_UTENTE,
+					VENDITORE.COGNOME,
+					VENDITORE.NOME,
+					VENDITORE.TIPO,
+					COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) AS APPUNTAMENTI,
+					SUM(IFNULL(APPUNTAMENTI.NUM_LUCE,0))+SUM(IFNULL(APPUNTAMENTI.NUM_GAS,0))  AS CONTRATTI,
+					ROUND((SUM(IFNULL(APPUNTAMENTI.NUM_LUCE,0))+SUM(IFNULL(APPUNTAMENTI.NUM_GAS,0)))/COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0) AS PERC_CONTRATTI_O_APPUNTAMENTI,
+					COUNT(IF(APPUNTAMENTI.ESITO='OK',1, null)) AS OK,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='OK',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS OK_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='KO',1, null)) AS KO,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='KO',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS KO_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='VALUTA',1, null)) AS VALUTA,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='VALUTA',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS VALUTA_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='ASSENTE',1, null)) AS ASSENTE,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='ASSENTE',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS ASSENTE_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='NON VISITATO',1, null)) AS NON_VISITATO,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='NON VISITATO',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS NON_VISITATO_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO IS NULL,1, null)) AS DA_ESITARE,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO IS NULL,1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS DA_ESITARE_PERC 
+					
+					from APPUNTAMENTI 
+					LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE  
+				    LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE 
+					 
+				    JOIN  SUPERVISORE_RESPONSABILI ON SUPERVISORE_RESPONSABILI.ID_RESPONSABILE = VENDITORE.ID_UTENTE AND SUPERVISORE_RESPONSABILI.ID_SUPERVISORE=? AND SUPERVISORE_RESPONSABILI.DATA_FINE_ASS IS NULL  
+					 WHERE 1=1  ${QdateFrom} ${QdateTo} ${Qagente} 
+					group by APPUNTAMENTI.ID_VENDITORE `,[idResponsabile,idResponsabile,idResponsabile], function (err, rows, fields) {
 					connection.release();
 					if(err){
 						log.error('ERRORE SQL STATS ADMIN: --> ' + err);
@@ -2140,9 +2404,16 @@ app.get('/listaAgentiForResponsabile/:id', ensureToken, function (req, res) {
 			var data = {};
 			pool.getConnection(function (err, connection) {
 				connection.query(  
-					'SELECT * FROM UTENTI AS UT '
-						+' JOIN '
-						+' (SELECT * FROM RESPONSABILI_AGENTI AS RA WHERE RA.ID_RESPONSABILE = ? AND RA.DATA_FINE_ASS IS NULL ) AS T ON UT.ID_UTENTE=T.ID_AGENTE WHERE UT.UTENTE_ATTIVO = 1' ,[idResponsabile], function (err, rows, fields) {
+					`SELECT UT.* FROM UTENTI AS UT
+
+					JOIN  (SELECT * FROM RESPONSABILI_AGENTI AS RA WHERE RA.ID_RESPONSABILE = ? AND RA.DATA_FINE_ASS IS NULL ) AS T ON UT.ID_UTENTE=T.ID_AGENTE WHERE UT.UTENTE_ATTIVO = 1
+				  UNION
+					  SELECT UT.* FROM UTENTI AS UT
+					  JOIN  (SELECT * FROM SUPERVISORE_RESPONSABILI AS SR WHERE SR.ID_SUPERVISORE = ? AND SR.DATA_FINE_ASS IS NULL ) AS T ON UT.ID_UTENTE=T.ID_RESPONSABILE WHERE UT.UTENTE_ATTIVO = 1
+				  UNION
+					  SELECT UT.* FROM UTENTI AS UT
+					  JOIN  (SELECT RA.* FROM RESPONSABILI_AGENTI AS RA JOIN SUPERVISORE_RESPONSABILI AS SR ON RA.ID_RESPONSABILE=SR.ID_RESPONSABILE   WHERE SR.ID_SUPERVISORE = ? AND RA.DATA_FINE_ASS IS NULL ) AS T 
+					  ON UT.ID_UTENTE=T.ID_AGENTE WHERE UT.UTENTE_ATTIVO = 1` ,[idResponsabile,idResponsabile,idResponsabile], function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["utenti"] = rows;

@@ -17,6 +17,7 @@ app.controller('addUserCtrl', function ( $scope, $http, $location,$route,alertif
     $scope.userType = "AGENTE";
     $scope.operatoreAssociato = "";
     $scope.responsabileAssociato = "";
+    $scope.supervisoreAssociato = "";
     $scope.operatori = "";
     $scope.responsabili = "";
 
@@ -42,7 +43,8 @@ app.controller('addUserCtrl', function ( $scope, $http, $location,$route,alertif
             'cognome':$scope.cognome,
             'userType': $scope.userType,
             'operatoreAssociato' : $scope.operatoreAssociato,
-            'responsabileAssociato' : $scope.responsabileAssociato
+            'responsabileAssociato' : $scope.responsabileAssociato,
+            'supervisoreAssociato' : $scope.supervisoreAssociato
         }).then((result) => {
             alertify.alert('Utente creato correttamente');
             $route.reload();
