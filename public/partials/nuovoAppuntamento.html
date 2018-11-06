@@ -33,7 +33,7 @@
    
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
         <label for="provinceSelect">Provincia*</label>
-        <select ng-required="true" name="provinceSelect" class="form-control" id="provinceSelect" ng-change="newDate.showComuni()" ng-model="newDate.provinciaSelected">
+        <select ng-required="true" name="provinceSelect" class="form-control" id="provinceSelect" ng-change="newDate.showComuniAndLoadCompanyNameForProvince()" ng-model="newDate.provinciaSelected">
             <option ng-repeat="option in newDate.province" value="{{option.nome}}">{{option.nome}}</option>
         </select>
     </div>
@@ -69,9 +69,12 @@
             </select>
         </div>
     
-    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
+    <div class="form-group nomeAttivitaDIV pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
             <label for="nomeAttivita">Nome azienda / persona fisica*</label>
-            <input ng-required="true" type="text"name="nomeAttivita" class="form-control w-100" id="nomeAttivita"  ng-model="newDate.nomeAttivita" />         
+            <input ng-required="true" ng-keyup="newDate.completeNomeAttivita(newDate.nomeAttivita)" ng-disabled="newDate.disabledNomeAttivita" autocomplete="off" type="text"name="nomeAttivita" class="form-control w-100" id="nomeAttivita"  ng-model="newDate.nomeAttivita" />         
+            <ul class="list-group" ng-if="newDate.filterOldDateForProvince.length > 0">
+				<li class="list-group-item" ng-repeat="nomeAziendaOld in newDate.filterOldDateForProvince track by $index" ng-click="newDate.viewDateInModal(nomeAziendaOld.ID_APPUNTAMENTO)">{{nomeAziendaOld.NOME_ATTIVITA}}</li>
+			</ul>
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
         <label for="gestoreAttuale">Gestore attuale*</label>
@@ -97,4 +100,140 @@
     
 
 </form>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">Appuntamento: <b>{{newDate.Appuntamento.ID_APPUNTAMENTO}}</b></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container" >
+            <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="viewAppuntamento" >
+      
+            <div class="row col-12" >
+                <div class="form-group pb-3   col-xs-12 col-sm-6 col-md-4 mr-2">
+                    <label for="dataAppuntamento">Data appuntamento: &nbsp;  </label>
+                    <p id="dataAppuntamento" class="input-group datepicker font-weight-bold">
+                        {{newDate.Appuntamento.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
+                    </p>
+                </div>
+                <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-6">
+                    <label for="oraAppuntamento">Ora appuntamento: &nbsp;</label>
+                    <p ng-if="newDate.Appuntamento.ORA_APPUNTAMENTO == '00:01'" id="oraAppuntamento" class="input-group datepicker font-weight-bold">
+                        <span style="color: red">DA DEFINIRE</span>
+                    </p>
+                    <p ng-if="newDate.Appuntamento.ORA_APPUNTAMENTO != '00:01'" id="oraAppuntamento" class="input-group datepicker font-weight-bold">
+                        {{newDate.Appuntamento.ORA_APPUNTAMENTO}}
+                    </p>
+                </div>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="provinceSelect">Provincia: &nbsp;</label>
+                <p id="provinceSelect" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.PROVINCIA}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="comuneSelect">Comune: &nbsp;</label>
+                <p id="comuneSelect" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.COMUNE}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="comuneSelect">Indirizzo: &nbsp;</label>
+                <p id="comuneSelect" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.INDIRIZZO}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="Operatore">Operatore: &nbsp;</label>
+                <p id="Operatore" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.COGNOME_OPERATORE}} {{newDate.Appuntamento.NOME_OPERATORE}} 
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="agente">Agente: &nbsp;</label>
+                <p id="agente" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.COGNOME_VENDITORE}} {{newDate.Appuntamento.NOME_VENDITORE}} 
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="attivita">Nome azienda / Persona fisica: &nbsp;</label>
+                <p id="attivita" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.NOME_ATTIVITA}} 
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="gestore">Gestore attuale: &nbsp;</label>
+                <p id="gestore" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.ATTUALE_GESTORE}} 
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="recapiti">Recapiti: &nbsp;</label>
+                <p id="recapiti" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.RECAPITI}} 
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-12  ">
+                <label for="noteOperatore">Note operatore: &nbsp;</label>
+                <textarea id="noteOperatore"  rows="4" cols="50" maxlength="400"  type="text" readonly >{{newDate.Appuntamento.NOTE_OPERATORE}}  </textarea> 
+            </div>
+    
+        <div ng-if="newDate.hasEsito" class="w-100">
+           <hr>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="esitoAppuntamento">Esito appuntamento: &nbsp;</label>
+                <p id="esitoAppuntamento" class="input-group datepicker font-weight-bold">
+                    {{newDate.Appuntamento.ESITO}} 
+                </p>
+            </div>
+            <hr>    
+            <div ng-if="newDate.hasEsito_OK" class="">
+                <div class="form-group pb-3 col-xs-3 col-sm-3 col-md-3  ">
+                    <label for="numLuce">Numero contratti luce: &nbsp; </label>
+                    <p id="numLuce" class="input-group datepicker font-weight-bold">
+                        {{newDate.Appuntamento.NUM_LUCE}} 
+                    </p>
+                </div>  
+                <div class="form-group pb-3 col-xs-3 col-sm-3 col-md-3  ">
+                        <label for="numGas">Numero contratti gas: &nbsp;</label>
+                        <p id="numGas" class="input-group datepicker font-weight-bold">
+                            {{newDate.Appuntamento.NUM_GAS}} 
+                        </p>
+                </div>  
+                <div class="form-group pb-3 col-xs-3 col-sm-3 col-md-3  ">
+                        <label for="codLuce">Codici contratti luce: &nbsp;</label>
+                        <p id="codLuce" class="input-group datepicker font-weight-bold">
+                            {{newDate.Appuntamento.CODICI_CONTRATTO_LUCE}} 
+                        </p>
+                </div>  
+                <div class="form-group pb-3 col-xs-3 col-sm-3 col-md-3 ">
+                        <label for="codGas">Codici contratti gas: &nbsp;</label>
+                        <p id="codGas" class="input-group datepicker font-weight-bold">
+                            {{newDate.Appuntamento.CODICI_CONTRATTO_GAS}} 
+                        </p>
+                </div>  
+            </div>
+    
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 ">
+                <label for="noteAgente">Note agente: &nbsp;</label>
+                <textarea id="noteAgente"  rows="4" cols="50" maxlength="400"  type="text" readonly >{{newDate.Appuntamento.NOTE_AGENTE}}  </textarea> 
+            </div>
+    
+    
+    
+        </div>
+        
+       </form>
+    </div>
+      </div>
+    
+    </div>
+  </div>
 </div>

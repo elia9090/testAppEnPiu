@@ -73,6 +73,10 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
             "Value":"NON VISITATO"
         },
         {
+            "Name":"NON ESITATO",
+            "Value":"NON ESITATO"
+        },
+        {
             "Name":" ",
             "Value":""
         }

@@ -1700,7 +1700,49 @@ app.post('/deleteDate', ensureToken,requireAdmin, function (req, res) {
 
 
 
+//Appuntamento
+app.get('/listaNomiAziendaAndIdAppunamentoForProvincia/:provincia', ensureToken, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+			
+		} else {
+			
+			var data = {};
+			
+			var provincia = req.params.provincia;
 
+			pool.getConnection(function (err, connection) {
+				connection.query(
+					`SELECT APPUNTAMENTI.ID_APPUNTAMENTO, APPUNTAMENTI.NOME_ATTIVITA FROM APPUNTAMENTI WHERE PROVINCIA = ? `,[provincia], function (err, rows, fields) {
+					connection.release();
+					if(err){
+						log.error('ERRORE SQL GET LISTA NOME AZIENDA: '+provincia+' --> ' + err);
+						res.sendStatus(500);
+					}else{
+						if (rows.length !== 0) {
+							data["listaAziendaAndIdAppuntamento"] = rows;
+							res.json(data);
+						} else if (rows.length === 0) {
+							//Error code 2 = no rows in db.
+							data["error"] = 2;
+							data["listaAziendaAndIdAppuntamento"] = 'Nessuna lista nomi azienda trovata';
+							res.status(404).json(data);
+						} else {
+							data["appuntamento"] = 'Errore in fase di reperimento lista nomi azienda';
+							res.status(500).json(data);
+							console.log('Errore in fase di reperimento lista nomi azienda: ' + err);
+							log.error('Errore in fase di reperimento lista nomi azienda: ' + err);
+						}
+					}
+				
+				});
+			
+			});
+		  
+		}
+	});
+});
 
 
 //Appuntamento
@@ -1801,7 +1843,11 @@ app.post('/searchDate', ensureToken, function (req, res) {
 							var esito = req.body.esito;
 							var Qesito = " ";
 							if(esito !== '' && esito !== undefined && esito !=null){
-								Qesito = ' AND ESITO = "'+esito+'" ';
+								if(esito == "NON ESITATO"){
+									Qesito = ' AND ESITO IS NULL ';
+								}else{
+									Qesito = ' AND ESITO = "'+esito+'" ';
+								}
 							}
 
 							var codiceLuce = req.body.codiceLuce;
@@ -1923,8 +1969,13 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 
 							var esito = req.body.esito;
 							var Qesito = " ";
+							
 							if(esito !== '' && esito !== undefined && esito !=null){
-								Qesito = ' AND APPUNTAMENTI.ESITO = "'+esito+'" ';
+								if(esito == "NON ESITATO"){
+									Qesito = ' AND ESITO IS NULL ';
+								}else{
+									Qesito = ' AND ESITO = "'+esito+'" ';
+								}
 							}
 
 							var codiceLuce = req.body.codiceLuce;

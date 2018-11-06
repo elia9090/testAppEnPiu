@@ -180,6 +180,17 @@ $scope.editDateVenditore.removeNewNumContrattoGas = function(){
             setterClousureDate = "OK";
         }
 
+        if($scope.editDateVenditore.esito.value != null
+            && typeof $scope.editDateVenditore.esito.value != undefined
+            && $scope.editDateVenditore.esito.value == 'KO' 
+            && ($scope.editDateVenditore.noteAgente == null 
+            || typeof $scope.editDateVenditore.noteAgente == undefined
+            || $scope.editDateVenditore.noteAgente.trim().length < 10)){
+                alertify.alert('Inserire una nota agente esplicativa in caso di KO');
+                return;
+            }
+
+
         $http.post('/editDateVenditore', {
             'idAppuntamento': $scope.editDateVenditore.Appuntamento.ID_APPUNTAMENTO,
             'esitoAppuntamento': $scope.editDateVenditore.esito.value,

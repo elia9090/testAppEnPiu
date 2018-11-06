@@ -19,22 +19,26 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,alertify) {
 
 
 
+    $.blockUI();
     
     $http.get(url).then((result) => {
     
-    if(result.data.error){
-        alertify.alert("Nessuno appuntamento trovato");
-    }else{
-        $scope.dateList = result.data.appuntamenti;
-    } 
+        if(result.data.error){
+            $.unblockUI();
+            alertify.alert("Nessuno appuntamento trovato");
+        }else{
+            $scope.dateList = result.data.appuntamenti;
+            $.unblockUI();
+        } 
     }).catch((err) => {
-        if(err.status === 403){
-            alertify.alert("Utente non autorizzato");
-            $location.path('/logout');
-            return;
-        }
-        alertify.alert("Impossibile reperire la lista degli appuntamenti");
-    });
+        $.unblockUI();
+            if(err.status === 403){
+                alertify.alert("Utente non autorizzato");
+                $location.path('/logout');
+                return;
+            }
+            alertify.alert("Impossibile reperire la lista degli appuntamenti");
+        });
   
 
     $scope.modifyDate = function (id) {

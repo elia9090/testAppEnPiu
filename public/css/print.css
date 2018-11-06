@@ -1,0 +1,18 @@
+@media print {
+    html{
+        margin: 0px !Important;
+        padding: 0px !important;
+    }
+    .container{
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-right: 0px !Important;
+        padding-left: 0px !Important;
+        margin-right: 0px !Important;
+        margin-left: 0px !Important;
+    }
+    form{
+        display: none !Important;
+    } 
+    @page {   margin: 0mm; }
+}

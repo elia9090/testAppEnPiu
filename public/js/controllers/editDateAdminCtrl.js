@@ -339,6 +339,16 @@ $scope.editDateAdmin.removeNewNumContrattoGas = function(){
                 setterClousureDate = "OK";
             }
 
+            if($scope.editDateAdmin.esito.value != null
+                && typeof $scope.editDateAdmin.esito.value != undefined
+                && $scope.editDateAdmin.esito.value == 'KO' 
+                && ($scope.editDateAdmin.noteAgente == null 
+                || typeof $scope.editDateAdmin.noteAgente == undefined
+                || $scope.editDateAdmin.noteAgente.trim().length < 10)){
+                    alertify.alert('Inserire una nota agente esplicativa in caso di KO');
+                    return;
+                }
+
             $http.post('/editDateAdmin', {
                 'idAppuntamento' :  $scope.editDateAdmin.Appuntamento.ID_APPUNTAMENTO,
                 'dataAppuntamento':dataAppuntamento ,

@@ -105,14 +105,107 @@ app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location,  $r
     });
     $scope.newDate.comuniPerProvincia = "";
     $scope.newDate.disabledComuni = true;
-    
-    $scope.newDate.showComuni = function(){
+    //CHECK DOPPIO APPUNTAMENTO
+    $scope.newDate.disabledNomeAttivita = true;
+    $scope.newDate.oldDateForProvince = [];
+
+    $scope.newDate.showComuniAndLoadCompanyNameForProvince = function(){
+        
+        $.blockUI();
+
         var newArray = $scope.newDate.province.filter(function (el) {
             return el.nome ===  $scope.newDate.provinciaSelected;
           });
+
         $scope.newDate.comuniPerProvincia = newArray[0].comuni;
         $scope.newDate.disabledComuni = false;
+
+       
+
+        //SVUTO LE VARIABILI IN CASO DI CAMBIO PROVINCIA
+        $scope.newDate.filterOldDateForProvince = [];
+        $scope.newDate.nomeAttivita = "";
+        $scope.newDate.oldDateForProvince = [];
+        
+        //chiamo il servizio che mi restituisce la lista dei nomi azienda e l'id appuntamento
+        
+        $http.get('/listaNomiAziendaAndIdAppunamentoForProvincia/'+$scope.newDate.provinciaSelected).then((result) => {
+            $scope.newDate.oldDateForProvince = result.data.listaAziendaAndIdAppuntamento;
+            $scope.newDate.disabledNomeAttivita = false;
+            $.unblockUI();
+            }).catch((err) => {
+                if(err.status === 403){
+                    $.unblockUI();
+                    alertify.alert("Utente non autorizzato");
+                    $location.path('/logout');
+                    return;
+                }
+                $.unblockUI();
+               
+                $scope.newDate.disabledNomeAttivita = false;
+            });
+        
+
+        
+      
+
     }
+
+	$scope.newDate.completeNomeAttivita=function(string){
+        if(!string){
+            $scope.newDate.filterOldDateForProvince = [];
+            return;
+        }
+        var output=[];
+        angular.forEach($scope.newDate.oldDateForProvince,function(e){
+            if(e.NOME_ATTIVITA.toLowerCase().indexOf(string.toLowerCase())>=0){
+                output.push(e);
+            }
+        });
+        $scope.newDate.filterOldDateForProvince=output;
+    }
+
+    //apro l'appuntamento
+    $scope.newDate.Appuntamento = {};
+
+    $scope.newDate.viewDateInModal=function(idAppuntamento){
+        
+        $.blockUI();
+
+        $http.get('/appuntamento/'+idAppuntamento).then((result) => {
+
+            $scope.newDate.Appuntamento =  result.data.appuntamento;
+            if($scope.newDate.Appuntamento.ESITO !== null 
+                && $scope.newDate.Appuntamento.ESITO !== " " 
+                    && $scope.newDate.Appuntamento.ESITO !== "")
+                    {
+                        $scope.newDate.hasEsito = true;
+
+                    }else{
+                        $scope.newDate.hasEsito = false;
+                    }
+        
+        if($scope.newDate.Appuntamento.ESITO == 'OK'){
+            $scope.newDate.hasEsito_OK = true;
+        }else{
+            $scope.newDate.hasEsito_OK = false;
+        }
+            $('#exampleModal').modal('show');
+            $.unblockUI();
+    
+        }).catch((err) => {
+            if(err.status === 403){
+            $.unblockUI();
+                alertify.alert("Utente non autorizzato");
+                $location.path('/logout');
+                return;
+            }
+            $.unblockUI();
+            alertify.alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
+        });
+    }
+
+
 
     // ATTUALE GESTORE START
     $scope.newDate.Groups = "";

@@ -213,6 +213,23 @@ tr.red-backgroundTR td{
   
 }
 
+.nomeAttivitaDIV .list-group-item:hover{
+  color: #f47320;
+  cursor: pointer;
+}
+.nomeAttivitaDIV{
+  position: relative;
+}
+.nomeAttivitaDIV .list-group {
+  overflow-y: scroll;
+  height: auto;
+  position: absolute;
+  display: block;
+  max-height: 150px;
+  z-index: 999;
+  top: 100%;
+}
+
 form p{
   margin-bottom: 0px;
 }
@@ -382,7 +399,6 @@ textarea{
 .statsContainer td{
   text-align: center;
 }
-
 
 
 
