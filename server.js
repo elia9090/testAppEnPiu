@@ -2109,6 +2109,108 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 	});
 });
 
+//VERIFICA APPUNTAMENTI GENERICA
+app.post('/verifyDate', ensureToken, requireAdmin, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+		} else {
+			var data = {};	
+							
+							var limit = req.body.limit;
+							//piccolo ANTI HACK
+							if(limit > 200){
+								limit = 100;
+							}
+
+							var offset = req.body.offset;
+			
+							var dateFrom = req.body.dateFROM;
+							var QdateFrom = " ";
+							if(dateFrom !== '' && dateFrom !== undefined && dateFrom !=null){
+								QdateFrom = ' AND DATA_APPUNTAMENTO >= "'+dateFrom+'" ';
+							}
+
+							var dateTo = req.body.dateTO;
+							var QdateTo = " ";
+							if(dateTo !== '' && dateTo !== undefined && dateTo !=null){
+								QdateTo = ' AND DATA_APPUNTAMENTO <= "'+dateTo+'" ';
+							}
+
+							var provincia = req.body.provincia;
+							var Qprovincia = " ";
+							if(provincia !== '' && provincia !== undefined && provincia !=null){
+								Qprovincia = ' AND PROVINCIA = "'+provincia+'" ';
+							}
+
+							var comune = req.body.comune;
+							var Qcomune = " ";
+							if(comune !== '' && comune !== undefined && comune !=null){
+								Qcomune = ' AND COMUNE = "'+comune+'" ';
+							}
+							
+
+						
+							var Qesito = ' AND ESITO = "OK" ';
+							
+					
+
+							var agente = req.body.agente;
+							var Qagente = " ";
+							if(agente !== '' && agente !== undefined && agente!= null){
+								Qagente = ' AND ID_VENDITORE = "'+agente+'" ';
+							}
+
+							
+
+
+							pool.getConnection(function (err, connection) {
+								connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
+									connection.release();
+									if(err){
+										log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
+										res.sendStatus(500);
+									}else{
+
+										data["totaleAppuntamenti"] = rows[0].TotalCount;
+
+										pool.getConnection(function (err, connection) {
+											connection.query(
+												'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,'+ 
+												' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*'+
+												' FROM APPUNTAMENTI'+
+												' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE'+
+												' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE'+
+												' WHERE 1=1 '+QdateFrom+QdateTo+Qprovincia+Qcomune+Qagente+Qesito+ ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?'  ,[limit, offset], function (err, rows, fields) {
+												connection.release();
+												if(err){
+													log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
+													res.sendStatus(500);
+												}else{
+													if (rows.length !== 0) {
+														data["appuntamenti"] = rows;
+														res.json(data);
+													} 
+													else{
+														data["appuntamenti"] = [];
+														res.json(data);
+													}
+												}
+											
+											});
+										
+										});
+									}
+								});
+							});
+								
+		
+
+						
+		}
+	});
+});
+
 
 
 //STATISTICHE APPUNTAMENTI

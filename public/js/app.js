@@ -13,7 +13,7 @@ app.run(['$rootScope', '$location', function($rootScope, $location, ) {
             $rootScope.userEditedPassword = JSON.parse(sessionStorage.user).editPassword === "0" ? true : false;
         }
         //svuoto il local storage dei parametri di ricerca
-        if(prevRoute && currRoute && currRoute.$$route.controller=="dateSearchCtrl" && 
+        if(prevRoute && currRoute && (currRoute.$$route.controller=="dateSearchCtrl" || currRoute.$$route.controller=="verifyDateCtrl") && 
                 (prevRoute.$$route.controller != "editDateAdminCtrl") 
                     && prevRoute.$$route.controller != "editDateOperatoreCtrl"
                         && prevRoute.$$route.controller != "editDateVenditoreCtrl"
@@ -78,6 +78,10 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
         .when('/statisticheAppuntamenti', {
             templateUrl: '../partials/statisticheAppuntamenti.html',
             controller:'statisticheAppuntamentiCtrl'
+        })
+        .when('/verifyDate', {
+            templateUrl: '../partials/verifyDate.html',
+            controller:'verifyDateCtrl'
         })
         .when('/statisticheAppuntamentiGruppoVendita', {
             templateUrl: '../partials/statisticheAppuntamentiGruppoVendita.html',

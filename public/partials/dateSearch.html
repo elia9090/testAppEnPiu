@@ -175,7 +175,7 @@
               </tbody>
             </table>
           </div>
-          <ul ng-if="searchDate.totalItems > searchDate.itemsPerPage" uib-pagination items-per-page="searchDate.itemsPerPage" total-items="searchDate.totalItems" ng-model="searchDate.currentPage" ng-change="pageChanged()"></ul>
+          <ul ng-if="searchDate.totalItems > searchDate.itemsPerPage" uib-pagination items-per-page="searchDate.itemsPerPage" total-items="searchDate.totalItems" ng-model="searchDate.currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="true" max-size="5"></ul>
        
       </div>
 </div>

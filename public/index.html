@@ -45,6 +45,7 @@
     <script src="js/controllers/dateSearchCtrl.js"></script>
     <script src="js/controllers/statisticheAppuntamentiCtrl.js"></script>
     <script src="js/controllers/statisticheAppuntamentiGruppoVenditaCtrl.js"></script>
+    <script src="js/controllers/verifyDateCtrl.js"></script>
 
     <link rel="stylesheet" type="text/css" media="print" href="css/print.css">
 
@@ -84,6 +85,9 @@
                                 <li class="nav-item" >
                                     <a class="nav-link" href="#statisticheAppuntamenti">Statistiche appuntamenti</a>
                                 </li>
+                                <li class="nav-item" ng-show="userType === 'ADMIN'">
+                                  <a class="nav-link" href="#verifyDate">Verifica appuntamenti</a>
+                                </li>
                                 <li class="nav-item"  ng-show="userType === 'RESPONSABILE_AGENTI' ">
                                   <a class="nav-link" href="#statisticheAppuntamentiGruppoVendita">Statistiche gruppo vendita</a>
                               </li>
@@ -93,6 +97,7 @@
                                 <li class="nav-item" ng-show="userType === 'ADMIN'">
                                   <a class="nav-link" href="#listaUtenti">Lista utenti</a>
                                 </li>
+                            
                                 <li class="nav-item" >
                                     <a class="nav-link"  href="#logout">Logout</a>
                                 </li>

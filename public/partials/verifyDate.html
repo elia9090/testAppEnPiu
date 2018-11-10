@@ -1,0 +1,137 @@
+<div class="container" >
+     
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="verifyDateForm" ng-submit="verifyDate.submitverifyDate('submit')">
+        
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Verifica appuntamenti</h2>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row col-12" >
+            <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
+                <label for="dataAppuntamentoDAL">Data appuntamento DAL</label>
+                <p class="input-group datepicker">
+                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="verifyDate.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
+                        </span>
+                    </p>
+            </div>
+            <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
+                <label for="dataAppuntamentoAL">Data appuntamento AL</label>
+                <p class="input-group datepicker">
+                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="verifyDate.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
+                        </span>
+                    </p>
+            </div>
+           
+        
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+            <label for="provinceSelect">Provincia</label>
+            <select  name="provinceSelect" class="form-control" id="provinceSelect" ng-change="verifyDate.showComuni()" ng-model="verifyDate.provinciaSelected">
+                
+                <option ng-repeat="option in verifyDate.province" value="{{option.nome}}">{{option.nome}}</option>
+            </select>
+        </div>
+        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+            <label for="comuniSelect">Comune</label>
+            <select  name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="verifyDate.disabledComuni" ng-model="verifyDate.comuneSelected">
+                    <option ng-repeat="option in verifyDate.comuniPerProvincia"  value="{{option.nome}}">{{option.nome}}</option>
+            </select>
+        </div>
+       
+    </div>
+
+
+    <div class="row col-12" ng-if="user.TYPE === 'ADMIN'">
+     
+        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+            <label for="venditoreSelect">Agente</label>
+            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="verifyDate.venditoreSelected">
+                <option value="" ></option>
+                <option ng-repeat="option1 in verifyDate.agenti" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
+            </select>
+        </div>
+    </div>
+
+
+
+
+    <div class="row col-12" >
+        <div class="col-md-12 col-xl-12 mt-3 ">
+            <button ng-disabled="verifyDateForm.$invalid "  type="submit" class="btn btn-orange ">Verifica appuntamenti</button> 
+        </div>
+    </div>
+    </form>
+
+    <div ng-if= "verifyDate.showRisultati" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+        <div class="col-md-12">
+            <h2>Risultato verifica appuntamenti</h2>
+            <hr>
+        </div>
+        <div ng-if= "verifyDate.totalItems == 0"><h3>Nessun appuntamento trovato, modificare i parametri di ricerca</h3></div>
+        
+          <div ng-if= "verifyDate.totalItems > 0" class="table-responsive">
+        <table class="table  table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Data</th>
+              <th scope="col">Azienda/cliente</th>
+
+              <th scope="col">Agente</th>
+              <th scope="col">Num Luce</th>
+              <th scope="col">Cod contratti luce</th>
+              <th scope="col">Num Gas</th>
+              <th scope="col">Cod contratti gas</th>
+              <th scope="col">Visualizza</th>
+             
+            </tr>
+          </thead>
+          <tbody>
+              <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in verifyDate.dateList   " >
+                
+                <td >
+                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
+                </td>
+                <td>
+                    {{x.NOME_ATTIVITA}}
+                </td> 
+                
+                <td>
+                     {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
+                </td> 
+                <td>
+                    {{x.NUM_LUCE}}
+                </td> 
+                <td>
+                    {{x.CODICI_CONTRATTO_LUCE}}
+                </td> 
+                <td>
+                    {{x.NUM_GAS}}
+                </td> 
+                <td>
+                    {{x.CODICI_CONTRATTO_GAS}}
+                </td> 
+             
+                
+               
+                <td>
+                    <button  class="btn btn-orange btn-modifyUtente" ng-click="verifyDate.viewDate(x.ID_APPUNTAMENTO)">
+                        <i class="fas fa-glasses"></i>
+                    </button>
+                  
+                </td>
+            
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <ul ng-if="verifyDate.totalItems > verifyDate.itemsPerPage" uib-pagination  items-per-page="verifyDate.itemsPerPage" total-items="verifyDate.totalItems" ng-model="verifyDate.currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="true" max-size="5"></ul>
+   
+  </div>
+
+</div>
