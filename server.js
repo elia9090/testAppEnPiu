@@ -2348,6 +2348,74 @@ app.post('/dateStats', ensureToken, function (req, res) {
 	});
 });
 
+//STATISTICHE APPUNTAMENTI DASHBOARD ADMIN
+app.get('/dateStatsAdminDashboard', ensureToken, requireAdmin,  function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+		} else {
+			var data = {};	
+			var today = new Date();
+			var meseCorrente = today.getMonth()+1;
+			var giornoCorrenteMenoUno = today.getDate()-1;
+			var annoCorrente = today.getFullYear();
+			var dateToTodayMenoUno = annoCorrente+"-"+meseCorrente+"-"+giornoCorrenteMenoUno;
+
+			pool.getConnection(function (err, connection) {
+				connection.query(  
+					`select
+					
+					COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) AS APPUNTAMENTI,
+					SUM(IFNULL(APPUNTAMENTI.NUM_LUCE,0))+SUM(IFNULL(APPUNTAMENTI.NUM_GAS,0))  AS CONTRATTI,
+					ROUND((SUM(IFNULL(APPUNTAMENTI.NUM_LUCE,0))+SUM(IFNULL(APPUNTAMENTI.NUM_GAS,0)))/COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0) AS PERC_CONTRATTI_O_APPUNTAMENTI,
+					COUNT(IF(APPUNTAMENTI.ESITO='OK',1, null)) AS OK,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='OK',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS OK_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='KO',1, null)) AS KO,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='KO',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS KO_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='VALUTA',1, null)) AS VALUTA,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='VALUTA',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS VALUTA_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='ASSENTE',1, null)) AS ASSENTE,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='ASSENTE',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS ASSENTE_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO='NON VISITATO',1, null)) AS NON_VISITATO,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO='NON VISITATO',1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS NON_VISITATO_PERC,
+					COUNT(IF(APPUNTAMENTI.ESITO IS NULL,1, null)) AS DA_ESITARE,
+					ROUND(COUNT(IF(APPUNTAMENTI.ESITO IS NULL,1, null)) / COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) *100,0)  AS DA_ESITARE_PERC 
+					
+					from APPUNTAMENTI 
+
+					WHERE APPUNTAMENTI.DATA_APPUNTAMENTO <= ?
+
+					`,[dateToTodayMenoUno], function (err, rows, fields) {
+					connection.release();
+					if(err){
+						log.error('ERRORE SQL STATS DASHBOARD ADMIN: --> ' + err);
+						res.sendStatus(500);
+					}else{	
+						if (rows.length !== 0 && !err) {
+						data["stats"] = rows[0];
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["stats"] = 'Nessuna statistica trovata';
+						res.status(404).json(data);
+					} else {
+						data["stats"] = 'Errore in fase di reperimento statistiche dashboard';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento statistiche dashboard: ' + err);
+						log.error('Errore in fase di reperimento statistiche dashboard: ' + err);
+					}}
+				
+				});
+			
+			});
+				
+		
+
+						
+		}
+	});
+});
 	
 app.get('/listaUtentiForOperatore/:id', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
