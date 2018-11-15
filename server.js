@@ -2506,7 +2506,7 @@ app.get('/dateStatsVenditoreDashboard/:id', ensureToken, requireAdmin,  function
 		}
 	});
 });
-	//STATISTICHE APPUNTAMENTI DASHBOARD VENDITORI
+	//STATISTICHE APPUNTAMENTI DASHBOARD Operatori
 app.get('/dateStatsOperatoreDashboard/:id', ensureToken, requireAdmin,  function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
