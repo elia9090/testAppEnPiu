@@ -27,6 +27,25 @@
       </div>
       <div class="clearfix"></div>
    </div>
+   <div ng-if="user.TYPE == 'AGENTE' || user.TYPE == 'RESPONSABILE_AGENTI'">
+    <div class="col-md-6 float-left">
+        <h3 class="text-center">% Contratti su appuntamenti</h3>
+        <p class="text-center"> Appuntamenti:<b>{{dashBoard.stats.APPUNTAMENTI}}</b></p>
+        <p class="text-center">Contratti:<b>{{dashBoard.stats.CONTRATTI}}</b></p>
+      <canvas  height="{{dashBoard.height_chart}}"  id="doughnut" class="chart chart-doughnut"
+          chart-data="data" chart-labels="labels" chart-options="options" chart-colors="colors">
+      </canvas>
+    </div>
+      <div class="col-md-6 float-left">
+          <h3 class="text-center">% Stato appuntamenti </h3>
+          <p class="text-center"> Appuntamenti:<b>{{dashBoard.stats.APPUNTAMENTI}}</b></p>
+          <p class="text-center"><span>OK:<b>{{dashBoard.stats.OK}}</b></span> | <span>KO: <b>{{dashBoard.stats.KO}}</b></span> | <span>VALUTA:<b>{{dashBoard.stats.VALUTA}}</b></span> | <span>ASSENTE:<b>{{dashBoard.stats.ASSENTE}}</b></span> | <span>NON VISITATO:<b>{{dashBoard.stats.NON_VISITATO}}</b></span> | <span>DA ESITARE:<b>{{dashBoard.stats.DA_ESITARE}}</b></span></p>
+          <canvas  height="{{dashBoard.height_chart}}"  id="pie" class="chart chart-pie"
+          chart-data="data1" chart-labels="labels1" chart-options="options1" chart-colors="colors1">
+      </canvas>  
+      </div>
+      <div class="clearfix"></div>
+   </div>
 
 
 
