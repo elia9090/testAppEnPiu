@@ -27,6 +27,8 @@
     "jsonwebtoken": "^8.2.2",
     "log4js": "^2.7.0",
     "mysql": "^2.15.0",
+    "mysqldump": "^2.2.1",
+    "node-cron": "^2.0.3",
     "sha1": "^1.1.1"
   }
 }
