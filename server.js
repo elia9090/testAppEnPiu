@@ -40,7 +40,7 @@ const mysqldump = require('mysqldump');
 
 var cron = require('node-cron');
  
-cron.schedule('0 2 * * *', () => {
+cron.schedule('0 7 * * *', () => {
 	// dump the result straight to a file
 	mysqldump({
 		connection: {
@@ -51,7 +51,7 @@ cron.schedule('0 2 * * *', () => {
 		},
 	dumpToFile: './BackUpMysqlDbDump.sql',
 	});
-	//console.log('Runing a job at 02:00 at Europe/Rome timezone');
+	//console.log('Runing a job at 07:00 at Europe/Rome timezone');
 
   }, {
 	scheduled: true,
