@@ -23,9 +23,9 @@ app.listen(3000,'192.168.1.187' || 'localhost',function() {
 app.use(minify({
   uglifyJsModule: uglifyEs,
 }));
-
+const tenHour       = 36000000;
 //STATIC FILES
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public', { maxAge: tenHour }));
 
 
 //app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,8 +63,7 @@ cron.schedule('0 7 * * *', () => {
 	scheduled: true,
 	timezone: "Europe/Rome"
   });
-
-
+  
 
 // This responds a POST request for the /LOGIN page.
 app.post('/login', function (req, res) {
