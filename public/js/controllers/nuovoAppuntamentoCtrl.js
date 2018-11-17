@@ -1,5 +1,5 @@
 
-app.controller('nuovoAppuntamentoCtrl', function ( $scope, $http, $location,  $route, alertify) {
+app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$route', 'alertify', function ( $scope, $http, $location,  $route, alertify) {
     
     $scope.user = JSON.parse(sessionStorage.user);
     // CREO LO SCOPE PER IL CONTROLLER DEL FORM altrimenti con ng-if crea uno scope child e non prende il valore assegnato
@@ -294,4 +294,4 @@ $scope.newDate.submitNewDate = function(){
 }
 
 
-});
+}]);

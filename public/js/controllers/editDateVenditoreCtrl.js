@@ -1,4 +1,4 @@
-app.controller('editDateVenditoreCtrl', function ($scope, $http, $location,$routeParams,$route, alertify) {
+app.controller('editDateVenditoreCtrl',['$scope', '$http', '$location','$routeParams','$route', 'alertify', function ($scope, $http, $location,$routeParams,$route, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -219,4 +219,4 @@ $scope.editDateVenditore.removeNewNumContrattoGas = function(){
     };
     
 
-});
+}]);

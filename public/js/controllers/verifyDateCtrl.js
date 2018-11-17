@@ -1,4 +1,4 @@
-app.controller('verifyDateCtrl', function ( $scope, $http, $location,alertify) {
+app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', function ( $scope, $http, $location,alertify) {
 
     $scope.user = JSON.parse(sessionStorage.user);
 
@@ -54,13 +54,13 @@ app.controller('verifyDateCtrl', function ( $scope, $http, $location,alertify) {
 
    
 
-    $scope.verifyDate.URL = "";
+    $scope.verifyDate.URLverifyDate = "";
 
     $scope.verifyDate.venditoreSelected = "";
 
     if($scope.user.TYPE == "ADMIN"){
        
-        $scope.verifyDate.URL = '/verifyDate';
+        $scope.verifyDate.URLverifyDate = '/verifyDate';
 
     
         
@@ -134,7 +134,7 @@ app.controller('verifyDateCtrl', function ( $scope, $http, $location,alertify) {
          //SALVO I PARAMETRI DI RICERCA END
 
     
-        $http.post($scope.verifyDate.URL,{
+        $http.post($scope.verifyDate.URLverifyDate,{
             'limit' :$scope.verifyDate.itemsPerPage,
             'offset':$scope.verifyDate.startQuery,
             'dateFROM': $scope.verifyDate.dataAppuntamentoDAL,
@@ -185,4 +185,4 @@ app.controller('verifyDateCtrl', function ( $scope, $http, $location,alertify) {
     };
 
 
-});
+}]);

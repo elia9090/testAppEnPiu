@@ -1,4 +1,4 @@
-app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
+app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', function ( $scope, $http, $location,alertify) {
 
     $scope.user = JSON.parse(sessionStorage.user);
 
@@ -86,13 +86,13 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
 
    
 
-    $scope.searchDate.URL = "";
+    $scope.searchDate.URLsearchDate = "";
 
     $scope.searchDate.venditoreSelected = "";
 
     if($scope.user.TYPE == "ADMIN"){
        
-        $scope.searchDate.URL = '/searchDate';
+        $scope.searchDate.URLsearchDate = '/searchDate';
 
         //LISTA OPERATORI
         $http.get('/listaOperatoriWS').then((result) => {
@@ -127,7 +127,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
 
     }else if($scope.user.TYPE == "OPERATORE"){
         
-        $scope.searchDate.URL = '/searchDate';
+        $scope.searchDate.URLsearchDate = '/searchDate';
         $scope.searchDate.operatoriSelected = $scope.user.Id;
 
         $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS').then((result) => {
@@ -144,7 +144,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
             });
         
     }else if( $scope.user.TYPE == "RESPONSABILE_AGENTI"){
-        $scope.searchDate.URL = '/searchDateResponsabile';
+        $scope.searchDate.URLsearchDate = '/searchDateResponsabile';
         $scope.searchDate.idResponsabile = $scope.user.Id;
 
         $http.get('/listaAgentiForResponsabile/'+$scope.user.Id).then((result) => {
@@ -163,7 +163,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
     }
     else if( $scope.user.TYPE == "AGENTE"){
         
-        $scope.searchDate.URL = '/searchDate';
+        $scope.searchDate.URLsearchDate = '/searchDate';
         $scope.searchDate.venditoreSelected = $scope.user.Id;
         
     }
@@ -221,7 +221,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
          //SALVO I PARAMETRI DI RICERCA END
 
         if($scope.user.TYPE !== "RESPONSABILE_AGENTI"){
-        $http.post($scope.searchDate.URL,{
+        $http.post($scope.searchDate.URLsearchDate,{
             'limit' :$scope.searchDate.itemsPerPage,
             'offset':$scope.searchDate.startQuery,
             'dateFROM': $scope.searchDate.dataAppuntamentoDAL,
@@ -263,7 +263,7 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
          
         });
     }else{
-        $http.post($scope.searchDate.URL,{
+        $http.post($scope.searchDate.URLsearchDate,{
             'limit' :$scope.searchDate.itemsPerPage,
             'offset':$scope.searchDate.startQuery,
             'dateFROM': $scope.searchDate.dataAppuntamentoDAL,
@@ -330,4 +330,4 @@ app.controller('dateSearchCtrl', function ( $scope, $http, $location,alertify) {
         }
        
     };
-});
+}]);

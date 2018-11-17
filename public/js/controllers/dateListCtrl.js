@@ -1,4 +1,4 @@
-app.controller('dateListCtrl', function ( $scope, $http, $location,alertify) {
+app.controller('dateListCtrl',['$scope', '$http', '$location','alertify', function ( $scope, $http, $location,alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -93,4 +93,4 @@ app.controller('dateListCtrl', function ( $scope, $http, $location,alertify) {
    
 
 
-});
+}]);

@@ -1,4 +1,4 @@
-app.controller('editPasswordCtrl', function ( $scope, $http, $location, alertify) {
+app.controller('editPasswordCtrl',['$scope', '$http', '$location', 'alertify', function ( $scope, $http, $location, alertify) {
 
     $scope.user = JSON.parse(sessionStorage.user);
 
@@ -36,4 +36,4 @@ app.controller('editPasswordCtrl', function ( $scope, $http, $location, alertify
 
         });
     };
-});
+}]);

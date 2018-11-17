@@ -1,4 +1,4 @@
-app.controller('dateListGVCtrl', function ( $scope, $http, $location,alertify) {
+app.controller('dateListGVCtrl',['$scope', '$http', '$location','alertify', function ( $scope, $http, $location,alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -84,4 +84,4 @@ app.controller('dateListGVCtrl', function ( $scope, $http, $location,alertify) {
     
 
 
-});
+}]);

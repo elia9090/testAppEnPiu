@@ -21,7 +21,9 @@
   "homepage": "https://github.com/elia9090/testAppEnPiu#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
     "express": "^4.16.3",
+    "express-minify": "^1.0.0",
     "express-session": "^1.15.6",
     "helmet": "^3.12.1",
     "jsonwebtoken": "^8.2.2",
@@ -29,6 +31,11 @@
     "mysql": "^2.15.0",
     "mysqldump": "^2.2.1",
     "node-cron": "^2.0.3",
-    "sha1": "^1.1.1"
+    "sha1": "^1.1.1",
+    "uglify-es": "^3.3.9"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1"
   }
 }

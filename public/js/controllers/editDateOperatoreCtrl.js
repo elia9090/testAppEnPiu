@@ -1,4 +1,4 @@
-app.controller('editDateOperatoreCtrl', function ($scope, $http, $location,$routeParams,$route, alertify) {
+app.controller('editDateOperatoreCtrl',['$scope', '$http', '$location','$routeParams','$route', 'alertify', function ($scope, $http, $location,$routeParams,$route, alertify) {
     $scope.user = JSON.parse(sessionStorage.user);
    
     if(!$scope.user.TYPE == "OPERATORE"){
@@ -271,4 +271,4 @@ $scope.editDateOperatore.Esiti =    [
     };
 
 
-});
+}]);

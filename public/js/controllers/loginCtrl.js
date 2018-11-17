@@ -1,5 +1,5 @@
 
-app.controller('loginCtrl', function ($scope, $http, $location, alertify) {
+app.controller('loginCtrl',['$scope', '$http', '$location', 'alertify', function ($scope, $http, $location, alertify) {
 
     $scope.submitLogin = function () {
         $http.post('/login', {
@@ -30,4 +30,4 @@ app.controller('loginCtrl', function ($scope, $http, $location, alertify) {
             }
         });
     };
-});
+}]);

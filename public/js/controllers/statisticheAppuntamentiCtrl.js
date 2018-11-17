@@ -1,4 +1,4 @@
-app.controller('statisticheAppuntamentiCtrl', function ( $scope, $http, $location,$routeParams,$route, alertify) {
+app.controller('statisticheAppuntamentiCtrl',[ '$scope', '$http', '$location', 'alertify', function ( $scope, $http, $location, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
 
@@ -136,4 +136,4 @@ app.controller('statisticheAppuntamentiCtrl', function ( $scope, $http, $locatio
             });
     };
 
-});
+}]);

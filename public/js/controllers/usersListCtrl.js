@@ -1,4 +1,4 @@
-app.controller('usersListCtrl', function ( $scope, $http, $location, alertify) {
+app.controller('usersListCtrl',['$scope', '$http', '$location', 'alertify', function ( $scope, $http, $location, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -28,4 +28,4 @@ app.controller('usersListCtrl', function ( $scope, $http, $location, alertify) {
             $location.path('/modificaUtente/'+id);
         
     };
-});
+}]);

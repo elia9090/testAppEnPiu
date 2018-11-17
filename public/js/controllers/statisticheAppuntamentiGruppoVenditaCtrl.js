@@ -1,4 +1,4 @@
-app.controller('statisticheAppuntamentiGruppoVenditaCtrl', function ( $scope, $http, $location,$routeParams,$route, alertify) {
+app.controller('statisticheAppuntamentiGruppoVenditaCtrl',['$scope', '$http', '$location', 'alertify', function ( $scope, $http, $location, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
 
@@ -92,4 +92,4 @@ app.controller('statisticheAppuntamentiGruppoVenditaCtrl', function ( $scope, $h
             });
     };
 
-});
+}]);

@@ -1,4 +1,4 @@
-app.controller('viewDateCtrl', function ( $scope, $http, $location,$routeParams, alertify) {
+app.controller('viewDateCtrl',['$scope', '$http', '$location','$routeParams', 'alertify', function ( $scope, $http, $location,$routeParams, alertify) {
 
     $scope.user = JSON.parse(sessionStorage.user);
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
@@ -46,4 +46,4 @@ app.controller('viewDateCtrl', function ( $scope, $http, $location,$routeParams,
 
 
 
-});
+}]);

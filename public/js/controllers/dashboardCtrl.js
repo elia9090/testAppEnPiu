@@ -1,5 +1,5 @@
 
-app.controller('dashboardCtrl', function ( $scope, $http,$location,alertify) {
+app.controller('dashboardCtrl',['$scope', '$http','$location','alertify', function ( $scope, $http,$location,alertify) {
 
     
     $scope.dashBoard = {};
@@ -130,4 +130,4 @@ app.controller('dashboardCtrl', function ( $scope, $http,$location,alertify) {
 
  
 
-});
+}]);

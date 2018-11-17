@@ -1,4 +1,4 @@
-app.controller('editDateAdminCtrl', function ( $scope, $http, $location,$routeParams,$route, alertify) {
+app.controller('editDateAdminCtrl',['$scope', '$http', '$location','$routeParams','$route', 'alertify', function ( $scope, $http, $location,$routeParams,$route, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -416,4 +416,4 @@ $scope.editDateAdmin.removeNewNumContrattoGas = function(){
         $scope.editDateAdmin.cancel = function () {
             window.history.back();
         };
-});
+}]);

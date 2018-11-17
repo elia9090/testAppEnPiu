@@ -1,4 +1,4 @@
-app.controller('addUserCtrl', function ( $scope, $http, $location,$route,alertify) {
+app.controller('addUserCtrl',[ '$scope', '$http', '$location','$route','alertify', function ( $scope, $http, $location,$route,alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -61,4 +61,4 @@ app.controller('addUserCtrl', function ( $scope, $http, $location,$route,alertif
             }
         });
     };
-});
+}]);

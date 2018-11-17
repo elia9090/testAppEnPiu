@@ -1,4 +1,4 @@
-app.controller('editUserCtrl', function ( $scope, $http, $location,$routeParams, $q, alertify) {
+app.controller('editUserCtrl',[ '$scope', '$http', '$location','$routeParams', '$q', 'alertify', function ( $scope, $http, $location,$routeParams, $q, alertify) {
    
     $scope.user = JSON.parse(sessionStorage.user);
    
@@ -211,4 +211,4 @@ $scope.delete = function () {
 
 
     };
-});
+}]);
