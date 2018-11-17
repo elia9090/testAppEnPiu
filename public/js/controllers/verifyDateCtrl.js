@@ -3,6 +3,7 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
     $scope.user = JSON.parse(sessionStorage.user);
 
     $scope.verifyDate = {};
+    $scope.verifyDate.verifyParam={};
   
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
@@ -30,7 +31,7 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
     };
 
     $http.get('../../utility/province_comuni.json').then((result) => {
-       // $scope.verifyDate.provinciaSelected = "";
+       // $scope.verifyDate.verifyParam.provinciaSelected = "";
         $scope.verifyDate.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
         $scope.verifyDate.province.splice(0, 0, ({code:"",comuni:"",nome:""}));
@@ -43,7 +44,7 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
     
     $scope.verifyDate.showComuni = function(){
         var newArray = $scope.verifyDate.province.filter(function (el) {
-            return el.nome ===  $scope.verifyDate.provinciaSelected;
+            return el.nome ===  $scope.verifyDate.verifyParam.provinciaSelected;
           });
         $scope.verifyDate.comuniPerProvincia = newArray[0].comuni;
         $scope.verifyDate.comuniPerProvincia.splice(0, 0, ({code:"",comuni:"",nome:""}));
@@ -56,7 +57,7 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
 
     $scope.verifyDate.URLverifyDate = "";
 
-    $scope.verifyDate.venditoreSelected = "";
+    $scope.verifyDate.verifyParam.venditoreSelected = "";
 
     if($scope.user.TYPE == "ADMIN"){
        
@@ -86,11 +87,11 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
     $scope.verifyDate.showRisultati = false;
     //PAGINATION START
    
-    $scope.verifyDate.currentPage = 1;
-    $scope.verifyDate.itemsPerPage = 10;
+    $scope.verifyDate.verifyParam.currentPage = 1;
+    $scope.verifyDate.verifyParam.itemsPerPage = 10;
 
     $scope.pageChanged = function() {
-        $scope.verifyDate.startQuery = ($scope.verifyDate.currentPage - 1) * $scope.verifyDate.itemsPerPage;
+        $scope.verifyDate.verifyParam.startQuery = ($scope.verifyDate.verifyParam.currentPage - 1) * $scope.verifyDate.verifyParam.itemsPerPage;
         $scope.verifyDate.submitverifyDate("pageChanged");
     };
   
@@ -99,16 +100,16 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
     //CONTROLLO SE CI SONO PARAMETRI DI RICERCA
 
     if(localStorage.getItem("searchParam")){
-        $scope.verifyDate = angular.fromJson(localStorage.getItem("searchParam"));
-        if($scope.verifyDate.venditoreSelected){
-            $scope.verifyDate.venditoreSelected = parseInt($scope.verifyDate.venditoreSelected);
+        $scope.verifyDate.verifyParam = angular.fromJson(localStorage.getItem("searchParam"));
+        if($scope.verifyDate.verifyParam.venditoreSelected){
+            $scope.verifyDate.verifyParam.venditoreSelected = parseInt($scope.verifyDate.verifyParam.venditoreSelected);
         }
        
-        if($scope.verifyDate.dataAppuntamentoDAL){
-            $scope.verifyDate.dataAppuntamentoDAL = new Date($scope.verifyDate.dataAppuntamentoDAL);
+        if($scope.verifyDate.verifyParam.dataAppuntamentoDAL){
+            $scope.verifyDate.verifyParam.dataAppuntamentoDAL = new Date($scope.verifyDate.verifyParam.dataAppuntamentoDAL);
         }
-        if($scope.verifyDate.dataAppuntamentoAL){
-            $scope.verifyDate.dataAppuntamentoAL = new Date($scope.verifyDate.dataAppuntamentoAL);
+        if($scope.verifyDate.verifyParam.dataAppuntamentoAL){
+            $scope.verifyDate.verifyParam.dataAppuntamentoAL = new Date($scope.verifyDate.verifyParam.dataAppuntamentoAL);
         }     
     }
 
@@ -121,27 +122,27 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
         $.blockUI();
 
         if(pageChangedOrSubmit === 'submit'){
-            $scope.verifyDate.currentPage = 1;
+            $scope.verifyDate.verifyParam.currentPage = 1;
         }
             
-        $scope.verifyDate.startQuery = ($scope.verifyDate.currentPage - 1) * $scope.verifyDate.itemsPerPage;
+        $scope.verifyDate.verifyParam.startQuery = ($scope.verifyDate.verifyParam.currentPage - 1) * $scope.verifyDate.verifyParam.itemsPerPage;
 
         //SALVO I PARAMETRI DI RICERCA START
         localStorage.removeItem("searchParam");
 
-        localStorage.setItem("searchParam",angular.toJson($scope.verifyDate) );
+        localStorage.setItem("searchParam",angular.toJson($scope.verifyDate.verifyParam) );
 
          //SALVO I PARAMETRI DI RICERCA END
 
     
         $http.post($scope.verifyDate.URLverifyDate,{
-            'limit' :$scope.verifyDate.itemsPerPage,
-            'offset':$scope.verifyDate.startQuery,
-            'dateFROM': $scope.verifyDate.dataAppuntamentoDAL,
-            'dateTO': $scope.verifyDate.dataAppuntamentoAL,
-            'provincia': $scope.verifyDate.provinciaSelected,
-            'comune': $scope.verifyDate.comuneSelected,
-            'agente': $scope.verifyDate.venditoreSelected
+            'limit' :$scope.verifyDate.verifyParam.itemsPerPage,
+            'offset':$scope.verifyDate.verifyParam.startQuery,
+            'dateFROM': $scope.verifyDate.verifyParam.dataAppuntamentoDAL,
+            'dateTO': $scope.verifyDate.verifyParam.dataAppuntamentoAL,
+            'provincia': $scope.verifyDate.verifyParam.provinciaSelected,
+            'comune': $scope.verifyDate.verifyParam.comuneSelected,
+            'agente': $scope.verifyDate.verifyParam.venditoreSelected
 
         }).then((result) => {
 

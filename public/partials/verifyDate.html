@@ -13,7 +13,7 @@
             <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoDAL">Data appuntamento DAL</label>
                 <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="verifyDate.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="verifyDate.verifyParam.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
                         </span>
@@ -22,7 +22,7 @@
             <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoAL">Data appuntamento AL</label>
                 <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="verifyDate.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="verifyDate.verifyParam.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
                         </span>
@@ -32,14 +32,14 @@
         
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
             <label for="provinceSelect">Provincia</label>
-            <select  name="provinceSelect" class="form-control" id="provinceSelect" ng-change="verifyDate.showComuni()" ng-model="verifyDate.provinciaSelected">
+            <select  name="provinceSelect" class="form-control" id="provinceSelect" ng-change="verifyDate.showComuni()" ng-model="verifyDate.verifyParam.provinciaSelected">
                 
                 <option ng-repeat="option in verifyDate.province" value="{{option.nome}}">{{option.nome}}</option>
             </select>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
             <label for="comuniSelect">Comune</label>
-            <select  name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="verifyDate.disabledComuni" ng-model="verifyDate.comuneSelected">
+            <select  name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="verifyDate.disabledComuni" ng-model="verifyDate.verifyParam.comuneSelected">
                     <option ng-repeat="option in verifyDate.comuniPerProvincia"  value="{{option.nome}}">{{option.nome}}</option>
             </select>
         </div>
@@ -51,7 +51,7 @@
      
         <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="venditoreSelect">Agente</label>
-            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="verifyDate.venditoreSelected">
+            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="verifyDate.verifyParam.venditoreSelected">
                 <option value="" ></option>
                 <option ng-repeat="option1 in verifyDate.agenti" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
             </select>
@@ -130,7 +130,7 @@
           </tbody>
         </table>
       </div>
-      <ul ng-if="verifyDate.totalItems > verifyDate.itemsPerPage" uib-pagination  items-per-page="verifyDate.itemsPerPage" total-items="verifyDate.totalItems" ng-model="verifyDate.currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="true" max-size="5"></ul>
+      <ul ng-if="verifyDate.totalItems > verifyDate.verifyParam.itemsPerPage" uib-pagination  items-per-page="verifyDate.verifyParam.itemsPerPage" total-items="verifyDate.totalItems" ng-model="verifyDate.verifyParam.currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="true" max-size="5"></ul>
    
   </div>
 

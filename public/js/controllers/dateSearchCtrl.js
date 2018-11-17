@@ -3,6 +3,7 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
     $scope.user = JSON.parse(sessionStorage.user);
 
     $scope.searchDate = {};
+    $scope.searchDate.searchParam={};
   
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
@@ -30,7 +31,7 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
     };
 
     $http.get('../../utility/province_comuni.json').then((result) => {
-       // $scope.searchDate.provinciaSelected = "";
+       // $scope.searchDate.searchParam.provinciaSelected = "";
         $scope.searchDate.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
         $scope.searchDate.province.splice(0, 0, ({code:"",comuni:"",nome:""}));
@@ -43,7 +44,7 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
     
     $scope.searchDate.showComuni = function(){
         var newArray = $scope.searchDate.province.filter(function (el) {
-            return el.nome ===  $scope.searchDate.provinciaSelected;
+            return el.nome ===  $scope.searchDate.searchParam.provinciaSelected;
           });
         $scope.searchDate.comuniPerProvincia = newArray[0].comuni;
         $scope.searchDate.comuniPerProvincia.splice(0, 0, ({code:"",comuni:"",nome:""}));
@@ -82,13 +83,13 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
         }
         
     ];
-    $scope.searchDate.esito={};
+    $scope.searchDate.searchParam.esito={};
 
    
 
     $scope.searchDate.URLsearchDate = "";
 
-    $scope.searchDate.venditoreSelected = "";
+    $scope.searchDate.searchParam.venditoreSelected = "";
 
     if($scope.user.TYPE == "ADMIN"){
        
@@ -128,7 +129,7 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
     }else if($scope.user.TYPE == "OPERATORE"){
         
         $scope.searchDate.URLsearchDate = '/searchDate';
-        $scope.searchDate.operatoriSelected = $scope.user.Id;
+        $scope.searchDate.searchParam.operatoriSelected = $scope.user.Id;
 
         $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS').then((result) => {
             $scope.searchDate.venditoriForOperatore = result.data.agenti;
@@ -164,18 +165,18 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
     else if( $scope.user.TYPE == "AGENTE"){
         
         $scope.searchDate.URLsearchDate = '/searchDate';
-        $scope.searchDate.venditoreSelected = $scope.user.Id;
+        $scope.searchDate.searchParam.venditoreSelected = $scope.user.Id;
         
     }
 
     $scope.searchDate.showRisultati = false;
     //PAGINATION START
    
-    $scope.searchDate.currentPage = 1;
-    $scope.searchDate.itemsPerPage = 10;
+    $scope.searchDate.searchParam.currentPage = 1;
+    $scope.searchDate.searchParam.itemsPerPage = 10;
 
     $scope.pageChanged = function() {
-        $scope.searchDate.startQuery = ($scope.searchDate.currentPage - 1) * $scope.searchDate.itemsPerPage;
+        $scope.searchDate.searchParam.startQuery = ($scope.searchDate.searchParam.currentPage - 1) * $scope.searchDate.searchParam.itemsPerPage;
         $scope.searchDate.submitSearchDate("pageChanged");
     };
   
@@ -184,18 +185,18 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
     //CONTROLLO SE CI SONO PARAMETRI DI RICERCA
 
     if(localStorage.getItem("searchParam")){
-        $scope.searchDate = angular.fromJson(localStorage.getItem("searchParam"));
-        if($scope.searchDate.venditoreSelected){
-            $scope.searchDate.venditoreSelected = parseInt($scope.searchDate.venditoreSelected);
+        $scope.searchDate.searchParam = angular.fromJson(localStorage.getItem("searchParam"));
+        if($scope.searchDate.searchParam.venditoreSelected){
+            $scope.searchDate.searchParam.venditoreSelected = parseInt($scope.searchDate.searchParam.venditoreSelected);
         }
-        if($scope.searchDate.operatoriSelected){
-            $scope.searchDate.operatoriSelected = parseInt($scope.searchDate.operatoriSelected);
+        if($scope.searchDate.searchParam.operatoriSelected){
+            $scope.searchDate.searchParam.operatoriSelected = parseInt($scope.searchDate.searchParam.operatoriSelected);
         }
-        if($scope.searchDate.dataAppuntamentoDAL){
-            $scope.searchDate.dataAppuntamentoDAL = new Date($scope.searchDate.dataAppuntamentoDAL);
+        if($scope.searchDate.searchParam.dataAppuntamentoDAL){
+            $scope.searchDate.searchParam.dataAppuntamentoDAL = new Date($scope.searchDate.searchParam.dataAppuntamentoDAL);
         }
-        if($scope.searchDate.dataAppuntamentoAL){
-            $scope.searchDate.dataAppuntamentoAL = new Date($scope.searchDate.dataAppuntamentoAL);
+        if($scope.searchDate.searchParam.dataAppuntamentoAL){
+            $scope.searchDate.searchParam.dataAppuntamentoAL = new Date($scope.searchDate.searchParam.dataAppuntamentoAL);
         }     
     }
 
@@ -208,32 +209,32 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
         $.blockUI();
 
         if(pageChangedOrSubmit === 'submit'){
-            $scope.searchDate.currentPage = 1;
+            $scope.searchDate.searchParam.currentPage = 1;
         }
             
-        $scope.searchDate.startQuery = ($scope.searchDate.currentPage - 1) * $scope.searchDate.itemsPerPage;
+        $scope.searchDate.searchParam.startQuery = ($scope.searchDate.searchParam.currentPage - 1) * $scope.searchDate.searchParam.itemsPerPage;
 
         //SALVO I PARAMETRI DI RICERCA START
         localStorage.removeItem("searchParam");
 
-        localStorage.setItem("searchParam",angular.toJson($scope.searchDate) );
+        localStorage.setItem("searchParam",angular.toJson($scope.searchDate.searchParam) );
 
          //SALVO I PARAMETRI DI RICERCA END
 
         if($scope.user.TYPE !== "RESPONSABILE_AGENTI"){
         $http.post($scope.searchDate.URLsearchDate,{
-            'limit' :$scope.searchDate.itemsPerPage,
-            'offset':$scope.searchDate.startQuery,
-            'dateFROM': $scope.searchDate.dataAppuntamentoDAL,
-            'dateTO': $scope.searchDate.dataAppuntamentoAL,
-            'provincia': $scope.searchDate.provinciaSelected,
-            'comune': $scope.searchDate.comuneSelected,
-            'ragioneSociale':$scope.searchDate.ragioneSociale,
-            'esito': $scope.searchDate.esito.value,
-            'codiceLuce': $scope.searchDate.codLuce,
-            'codiceGas': $scope.searchDate.codGas,
-            'operatore': $scope.searchDate.operatoriSelected,
-            'agente': $scope.searchDate.venditoreSelected,
+            'limit' :$scope.searchDate.searchParam.itemsPerPage,
+            'offset':$scope.searchDate.searchParam.startQuery,
+            'dateFROM': $scope.searchDate.searchParam.dataAppuntamentoDAL,
+            'dateTO': $scope.searchDate.searchParam.dataAppuntamentoAL,
+            'provincia': $scope.searchDate.searchParam.provinciaSelected,
+            'comune': $scope.searchDate.searchParam.comuneSelected,
+            'ragioneSociale':$scope.searchDate.searchParam.ragioneSociale,
+            'esito': $scope.searchDate.searchParam.esito.value,
+            'codiceLuce': $scope.searchDate.searchParam.codLuce,
+            'codiceGas': $scope.searchDate.searchParam.codGas,
+            'operatore': $scope.searchDate.searchParam.operatoriSelected,
+            'agente': $scope.searchDate.searchParam.venditoreSelected,
 
         }).then((result) => {
 
@@ -264,18 +265,18 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
         });
     }else{
         $http.post($scope.searchDate.URLsearchDate,{
-            'limit' :$scope.searchDate.itemsPerPage,
-            'offset':$scope.searchDate.startQuery,
-            'dateFROM': $scope.searchDate.dataAppuntamentoDAL,
-            'dateTO': $scope.searchDate.dataAppuntamentoAL,
-            'provincia': $scope.searchDate.provinciaSelected,
-            'comune': $scope.searchDate.comuneSelected,
-            'ragioneSociale':$scope.searchDate.ragioneSociale,
-            'esito': $scope.searchDate.esito.value,
-            'codiceLuce': $scope.searchDate.codLuce,
-            'codiceGas': $scope.searchDate.codGas,
+            'limit' :$scope.searchDate.searchParam.itemsPerPage,
+            'offset':$scope.searchDate.searchParam.startQuery,
+            'dateFROM': $scope.searchDate.searchParam.dataAppuntamentoDAL,
+            'dateTO': $scope.searchDate.searchParam.dataAppuntamentoAL,
+            'provincia': $scope.searchDate.searchParam.provinciaSelected,
+            'comune': $scope.searchDate.searchParam.comuneSelected,
+            'ragioneSociale':$scope.searchDate.searchParam.ragioneSociale,
+            'esito': $scope.searchDate.searchParam.esito.value,
+            'codiceLuce': $scope.searchDate.searchParam.codLuce,
+            'codiceGas': $scope.searchDate.searchParam.codGas,
             'idResponsabile': $scope.searchDate.idResponsabile,
-            'agente': $scope.searchDate.venditoreSelected,
+            'agente': $scope.searchDate.searchParam.venditoreSelected,
 
         }).then((result) => {
 

@@ -13,7 +13,7 @@
             <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoDAL">Data appuntamento DAL</label>
                 <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="searchDate.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="searchDate.searchParam.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
                         </span>
@@ -22,7 +22,7 @@
             <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoAL">Data appuntamento AL</label>
                 <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="searchDate.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="searchDate.searchParam.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
                         </span>
@@ -32,14 +32,14 @@
         
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
             <label for="provinceSelect">Provincia</label>
-            <select  name="provinceSelect" class="form-control" id="provinceSelect" ng-change="searchDate.showComuni()" ng-model="searchDate.provinciaSelected">
+            <select  name="provinceSelect" class="form-control" id="provinceSelect" ng-change="searchDate.showComuni()" ng-model="searchDate.searchParam.provinciaSelected">
                 
                 <option ng-repeat="option in searchDate.province" value="{{option.nome}}">{{option.nome}}</option>
             </select>
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
             <label for="comuniSelect">Comune</label>
-            <select  name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="searchDate.disabledComuni" ng-model="searchDate.comuneSelected">
+            <select  name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="searchDate.disabledComuni" ng-model="searchDate.searchParam.comuneSelected">
                     <option ng-repeat="option in searchDate.comuniPerProvincia"  value="{{option.nome}}">{{option.nome}}</option>
             </select>
         </div>
@@ -48,33 +48,33 @@
     <div class="row col-12" >
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                 <label for="ragioneSociale">Rag.Sociale/Nome cliente</label>
-                <input type="text" id="ragioneSociale"   class="form-control w-100"    ng-model="searchDate.ragioneSociale">
+                <input type="text" id="ragioneSociale"   class="form-control w-100"    ng-model="searchDate.searchParam.ragioneSociale">
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
             <label for="esitoAppuntamento">Esito appuntamento</label>
-            <select   ng-model="searchDate.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in searchDate.Esiti"></select>      
+            <select   ng-model="searchDate.searchParam.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in searchDate.Esiti"></select>      
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
             <label for="codiceContrattoLuce">Codice contratto luce</label>
-            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100"    ng-model="searchDate.codLuce">
+            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100"    ng-model="searchDate.searchParam.codLuce">
         </div>
         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
             <label for="codiceContrattoGas">Codice contratto gas</label>
-            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100"    ng-model="searchDate.codGas">
+            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100"    ng-model="searchDate.searchParam.codGas">
         </div>
     </div>
 
     <div class="row col-12" ng-if="user.TYPE === 'ADMIN'">
         <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="operatoriSelect">Operatore</label>
-            <select  name="operatoriSelect" class="form-control"  id="operatoriSelect"   ng-model="searchDate.operatoriSelected">
+            <select  name="operatoriSelect" class="form-control"  id="operatoriSelect"   ng-model="searchDate.searchParam.operatoriSelected">
                 <option value="" ></option>
                 <option ng-repeat="option in searchDate.operatori" ng-value="option.ID_UTENTE"  value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}} {{option.COGNOME}} {{option.NOME}}</option>
             </select> 
         </div>   
         <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="venditoreSelect">Agente</label>
-            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.venditoreSelected">
+            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.searchParam.venditoreSelected">
                 <option value="" ></option>
                 <option ng-repeat="option1 in searchDate.agenti" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
             </select>
@@ -84,7 +84,7 @@
     <div class="row col-12" ng-if="user.TYPE === 'OPERATORE'">
         <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="venditoreSelect">Agente</label>
-            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.venditoreSelected">
+            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.searchParam.venditoreSelected">
                 <option value="" ></option>
                 <option ng-repeat="option1 in searchDate.venditoriForOperatore" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
             </select>
@@ -94,7 +94,7 @@
     <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">
             <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                     <label for="venditoreSelect">Agente</label>
-                    <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.venditoreSelected">
+                    <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.searchParam.venditoreSelected">
                         <option value="" ></option>
                         <option ng-value="user.Id" value="{{user.Id}}" >{{user.Id}} - {{user.SURNAME}} {{user.NAME}}</option>
                         <option ng-repeat="option1 in searchDate.venditoriForResponsabili" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
@@ -175,7 +175,7 @@
               </tbody>
             </table>
           </div>
-          <ul ng-if="searchDate.totalItems > searchDate.itemsPerPage" uib-pagination items-per-page="searchDate.itemsPerPage" total-items="searchDate.totalItems" ng-model="searchDate.currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="true" max-size="5"></ul>
+          <ul ng-if="searchDate.totalItems > searchDate.searchParam.itemsPerPage" uib-pagination items-per-page="searchDate.searchParam.itemsPerPage" total-items="searchDate.totalItems" ng-model="searchDate.searchParam.currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="true" max-size="5"></ul>
        
       </div>
 </div>
