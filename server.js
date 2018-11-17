@@ -2444,7 +2444,7 @@ app.get('/dateStatsAdminDashboard', ensureToken, requireAdmin,  function (req, r
 
 
 //STATISTICHE APPUNTAMENTI DASHBOARD VENDITORI
-app.get('/dateStatsVenditoreDashboard/:id', ensureToken, requireAdmin,  function (req, res) {
+app.get('/dateStatsVenditoreDashboard/:id', ensureToken,  function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -2513,7 +2513,7 @@ app.get('/dateStatsVenditoreDashboard/:id', ensureToken, requireAdmin,  function
 	});
 });
 	//STATISTICHE APPUNTAMENTI DASHBOARD Operatori
-app.get('/dateStatsOperatoreDashboard/:id', ensureToken, requireAdmin,  function (req, res) {
+app.get('/dateStatsOperatoreDashboard/:id', ensureToken,  function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
