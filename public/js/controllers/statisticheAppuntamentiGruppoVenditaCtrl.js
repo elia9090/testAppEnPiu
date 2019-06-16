@@ -70,7 +70,15 @@ app.controller('statisticheAppuntamentiGruppoVenditaCtrl',['$scope', '$http', '$
             'agente': $scope.statsDate.venditoreSelected,
         }).then((result) => {
         
-            $scope.statsDate.statsVenditori = result.data.stats;
+            $scope.statsDate.statsDateArray = result.data.stats;
+
+            $scope.statsDate.statsVenditori = $scope.statsDate.statsDateArray.filter(function (utente) {
+                return (utente.TIPO == "AGENTE" || utente.TIPO == "RESPONSABILE_AGENTI");
+            });
+
+            $scope.statsDate.statsOperatori = $scope.statsDate.statsDateArray.filter(function (utente) {
+                return (utente.TIPO == "OPERATORE");
+            });
      
             $scope.statsDate.showRisultati = true;
             $.unblockUI();
