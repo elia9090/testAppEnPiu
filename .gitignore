@@ -6,3 +6,4 @@ public/js/controllers/ng-app.js
 public/js/controllers/dist/ng-app.js
 public/js/dist/ng-app.js
 public/js/dist/ng-app.js
+node_modules/
