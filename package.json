@@ -32,10 +32,11 @@
     "mysqldump": "^2.2.1",
     "node-cron": "^2.0.3",
     "sha1": "^1.1.1",
+    "typescript": "^3.5.2",
     "uglify-es": "^3.3.9"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1"
   }
 }

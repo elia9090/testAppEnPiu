@@ -8,4 +8,4 @@ gulp.task('combine', function() {
     .pipe(gulp.dest('./public/js/dist/')); 
 });
 
-gulp.task('default', ['combine']);
+gulp.task('default', gulp.parallel('combine'));
