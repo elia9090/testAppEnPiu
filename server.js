@@ -70,7 +70,7 @@ cron.schedule('0 5 * * *', () => {
 app.post('/login', function (req, res) {
 	console.log("post :: /login");
 	log.info('post Request :: /login');
-	console.log("test")
+	
 	var data = {};
 	
 	var username = req.body.username;
