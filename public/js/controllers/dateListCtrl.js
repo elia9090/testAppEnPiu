@@ -9,7 +9,7 @@ app.controller('dateListCtrl',['$scope', '$http', '$location','alertify', functi
     
     var url = "";
 
-    if($scope.user.TYPE == "ADMIN"){
+    if($scope.user.TYPE == "ADMIN" || $scope.user.TYPE == "BACK_OFFICE"){
         url = '/listaAppuntamentiAdmin';
     }else if($scope.user.TYPE == "OPERATORE"){
         url = '/listaAppuntamentiOperatore/'+$scope.user.Id;

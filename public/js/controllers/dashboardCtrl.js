@@ -16,7 +16,7 @@ app.controller('dashboardCtrl',['$scope', '$http','$location','alertify', functi
 
    
 
-    if($scope.user.TYPE == "ADMIN"){
+    if($scope.user.TYPE == "ADMIN" || $scope.user.TYPE == "BACK_OFFICE"){
         
         $http.get('/dateStatsAdminDashboard').then((result) => {
         

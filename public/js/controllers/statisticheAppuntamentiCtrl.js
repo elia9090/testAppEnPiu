@@ -34,7 +34,7 @@ app.controller('statisticheAppuntamentiCtrl',[ '$scope', '$http', '$location', '
     };
 
 
-    if($scope.user.TYPE == "ADMIN"){
+    if($scope.user.TYPE == "ADMIN" || $scope.user.TYPE == "BACK_OFFICE"){
         
 
         $scope.statsDate.URL = "/dateStats";

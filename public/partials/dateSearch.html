@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <div class="row col-12" ng-if="user.TYPE === 'ADMIN'">
+    <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
         <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="operatoriSelect">Operatore</label>
             <select  name="operatoriSelect" class="form-control"  id="operatoriSelect"   ng-model="searchDate.searchParam.operatoriSelected">

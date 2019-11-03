@@ -85,6 +85,8 @@ app.post('/login', function (req, res) {
 				var token;
 				if(rows[0].TIPO == 'ADMIN'){
 					 token = jwt.sign({ user: rows[0].ID_UTENTE, role:'ADMIN' }, config.secretKey,{expiresIn: "8h"});
+				}else if(rows[0].TIPO == 'BACK_OFFICE'){
+					token = jwt.sign({ user: rows[0].ID_UTENTE, role:'BACK_OFFICE' }, config.secretKey,{expiresIn: "8h"});
 				}else{
 					 token = jwt.sign({ user: rows[0].ID_UTENTE, role:'OTHER' }, config.secretKey,{expiresIn: "8h"});
 				}
@@ -216,8 +218,8 @@ app.post('/addUser', ensureToken,requireAdmin, function (req, res) {
 						}
 							
 					}else{
-						// se l'usertype è l'operatore faccio il commit ed esco
-						if(userType === 'OPERATORE'){
+						// se l'usertype è l'operatore o BACK_OFFICE faccio il commit ed esco
+						if(userType === 'OPERATORE' || userType === 'BACK_OFFICE'){
 							connection.commit(function(err) {
 								if (err) {
 									connection.rollback(function() {
@@ -1348,7 +1350,7 @@ app.post('/editDateOperatore', ensureToken, function (req, res) {
 });
 
 //lsita appuntamenti admin
-app.get('/listaAppuntamentiAdmin', ensureToken,requireAdmin, function (req, res) {
+app.get('/listaAppuntamentiAdmin', ensureToken,requireAdminOrBackOffice, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -2135,7 +2137,7 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 });
 
 //VERIFICA APPUNTAMENTI GENERICA
-app.post('/verifyDate', ensureToken, requireAdmin, function (req, res) {
+app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -2374,7 +2376,7 @@ app.post('/dateStats', ensureToken, function (req, res) {
 });
 
 //STATISTICHE APPUNTAMENTI DASHBOARD ADMIN
-app.get('/dateStatsAdminDashboard', ensureToken, requireAdmin,  function (req, res) {
+app.get('/dateStatsAdminDashboard', ensureToken, requireAdminOrBackOffice,  function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 
@@ -2999,6 +3001,16 @@ function requireAdmin(request, response, next) {
     
 	var test = jwt.decode(request.token);
 	if (test.role != 'ADMIN') {
+        response.sendStatus(403);
+	}
+    else {
+        next();
+	}
+}
+function requireAdminOrBackOffice(request, response, next) {
+    
+	var test = jwt.decode(request.token);
+	if (test.role != 'ADMIN' && test.role !='BACK_OFFICE') {
         response.sendStatus(403);
 	}
     else {

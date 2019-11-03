@@ -62,7 +62,7 @@
                   
                 </td>
                 <td>
-                    <button ng-disabled="(user.TYPE == 'OPERATORE' && (x.ESITO == 'KO' || x.ESITO == 'OK')) ||  (user.TYPE == 'AGENTE' && (x.ESITO == 'KO' || x.ESITO == 'OK')) ||  (user.TYPE == 'RESPONSABILE_AGENTI' && (x.ESITO == 'KO' || x.ESITO == 'OK')) "  class="btn btn-orange btn-modifyUtente" ng-click="modifyDate(x.ID_APPUNTAMENTO)">
+                    <button ng-disabled="(user.TYPE == 'BACK_OFFICE') || (user.TYPE == 'OPERATORE' && (x.ESITO == 'KO' || x.ESITO == 'OK')) ||  (user.TYPE == 'AGENTE' && (x.ESITO == 'KO' || x.ESITO == 'OK')) ||  (user.TYPE == 'RESPONSABILE_AGENTI' && (x.ESITO == 'KO' || x.ESITO == 'OK')) "  class="btn btn-orange btn-modifyUtente" ng-click="modifyDate(x.ID_APPUNTAMENTO)">
                         <i class="fas fa-pencil-alt"></i>
                     </button>
                   

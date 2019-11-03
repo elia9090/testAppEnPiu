@@ -59,7 +59,7 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
 
     $scope.verifyDate.verifyParam.venditoreSelected = "";
 
-    if($scope.user.TYPE == "ADMIN"){
+    if($scope.user.TYPE == "ADMIN" || $scope.user.TYPE == "BACK_OFFICE"){
        
         $scope.verifyDate.URLverifyDate = '/verifyDate';
 

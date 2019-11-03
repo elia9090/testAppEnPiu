@@ -31,7 +31,7 @@
     </div>
   
 
-    <div class="row col-12" ng-if="user.TYPE === 'ADMIN'">
+    <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
         <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
             <label for="operatoriSelect">Operatore</label>
             <select  name="operatoriSelect" class="form-control"  id="operatoriSelect"   ng-model="statsDate.operatoriSelected">
@@ -64,7 +64,7 @@
                 ##########################################
 
             -->
-            <div ng-if="user.TYPE === 'ADMIN'">
+            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
             <div class="col-md-12 mt-5">
                 <h4>Statistiche appuntamenti venditori</h4>
                 <hr>

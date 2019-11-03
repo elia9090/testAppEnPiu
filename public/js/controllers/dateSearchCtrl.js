@@ -91,7 +91,7 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
 
     $scope.searchDate.searchParam.venditoreSelected = "";
 
-    if($scope.user.TYPE == "ADMIN"){
+    if($scope.user.TYPE == "ADMIN" || $scope.user.TYPE == "BACK_OFFICE"){
        
         $scope.searchDate.URLsearchDate = '/searchDate';
 
