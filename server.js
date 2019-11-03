@@ -69,6 +69,7 @@ cron.schedule('0 5 * * *', () => {
 // This responds a POST request for the /LOGIN page.
 app.post('/login', function (req, res) {
 	console.log("post :: /login");
+	console.log("TEST")
 	log.info('post Request :: /login');
 	
 	var data = {};
