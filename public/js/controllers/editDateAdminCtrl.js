@@ -333,7 +333,7 @@ $scope.editDateAdmin.removeNewNumContrattoGas = function(){
             }
 
             var setterClousureDate = "";
-            if($scope.editDateAdmin.Appuntamento && $scope.editDateAdmin.Appuntamento.ESITO != null
+            if($scope.editDateAdmin.Appuntamento 
                  && $scope.editDateAdmin.Appuntamento.ESITO != 'OK' && $scope.editDateAdmin.esito.value != null
                   && $scope.editDateAdmin.esito.value == 'OK'){
                 setterClousureDate = "OK";

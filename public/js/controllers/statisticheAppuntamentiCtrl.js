@@ -33,6 +33,44 @@ app.controller('statisticheAppuntamentiCtrl',[ '$scope', '$http', '$location', '
         opened: false
     };
 
+    $scope.downloadStats = function () {
+
+        var dateFROM = "";
+        var dateTO = "";
+
+        if(typeof $scope.statsDate.dataAppuntamentoDAL != 'undefined' && $scope.statsDate.dataAppuntamentoDAL){
+            dateFROM = $scope.statsDate.dataAppuntamentoDAL.getDate() + "-" + ($scope.statsDate.dataAppuntamentoDAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoDAL.getFullYear();
+        }
+        if(typeof $scope.statsDate.dataAppuntamentoAL != 'undefined' && $scope.statsDate.dataAppuntamentoAL){
+            dateTO = $scope.statsDate.dataAppuntamentoAL.getDate() + "-" + ($scope.statsDate.dataAppuntamentoAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoAL.getFullYear();
+        }else{
+            var today = new Date()
+            dateTO= today.getDate() + "-" + (today.getMonth()+1) + "-" + today.getFullYear();
+        }
+
+        var workbookName = "Statistiche";
+        if(dateFROM){
+            workbookName += "_DAL_" + dateFROM + "_AL_" + dateTO;
+        }else{
+            workbookName += "_AL_" + dateTO;
+        }
+
+        var workbook = XLSX.utils.book_new();
+        var ws1 = XLSX.utils.table_to_sheet(document.getElementById('tabella-agenti'));
+        XLSX.utils.book_append_sheet(workbook, ws1, "AGENTI");
+        var ws2 = XLSX.utils.table_to_sheet(document.getElementById('tabella-operatori'));
+        XLSX.utils.book_append_sheet(workbook, ws2, "OPERATORI");
+        var wbout = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        function s2ab(s) {
+                        var buf = new ArrayBuffer(s.length);
+                        var view = new Uint8Array(buf);
+                        for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+                        return buf;
+        }
+        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), workbookName+'.xlsx');
+
+       
+    };
 
     if($scope.user.TYPE == "ADMIN" || $scope.user.TYPE == "BACK_OFFICE"){
         
@@ -134,6 +172,64 @@ app.controller('statisticheAppuntamentiCtrl',[ '$scope', '$http', '$location', '
                 $.unblockUI();
                 alertify.alert("Impossibile reperire le statistiche");
             });
+    };
+
+    $scope.statsDate.mostraAppuntamenti = function(idUtente){
+
+        $.blockUI();
+       
+        var dateFROM = "";
+        var dateTO = "";
+
+        if(typeof $scope.statsDate.dataAppuntamentoDAL != 'undefined' && $scope.statsDate.dataAppuntamentoDAL){
+            dateFROM = $scope.statsDate.dataAppuntamentoDAL.getFullYear() + "-" + ($scope.statsDate.dataAppuntamentoDAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoDAL.getDate();
+        }
+        if(typeof $scope.statsDate.dataAppuntamentoAL != 'undefined' && $scope.statsDate.dataAppuntamentoAL){
+            dateTO = $scope.statsDate.dataAppuntamentoAL.getFullYear() + "-" + ($scope.statsDate.dataAppuntamentoAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoAL.getDate();
+        }
+
+        $http.post("/verifyDateStats", {
+            'dateFROM': dateFROM,
+            'dateTO': dateTO,
+            'operatore': $scope.statsDate.operatoriSelected,
+            'agente': $scope.statsDate.venditoreSelected,
+            'idUtente':idUtente
+        }).then((result) => {
+        
+            $scope.statsDate.recapStatisticheAppuntamenti = result.data.verifyStats;
+            $('#recapStatisticheAppuntamenti').modal('show');
+            $.unblockUI();
+
+            }).catch((err) => {
+                if(err.status === 403){
+                    alertify.alert("Utente non autorizzato");
+                    $.unblockUI();
+                    $location.path('/logout');
+                    return;
+                }
+                if(err.status === 404){
+                    $.unblockUI();
+                    alertify.alert("Non ci sono statistiche per i parametri selezionati");
+                    return;
+                }
+                $.unblockUI();
+                alertify.alert("Impossibile reperire le statistiche");
+            });
+    };
+
+    $scope.statsDate.tdEsitoClass = function (esito) {
+        if (esito=='OK'){
+            return 'green-background'
+        }else if (esito=='KO'){
+            return 'red-background'
+        }else if(esito == 'VALUTA'){
+            return 'yellow-background'
+        } else if(esito == 'ASSENTE' || esito == 'NON VISITATO'){
+            return 'grey-background'
+        }else{
+            return 'white-background'
+        }
+        
     };
 
 }]);

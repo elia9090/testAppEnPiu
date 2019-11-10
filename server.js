@@ -15,7 +15,7 @@ app.listen(3000,'192.168.1.187' || 'localhost',function() {
     console.log('Application worker  started...');
   }
   );*/
-  var compression = require('compression');
+ var compression = require('compression');
   var minify = require('express-minify');
 
  var uglifyEs = require('uglify-es');
@@ -69,7 +69,6 @@ cron.schedule('0 5 * * *', () => {
 // This responds a POST request for the /LOGIN page.
 app.post('/login', function (req, res) {
 	console.log("post :: /login");
-	console.log("TEST")
 	log.info('post Request :: /login');
 	
 	var data = {};
@@ -2360,6 +2359,133 @@ app.post('/dateStats', ensureToken, function (req, res) {
 						res.status(404).json(data);
 					} else {
 						data["stats"] = 'Errore in fase di reperimento utente';
+						res.status(500).json(data);
+						console.log('Errore in fase di reperimento utenti: ' + err);
+						log.error('Errore in fase di reperimento utenti: ' + err);
+					}}
+				
+				});
+			
+			});
+				
+		
+
+						
+		}
+	});
+});
+//VERIFICA STATISTICHE APPUNTAMENTI
+app.post('/verifyDateStats', ensureToken,requireAdminOrBackOffice, function (req, res) {
+	jwt.verify(req.token, config.secretKey, function(err, data) {
+		if (err) {
+			res.sendStatus(403); 
+		} else {
+			var data = {};	
+			var idUtente = req.body.idUtente;	
+			var dateFrom = req.body.dateFROM;
+			var QdateFrom = " ";
+			if(dateFrom !== '' && dateFrom !== undefined && dateFrom !=null){
+				QdateFrom = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO >= "'+dateFrom+'" OR APPUNTAMENTI.DATA_OK >= "'+dateFrom+'" )';
+			}
+
+			var dateTo = req.body.dateTO;
+			var QdateTo = " ";
+			if(dateTo !== '' && dateTo !== undefined && dateTo !=null){
+				QdateTo = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateTo+'" OR APPUNTAMENTI.DATA_OK <= "'+dateTo+'" )';
+			}else{
+				// SE NO NON HO SETTATO LA DATE_TO LA SETTO AD UN GIORNO PRIMA RISPETTO IL GIORNO CORRENTE
+				var today = new Date();
+				var meseCorrente = today.getMonth()+1;
+				var giornoCorrenteMenoUno = today.getDate()-1;
+				var annoCorrente = today.getFullYear();
+				var dateToTodayMenoUno = annoCorrente+"-"+meseCorrente+"-"+giornoCorrenteMenoUno;
+
+				QdateTo = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateToTodayMenoUno+'" OR APPUNTAMENTI.DATA_OK <= "'+dateToTodayMenoUno+'" )';
+
+			}
+
+			
+
+			var agente = req.body.agente;
+			var Qagente = " ";
+			if(agente !== '' && agente !== undefined && agente!= null){
+				Qagente = ' AND APPUNTAMENTI.ID_VENDITORE = "'+agente+'" ';
+			}
+
+			var operatore = req.body.operatore;
+			var Qoperatore = " ";
+			if(operatore !== '' && operatore !== undefined && operatore != null){
+				Qoperatore = ' AND APPUNTAMENTI.ID_OPERATORE = "'+operatore+'" ';
+			}
+
+
+			pool.getConnection(function (err, connection) {
+				connection.query(  
+					`select
+					VENDITORE.ID_UTENTE AS ID_VENDITORE,
+					VENDITORE.COGNOME AS COGNOME_VENDITORE,
+					VENDITORE.NOME AS NOME_VENDITORE,
+					VENDITORE.TIPO AS TIPO_VENDITORE,
+					OPERATORE.ID_UTENTE AS ID_OPERATORE,
+					OPERATORE.COGNOME AS COGNOME_OPERATORE,
+					OPERATORE.NOME AS NOME_OPERATORE,
+					OPERATORE.TIPO AS TIPO_OPERATORE,
+					APPUNTAMENTI.DATA_APPUNTAMENTO,
+					APPUNTAMENTI.NOME_ATTIVITA,
+					APPUNTAMENTI.PROVINCIA,
+					APPUNTAMENTI.COMUNE,
+					APPUNTAMENTI.ESITO,
+					APPUNTAMENTI.DATA_OK
+
+					
+					from APPUNTAMENTI 
+					left join UTENTI  AS VENDITORE ON  APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE
+					left join UTENTI AS OPERATORE ON  APPUNTAMENTI.ID_OPERATORE = OPERATORE.ID_UTENTE 
+					
+					WHERE 1=1 ${QdateFrom} ${QdateTo} ${Qagente} ${Qoperatore} AND VENDITORE.ID_UTENTE=${idUtente} 
+					
+					
+					UNION
+					
+					select
+					VENDITORE.ID_UTENTE AS ID_VENDITORE,
+					VENDITORE.COGNOME AS COGNOME_VENDITORE,
+					VENDITORE.NOME AS NOME_VENDITORE,
+					VENDITORE.TIPO AS TIPO_VENDITORE,
+					OPERATORE.ID_UTENTE AS ID_OPERATORE,
+					OPERATORE.COGNOME AS COGNOME_OPERATORE,
+					OPERATORE.NOME AS NOME_OPERATORE,
+					OPERATORE.TIPO AS TIPO_OPERATORE,
+					APPUNTAMENTI.DATA_APPUNTAMENTO,
+					APPUNTAMENTI.NOME_ATTIVITA,
+					APPUNTAMENTI.PROVINCIA,
+					APPUNTAMENTI.COMUNE,
+					APPUNTAMENTI.ESITO,
+					APPUNTAMENTI.DATA_OK
+
+					
+					from APPUNTAMENTI 
+					left join UTENTI AS VENDITORE ON  APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE
+					left join UTENTI AS OPERATORE ON  APPUNTAMENTI.ID_OPERATORE = OPERATORE.ID_UTENTE 
+					
+					WHERE 1=1 ${QdateFrom} ${QdateTo} ${Qagente} ${Qoperatore} AND OPERATORE.ID_UTENTE=${idUtente} 
+					
+					`, function (err, rows, fields) {
+					connection.release();
+					if(err){
+						log.error('ERRORE SQL STATS ADMIN: --> ' + err);
+						res.sendStatus(500);
+					}else{	
+						if (rows.length !== 0 && !err) {
+						data["verifyStats"] = rows;
+						res.json(data);
+					} else if (rows.length === 0) {
+						//Error code 2 = no rows in db.
+						data["error"] = 2;
+						data["verifyStats"] = 'Nessuna statistica trovata';
+						res.status(404).json(data);
+					} else {
+						data["verifyStats"] = 'Errore in fase di reperimento utente';
 						res.status(500).json(data);
 						console.log('Errore in fase di reperimento utenti: ' + err);
 						log.error('Errore in fase di reperimento utenti: ' + err);

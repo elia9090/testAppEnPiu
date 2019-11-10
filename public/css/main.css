@@ -400,7 +400,20 @@ textarea{
   text-align: center;
 }
 
+.mostra-appuntamenti{
+  width: 50px;
+  padding: 3px;
+  background-color: #f47320 !important;
+  color: white;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: .25rem;
+}
 
+#recapStatisticheAppuntamenti .modal-body{
+  height: 600px;
+  overflow-y: scroll;
+}
 
 @media screen and (max-width: 450px) {
  .modificaUtenteForm button.btn-white, .editAppuntamentoAdmin button.btn-white{

@@ -1,384 +1,648 @@
-<div class="container statsContainer" >
-     
-    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="statsDateForm" ng-submit="statsDate.submitstatsDate()">
-        
-        <div class="row col-12">
-            <div class="col-md-12">
-                <h2>Statistiche appuntamenti</h2>
-                <hr>
-            </div>
-        </div>
+<div class="container statsContainer">
 
-        <div class="row col-12" >
-            <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
-                <label for="dataAppuntamentoDAL">Data riferimento DAL</label>
-                <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="statsDate.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
-                        </span>
-                    </p>
-            </div>
-            <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
-                <label for="dataAppuntamentoAL">Data riferimento AL</label>
-                <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="statsDate.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
-                        </span>
-                    </p>
-            </div>
-    </div>
-  
-
-    <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
-        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-            <label for="operatoriSelect">Operatore</label>
-            <select  name="operatoriSelect" class="form-control"  id="operatoriSelect"   ng-model="statsDate.operatoriSelected">
-                <option value="" ></option>
-                <option ng-repeat="option in statsDate.operatori" ng-value="option.ID_UTENTE"  value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}} {{option.COGNOME}} {{option.NOME}}</option>
-            </select> 
-        </div>   
-        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-            <label for="venditoreSelect">Agente</label>
-            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="statsDate.venditoreSelected">
-                <option value="" ></option>
-                <option ng-repeat="option1 in statsDate.agenti" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="row col-12" >
-        <div class="col-md-12 col-xl-12 mt-3 ">
-            <button ng-disabled="statsDateForm.$invalid "  type="submit" class="btn btn-orange ">Vedi statistiche</button> 
-        </div>
-    </div>
-    </form>
+        <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="statsDateForm" ng-submit="statsDate.submitstatsDate()">
     
-    <div ng-if= "statsDate.showRisultati" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
-            
-            
-            <!--
-                ##########################################
-                                #ADMIN#
-                ##########################################
-
-            -->
-            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
-            <div class="col-md-12 mt-5">
-                <h4>Statistiche appuntamenti venditori</h4>
-                <hr>
+            <div class="row col-12">
+                <div class="col-md-12">
+                    <h2>Statistiche appuntamenti</h2>
+                    <hr>
+                </div>
             </div>
-            
-            <div  class="table-responsive">
-            <table class="table  table-bordered">
-              <thead>
-                <tr>
-                    <th scope="col">Cognome</th>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Appuntamenti</th>
-                    <th scope="col">Contratti</th>
-                    <th scope="col">% Contratti</th>
-                    <th scope="col">OK</th>
-                    
-                    <th scope="col">KO</th>
-                    
-                    <th scope="col">VALUTA</th>
-                    
-                    <th scope="col">ASSENTE</th>
-                    
-                    <th scope="col">NON VISITATO</th>
-                    
-                    <th scope="col">DA ESITARE</th>
-                    
-                </tr>
-              </thead>
-              <tbody>
-                  <tr  ng-repeat="X in statsDate.statsVenditori" >
-                    <td>
-                        {{X.COGNOME}}
-                    </td>
-                    <td>
-                        {{X.NOME}}
-                    </td>
-                    <td>
-                        <span class="bold">{{X.APPUNTAMENTI}}</span>
-                    </td>
-                    <td>
-                        <span class="bold">{{X.CONTRATTI}}</span>
-                    </td>
-                    <td>
-                        <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
-                    </td>
-                    <td>
-                        <span class="bold">{{X.OK}}</span> <br> {{X.OK_PERC}}%
-                    </td>
-                 
-                    <td>
-                        <span class="bold">{{X.KO}}</span> <br> {{X.KO_PERC}}%
-                    </td>
-                  
-                    <td>
-                        <span class="bold">{{X.VALUTA}}</span> <br> {{X.VALUTA_PERC}}%
-                    </td>
-                 
-                    <td>
-                        <span class="bold">{{X.ASSENTE}}</span> <br> {{X.ASSENTE_PERC}}%
-                    </td>
-                 
-                    <td>
-                        <span class="bold">{{X.NON_VISITATO}}</span> <br> {{X.NON_VISITATO_PERC}}%
-                    </td>
-                    
-                    <td>
-                        <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
-                    </td>
-                  </tr>
-              </tbody>
-            </table>
-          </div>
-
-        <div class="col-md-12 mt-5">
-            <h4>Statistiche appuntamenti operatori</h4>
-            <hr>
+    
+            <div class="row col-12">
+                <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
+                    <label for="dataAppuntamentoDAL">Data riferimento DAL</label>
+                    <p class="input-group datepicker">
+                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly uib-datepicker-popup="{{format}}" ng-model="statsDate.dataAppuntamentoDAL" value="" is-open="popupDAL.opened" datepicker-options="dateOptions" clear-text="Rimuovi" close-text="Chiudi" />
+                        <span class="input-group-btn">
+                                <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
+                            </span>
+                    </p>
+                </div>
+                <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
+                    <label for="dataAppuntamentoAL">Data riferimento AL</label>
+                    <p class="input-group datepicker">
+                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly uib-datepicker-popup="{{format}}" ng-model="statsDate.dataAppuntamentoAL" value="" is-open="popupAL.opened" datepicker-options="dateOptions" clear-text="Rimuovi" close-text="Chiudi" />
+                        <span class="input-group-btn">
+                                <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
+                            </span>
+                    </p>
+                </div>
+            </div>
+    
+            <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                    <label for="operatoriSelect">Operatore</label>
+                    <select name="operatoriSelect" class="form-control" id="operatoriSelect" ng-model="statsDate.operatoriSelected">
+                        <option value=""></option>
+                        <option ng-repeat="option in statsDate.operatori" ng-value="option.ID_UTENTE" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}} {{option.COGNOME}} {{option.NOME}}</option>
+                    </select>
+                </div>
+                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                    <label for="venditoreSelect">Agente</label>
+                    <select name="venditoreSelect" class="form-control" id="venditoreSelect" ng-model="statsDate.venditoreSelected">
+                        <option value=""></option>
+                        <option ng-repeat="option1 in statsDate.agenti" ng-value="option1.ID_UTENTE" value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
+                    </select>
+                </div>
+            </div>
+    
+            <div class="row col-12">
+                <div class="col-md-12 col-xl-12 mt-3 ">
+                    <button ng-disabled="statsDateForm.$invalid " type="submit" class="btn btn-orange ">Vedi statistiche</button>
+                </div>
+            </div>
+        </form>
+    
+        <div ng-if="statsDate.showRisultati" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+    
+            <!--
+                    ##########################################
+                                    #ADMIN#
+                    ##########################################
+    
+                -->
+            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                <div class="col-md-12 mt-5">
+                    <h4>Statistiche appuntamenti venditori</h4>
+                    <hr>
+                </div>
+                <button class="btn btn-orange float-right mb-3" ng-click="downloadStats()">
+                        <i style="font-size: 18px;" class="far fa-file-excel"></i>
+                </button>
+                <div class="table-responsive">
+                    <table class="table  table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cognome</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Appuntamenti</th>
+                                <th scope="col">Contratti</th>
+                                <th scope="col">% Contratti</th>
+                                <th scope="col">OK</th>
+    
+                                <th scope="col">KO</th>
+    
+                                <th scope="col">VALUTA</th>
+    
+                                <th scope="col">ASSENTE</th>
+    
+                                <th scope="col">NON VISITATO</th>
+    
+                                <th scope="col">DA ESITARE</th>
+    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="X in statsDate.statsVenditori">
+                                <td>
+                                    {{X.COGNOME}}
+                                </td>
+                                <td>
+                                    {{X.NOME}}
+                                </td>
+                                <td >
+                                    <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="bold mostra-appuntamenti">{{X.APPUNTAMENTI}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.CONTRATTI}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.OK}}</span>
+                                    <br> {{X.OK_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.KO}}</span>
+                                    <br> {{X.KO_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.VALUTA}}</span>
+                                    <br> {{X.VALUTA_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.ASSENTE}}</span>
+                                    <br> {{X.ASSENTE_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.NON_VISITATO}}</span>
+                                    <br> {{X.NON_VISITATO_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.DA_ESITARE}}</span>
+                                    <br> {{X.DA_ESITARE_PERC}}%
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table  table-bordered" style="display: none;" id="tabella-agenti">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cognome</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Appuntamenti</th>
+                                <th scope="col">Contratti</th>
+                                <th scope="col">% Contratti</th>
+                                <th scope="col">OK</th>
+                                <th scope="col">% OK</th>
+                                <th scope="col">KO</th>
+                                <th scope="col">% KO</th>
+    
+                                <th scope="col">VALUTA</th>
+                                <th scope="col">% VALUTA</th>
+    
+                                <th scope="col">ASSENTE</th>
+                                <th scope="col">% ASSENTE</th>
+    
+                                <th scope="col">NON VISITATO</th>
+                                <th scope="col">% NON VISITATO</th>
+                                <th scope="col">DA ESITARE</th>
+                                <th scope="col">% DA ESITARE</th>
+    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="X in statsDate.statsVenditori">
+                                <td>
+                                    {{X.COGNOME}}
+                                </td>
+                                <td>
+                                    {{X.NOME}}
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.APPUNTAMENTI}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.CONTRATTI}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.OK}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.OK_PERC}}<span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.KO}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.KO_PERC}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.VALUTA}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.VALUTA_PERC}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.ASSENTE}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.ASSENTE_PERC}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.NON_VISITATO}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold"> {{X.NON_VISITATO_PERC}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.DA_ESITARE}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.DA_ESITARE_PERC}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+    
+                <div class="col-md-12 mt-5">
+                    <h4>Statistiche appuntamenti operatori</h4>
+                    <hr>
+                </div>
+    
+                <div class="table-responsive">
+                    <table class="table  table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cognome</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Appuntamenti</th>
+    
+                                <th scope="col">% Chiusure</th>
+                                <th scope="col">OK</th>
+    
+                                <th scope="col">KO</th>
+    
+                                <th scope="col">VALUTA</th>
+    
+                                <th scope="col">ASSENTE</th>
+    
+                                <th scope="col">NON VISITATO</th>
+    
+                                <th scope="col">DA ESITARE</th>
+    
+                                <th scope="col">Contratti</th>
+    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="X in statsDate.statsOperatori">
+                                <td>
+                                    {{X.COGNOME}}
+                                </td>
+                                <td>
+                                    {{X.NOME}}
+                                </td>
+                                <td >
+                                    <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="bold mostra-appuntamenti">{{X.APPUNTAMENTI}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.OK}}</span>
+                                    <br> {{X.OK_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.KO}}</span>
+                                    <br> {{X.KO_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.VALUTA}}</span>
+                                    <br> {{X.VALUTA_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.ASSENTE}}</span>
+                                    <br> {{X.ASSENTE_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.NON_VISITATO}}</span>
+                                    <br> {{X.NON_VISITATO_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.DA_ESITARE}}</span>
+                                    <br> {{X.DA_ESITARE_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.CONTRATTI}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table  table-bordered" style="display: none;"  id="tabella-operatori">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cognome</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Appuntamenti</th>
+    
+                                <th scope="col">% Chiusure</th>
+                                <th scope="col">OK</th>
+                                <th scope="col">% OK</th>
+                                <th scope="col">KO</th>
+                                <th scope="col">% KO</th>
+    
+                                <th scope="col">VALUTA</th>
+                                <th scope="col">% VALUTA</th>
+    
+                                <th scope="col">ASSENTE</th>
+                                <th scope="col">% ASSENTE</th>
+    
+                                <th scope="col">NON VISITATO</th>
+                                <th scope="col">% NON VISITATO</th>
+                                <th scope="col">DA ESITARE</th>
+                                <th scope="col">% DA ESITARE</th>
+                                <th scope="col">Contratti</th>
+    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="X in statsDate.statsOperatori">
+                                <td>
+                                    {{X.COGNOME}}
+                                </td>
+                                <td>
+                                    {{X.NOME}}
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.APPUNTAMENTI}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.OK}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.OK_PERC}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.KO}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.KO_PERC}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.VALUTA}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.VALUTA_PERC}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.ASSENTE}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.ASSENTE_PERC}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.NON_VISITATO}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold"> {{X.NON_VISITATO_PERC}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.DA_ESITARE}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.DA_ESITARE_PERC}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.CONTRATTI}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    
+            <!--
+                    ##########################################
+                                    #VENDITORI#
+                    ##########################################
+    
+            -->
+            <div ng-if="user.TYPE === 'AGENTE' || user.TYPE === 'RESPONSABILE_AGENTI'">
+                <div class="col-md-12 mt-5">
+                    <h4>Statistiche appuntamenti personali</h4>
+                    <hr>
+                </div>
+    
+                <div class="table-responsive">
+                    <table class="table  table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cognome</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Appuntamenti</th>
+                                <th scope="col">Contratti</th>
+                                <th scope="col">% Contratti</th>
+                                <th scope="col">OK</th>
+    
+                                <th scope="col">KO</th>
+    
+                                <th scope="col">VALUTA</th>
+    
+                                <th scope="col">ASSENTE</th>
+    
+                                <th scope="col">NON VISITATO</th>
+    
+                                <th scope="col">DA ESITARE</th>
+    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="X in statsDate.statsVenditori">
+                                <td>
+                                    {{X.COGNOME}}
+                                </td>
+                                <td>
+                                    {{X.NOME}}
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.APPUNTAMENTI}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.CONTRATTI}}</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.OK}}</span>
+                                    <br> {{X.OK_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.KO}}</span>
+                                    <br> {{X.KO_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.VALUTA}}</span>
+                                    <br> {{X.VALUTA_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.ASSENTE}}</span>
+                                    <br> {{X.ASSENTE_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.NON_VISITATO}}</span>
+                                    <br> {{X.NON_VISITATO_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.DA_ESITARE}}</span>
+                                    <br> {{X.DA_ESITARE_PERC}}%
+                                </td>
+    
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    
+            <!--
+            ##########################################
+                            #OPERATORI#
+            ##########################################
+    
+        -->
+    
+            <div ng-if="user.TYPE === 'OPERATORE'">
+                <div class="col-md-12 mt-5">
+                    <h4>Statistiche appuntamenti personali</h4>
+                    <hr>
+                </div>
+    
+                <div class="table-responsive">
+                    <table class="table  table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cognome</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Appuntamenti</th>
+                                <th scope="col">% Chiusure</th>
+                                <th scope="col">OK</th>
+    
+                                <th scope="col">KO</th>
+    
+                                <th scope="col">VALUTA</th>
+    
+                                <th scope="col">ASSENTE</th>
+    
+                                <th scope="col">NON VISITATO</th>
+    
+                                <th scope="col">DA ESITARE</th>
+    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="X in statsDate.statsOperatori">
+                                <td>
+                                    {{X.COGNOME}}
+                                </td>
+                                <td>
+                                    {{X.NOME}}
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.APPUNTAMENTI}}</span>
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
+                                </td>
+                                <td>
+                                    <span class="bold">{{X.OK}}</span>
+                                    <br> {{X.OK_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.KO}}</span>
+                                    <br> {{X.KO_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.VALUTA}}</span>
+                                    <br> {{X.VALUTA_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.ASSENTE}}</span>
+                                    <br> {{X.ASSENTE_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.NON_VISITATO}}</span>
+                                    <br> {{X.NON_VISITATO_PERC}}%
+                                </td>
+    
+                                <td>
+                                    <span class="bold">{{X.DA_ESITARE}}</span>
+                                    <br> {{X.DA_ESITARE_PERC}}%
+                                </td>
+    
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    
         </div>
-        
-        <div  class="table-responsive">
-        <table class="table  table-bordered">
-          <thead>
-            <tr>
-                <th scope="col">Cognome</th>
-                <th scope="col">Nome</th>
-                <th scope="col">Appuntamenti</th>
-                
-                <th scope="col">% Chiusure</th>
-                <th scope="col">OK</th>
-                
-                <th scope="col">KO</th>
-                
-                <th scope="col">VALUTA</th>
-                
-                <th scope="col">ASSENTE</th>
-                
-                <th scope="col">NON VISITATO</th>
-                
-                <th scope="col">DA ESITARE</th>
-
-                <th scope="col">Contratti</th>
-                
-            </tr>
-          </thead>
-          <tbody>
-              <tr  ng-repeat="X in statsDate.statsOperatori">
-                <td>
-                    {{X.COGNOME}}
-                </td>
-                <td>
-                    {{X.NOME}}
-                </td>
-                <td>
-                    <span class="bold">{{X.APPUNTAMENTI}}</span>
-                </td>
-              
-                <td>
-                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
-                </td>
-                <td>
-                    <span class="bold">{{X.OK}}</span> <br> {{X.OK_PERC}}%
-                </td>
-             
-                <td>
-                    <span class="bold">{{X.KO}}</span> <br> {{X.KO_PERC}}%
-                </td>
-              
-                <td>
-                    <span class="bold">{{X.VALUTA}}</span> <br> {{X.VALUTA_PERC}}%
-                </td>
-             
-                <td>
-                    <span class="bold">{{X.ASSENTE}}</span> <br> {{X.ASSENTE_PERC}}%
-                </td>
-             
-                <td>
-                    <span class="bold">{{X.NON_VISITATO}}</span> <br> {{X.NON_VISITATO_PERC}}%
-                </td>
-                
-                <td>
-                    <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
-                </td>
-               
-                <td>
-                    <span class="bold">{{X.CONTRATTI}}</span>
-                </td>
-              </tr>
-          </tbody>
-        </table>
-      </div>
     </div>
 
-        <!--
-                ##########################################
-                                #VENDITORI#
-                ##########################################
-
-        -->
-    <div ng-if="user.TYPE === 'AGENTE' || user.TYPE === 'RESPONSABILE_AGENTI'">
-        <div class="col-md-12 mt-5">
-            <h4>Statistiche appuntamenti personali</h4>
-            <hr>
+    <!-- Modal -->
+<div class="modal fade" id="recapStatisticheAppuntamenti" tabindex="-1" role="dialog" aria-labelledby="recapStatisticheAppuntamentiLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="recapStatisticheAppuntamentiLabel">Recap appuntamenti</b></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-        
-        <div  class="table-responsive">
-        <table class="table  table-bordered">
-          <thead>
-            <tr>
-                <th scope="col">Cognome</th>
-                <th scope="col">Nome</th>
-                <th scope="col">Appuntamenti</th>
-                <th scope="col">Contratti</th>
-                <th scope="col">% Contratti</th>
-                <th scope="col">OK</th>
-                
-                <th scope="col">KO</th>
-                
-                <th scope="col">VALUTA</th>
-                
-                <th scope="col">ASSENTE</th>
-                
-                <th scope="col">NON VISITATO</th>
-                
-                <th scope="col">DA ESITARE</th>
-                
-            </tr>
-          </thead>
-          <tbody>
-              <tr  ng-repeat="X in statsDate.statsVenditori" >
-                <td>
-                    {{X.COGNOME}}
-                </td>
-                <td>
-                    {{X.NOME}}
-                </td>
-                <td>
-                    <span class="bold">{{X.APPUNTAMENTI}}</span>
-                </td>
-                <td>
-                    <span class="bold">{{X.CONTRATTI}}</span>
-                </td>
-                <td>
-                    <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
-                </td>
-                <td>
-                    <span class="bold">{{X.OK}}</span> <br> {{X.OK_PERC}}%
-                </td>
-             
-                <td>
-                    <span class="bold">{{X.KO}}</span> <br> {{X.KO_PERC}}%
-                </td>
-              
-                <td>
-                    <span class="bold">{{X.VALUTA}}</span> <br> {{X.VALUTA_PERC}}%
-                </td>
-             
-                <td>
-                    <span class="bold">{{X.ASSENTE}}</span> <br> {{X.ASSENTE_PERC}}%
-                </td>
-             
-                <td>
-                    <span class="bold">{{X.NON_VISITATO}}</span> <br> {{X.NON_VISITATO_PERC}}%
-                </td>
-                
-                <td>
-                    <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
-                </td>
-               
-
-              </tr>
-          </tbody>
-        </table>
-      </div>
-      </div>
-   
-      <!--
-        ##########################################
-                        #OPERATORI#
-        ##########################################
-
-    -->
-
-      <div ng-if="user.TYPE === 'OPERATORE'">
-        <div class="col-md-12 mt-5">
-            <h4>Statistiche appuntamenti personali</h4>
-            <hr>
+        <div class="modal-body">
+            <div class="container" >
+                <div class="table-responsive">
+                    <table class="table  table-bordered">
+                      <thead>
+                        <tr>
+                          <th scope="col">Data Appuntamento</th>
+                          <th scope="col">Esito</th>
+                          <th scope="col">Data OK</th>
+                          <th scope="col">Cliente</th>
+                          <th scope="col">Luogo</th>      
+                          <th scope="col">Agente</th>
+                          <th scope="col">Operatore</th>
+                          
+                        </tr>
+                      </thead>
+                      <tbody>
+                          <tr  ng-repeat="x in statsDate.recapStatisticheAppuntamenti | orderBy : ['DATA_APPUNTAMENTO'] " >
+                            <td >
+                                {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
+                            </td>
+                            <td ng-class="statsDate.tdEsitoClass(x.ESITO)">
+                                {{x.ESITO}}
+                            </td>
+                            
+                            <td>
+                                {{x.DATA_OK | date:'dd/MM/yyyy'}}
+                            </td>
+                            <td>
+                                {{x.NOME_ATTIVITA}} 
+                                    
+                            </td> 
+                            <td>
+                                {{x.PROVINCIA}} - {{x.COMUNE}}
+                                
+                            </td>
+                            
+                            <td>
+                                 {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
+                              </td> 
+                              
+                            <td>
+                                {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
+                            </td>
+                          
+                          
+                          </tr>
+                      </tbody>
+                    </table>
+                  </div>
+            </div>
         </div>
-        
-        <div  class="table-responsive">
-            <table class="table  table-bordered">
-              <thead>
-                <tr>
-                    <th scope="col">Cognome</th>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Appuntamenti</th>
-                    <th scope="col">% Chiusure</th>
-                    <th scope="col">OK</th>
-                    
-                    <th scope="col">KO</th>
-                    
-                    <th scope="col">VALUTA</th>
-                    
-                    <th scope="col">ASSENTE</th>
-                    
-                    <th scope="col">NON VISITATO</th>
-                    
-                    <th scope="col">DA ESITARE</th>
-                    
-                </tr>
-              </thead>
-              <tbody>
-                  <tr  ng-repeat="X in statsDate.statsOperatori">
-                    <td>
-                        {{X.COGNOME}}
-                    </td>
-                    <td>
-                        {{X.NOME}}
-                    </td>
-                    <td>
-                        <span class="bold">{{X.APPUNTAMENTI}}</span>
-                    </td>
-                   
-                    <td>
-                        <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
-                    </td>
-                    <td>
-                        <span class="bold">{{X.OK}}</span> <br> {{X.OK_PERC}}%
-                    </td>
-                 
-                    <td>
-                        <span class="bold">{{X.KO}}</span> <br> {{X.KO_PERC}}%
-                    </td>
-                  
-                    <td>
-                        <span class="bold">{{X.VALUTA}}</span> <br> {{X.VALUTA_PERC}}%
-                    </td>
-                 
-                    <td>
-                        <span class="bold">{{X.ASSENTE}}</span> <br> {{X.ASSENTE_PERC}}%
-                    </td>
-                 
-                    <td>
-                        <span class="bold">{{X.NON_VISITATO}}</span> <br> {{X.NON_VISITATO_PERC}}%
-                    </td>
-                    
-                    <td>
-                        <span class="bold">{{X.DA_ESITARE}}</span> <br> {{X.DA_ESITARE_PERC}}%
-                    </td>
-                   
-                  </tr>
-              </tbody>
-            </table>
-          </div>
+      
       </div>
-          
-       
-      </div>
-</div>
+    </div>
+  </div>

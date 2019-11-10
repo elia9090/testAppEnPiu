@@ -174,9 +174,9 @@ $scope.editDateVenditore.removeNewNumContrattoGas = function(){
         //SE L'ESITO PRECENDENTE NON ERA OK E ORA E' OK ALLORA SETTO LA DATA DI CHIUSURA
 
         var setterClousureDate = "";
-        if($scope.editDateVenditore.Appuntamento && $scope.editDateVenditore.Appuntamento.ESITO != null
-             && $scope.editDateVenditore.Appuntamento.ESITO != 'OK' && $scope.editDateVenditore.esito.value != null
-              && $scope.editDateVenditore.esito.value == 'OK'){
+        if($scope.editDateAdmin.Appuntamento 
+             && $scope.editDateAdmin.Appuntamento.ESITO != 'OK' && $scope.editDateAdmin.esito.value != null
+              && $scope.editDateAdmin.esito.value == 'OK'){
             setterClousureDate = "OK";
         }
 
