@@ -15,14 +15,7 @@ app.listen(3000,'192.168.1.187' || 'localhost',function() {
     console.log('Application worker  started...');
   }
   );*/
- var compression = require('compression');
-  var minify = require('express-minify');
 
- var uglifyEs = require('uglify-es');
- app.use(compression());
-app.use(minify({
-  uglifyJsModule: uglifyEs,
-}));
 
 const tenHour       = 36000000;
 //STATIC FILES
