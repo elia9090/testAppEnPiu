@@ -2240,30 +2240,33 @@ app.post('/dateStats', ensureToken, function (req, res) {
 			res.sendStatus(403); 
 		} else {
 			var data = {};	
-				
+			// date per le statistiche inerenti al range selezionato
 			var dateFrom = req.body.dateFROM;
 			var QdateFrom = " ";
-			if(dateFrom !== '' && dateFrom !== undefined && dateFrom !=null){
-				QdateFrom = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO >= "'+dateFrom+'" OR APPUNTAMENTI.DATA_OK >= "'+dateFrom+'" )';
+			if(dateFrom == '' || dateFrom == undefined || dateFrom ==null){
+				dateFrom = "2000-01-01";
 			}
-
+			QdateFrom = ' AND APPUNTAMENTI.DATA_APPUNTAMENTO >= "'+dateFrom+'" ';
+			
 			var dateTo = req.body.dateTO;
 			var QdateTo = " ";
-			if(dateTo !== '' && dateTo !== undefined && dateTo !=null){
-				QdateTo = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateTo+'" OR APPUNTAMENTI.DATA_OK <= "'+dateTo+'" )';
-			}else{
-				// SE NO NON HO SETTATO LA DATE_TO LA SETTO AD UN GIORNO PRIMA RISPETTO IL GIORNO CORRENTE
-				var today = new Date();
-				var meseCorrente = today.getMonth()+1;
-				var giornoCorrenteMenoUno = today.getDate()-1;
-				var annoCorrente = today.getFullYear();
-				var dateToTodayMenoUno = annoCorrente+"-"+meseCorrente+"-"+giornoCorrenteMenoUno;
-
-				QdateTo = ' AND (APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateToTodayMenoUno+'" OR APPUNTAMENTI.DATA_OK <= "'+dateToTodayMenoUno+'" )';
-
-			}
-
 			
+			if(dateTo == '' || dateTo == undefined || dateTo ==null){
+					// SE NON HO SETTATO LA DATE_TO LA SETTO A UN GIORNO PRIMA RISPETTO AL GIORNO CORRENTE
+					var today = new Date();
+					var meseCorrente = today.getMonth()+1;
+					var giornoCorrenteMenoUno = today.getDate()-1;
+					var annoCorrente = today.getFullYear();
+					dateTo = annoCorrente+"-"+meseCorrente+"-"+giornoCorrenteMenoUno;
+			}
+			
+			QdateTo = ' AND APPUNTAMENTI.DATA_APPUNTAMENTO <= "'+dateTo+'" ';
+
+			// date per il conteggio degli appuntamenti presi in precedenza ma chiusi(OK - data_ok) nel range selezionato.
+
+			var Q_dateOK_From = ' AND APPUNTAMENTI.DATA_APPUNTAMENTO < "'+dateFrom+'" AND APPUNTAMENTI.DATA_OK >= "'+dateFrom+'" ';
+			var Q_dateOK_To = ' AND APPUNTAMENTI.DATA_OK <= "'+dateTo+'" ';
+
 
 			var agente = req.body.agente;
 			var Qagente = " ";
@@ -2280,7 +2283,8 @@ app.post('/dateStats', ensureToken, function (req, res) {
 
 			pool.getConnection(function (err, connection) {
 				connection.query(  
-					`select
+					` select * from 
+					(select
 					UTENTI.ID_UTENTE,
 					UTENTI.COGNOME,
 					UTENTI.NOME,
@@ -2336,13 +2340,30 @@ app.post('/dateStats', ensureToken, function (req, res) {
 
 					WHERE 1=1 ${QdateFrom} ${QdateTo} ${Qagente} ${Qoperatore}
 					
-					group by UTENTI.ID_UTENTE`, function (err, rows, fields) {
+					group by UTENTI.ID_UTENTE) as tab1 
+					 left join (
+						select 
+							APPUNTAMENTI.ID_VENDITORE AS ID_UTENTE,
+							COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) AS OK_PRECEDENTI
+							FROM APPUNTAMENTI
+							WHERE 1=1  ${Q_dateOK_From} ${Q_dateOK_To} ${Qagente} ${Qoperatore} 
+							 group by APPUNTAMENTI.ID_VENDITORE
+							UNION 
+								select 
+							APPUNTAMENTI.ID_OPERATORE AS ID_UTENTE,
+							COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) AS OK_PRECEDENTI
+							FROM APPUNTAMENTI
+							WHERE 1=1 ${Q_dateOK_From} ${Q_dateOK_To} ${Qagente} ${Qoperatore}
+							 group by APPUNTAMENTI.ID_OPERATORE
+					) as tab2 on tab1.ID_UTENTE = tab2.ID_UTENTE`, function (err, rows, fields) {
 					connection.release();
 					if(err){
+					
 						log.error('ERRORE SQL STATS ADMIN: --> ' + err);
 						res.sendStatus(500);
 					}else{	
 						if (rows.length !== 0 && !err) {
+							
 						data["stats"] = rows;
 						res.json(data);
 					} else if (rows.length === 0) {

@@ -77,6 +77,7 @@
                                 <th scope="col">Cognome</th>
                                 <th scope="col">Nome</th>
                                 <th scope="col">Appuntamenti</th>
+                                <th scope="col">OK PRECEDENTI</th>
                                 <th scope="col">Contratti</th>
                                 <th scope="col">% Contratti</th>
                                 <th scope="col">OK</th>
@@ -101,9 +102,12 @@
                                 <td>
                                     {{X.NOME}}
                                 </td>
-                                <td >
-                                    <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="bold mostra-appuntamenti">{{X.APPUNTAMENTI}}</span>
-                                </td>
+                                    <td >
+                                        <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="bold mostra-appuntamenti">{{X.APPUNTAMENTI}}</span>
+                                    </td>
+                                    <td >
+                                        {{X.OK_PRECEDENTI}}
+                                    </td>
                                 <td>
                                     <span class="bold">{{X.CONTRATTI}}</span>
                                 </td>
