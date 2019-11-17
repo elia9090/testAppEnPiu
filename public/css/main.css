@@ -401,14 +401,14 @@ textarea{
 }
 
 .mostra-appuntamenti{
-  width: 50px;
   padding: 3px;
-  background-color: #f47320 !important;
-  color: white;
+  color: #f47320;
+  font-weight: bold;
   display: inline-block;
   cursor: pointer;
   border-radius: .25rem;
 }
+
 
 #recapStatisticheAppuntamenti .modal-body{
   height: 600px;

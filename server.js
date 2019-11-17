@@ -986,11 +986,29 @@ app.get('/edituser/:id', ensureToken,requireAdmin, function (req, res) {
 			
 			pool.getConnection(function (err, connection) {
 				connection.query(
-			'SELECT * from UTENTI '+
-			'LEFT JOIN OPERATORI_VENDITORI OV ON TIPO<>"OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL '+
-			'LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL '+
-			'LEFT JOIN SUPERVISORE_RESPONSABILI SR ON TIPO="RESPONSABILE_AGENTI" AND SR.ID_RESPONSABILE=UTENTI.ID_UTENTE AND SR.DATA_FINE_ASS IS NULL  '+
-			'WHERE ID_UTENTE=?' ,id, function (err, rows, fields) {
+					`SELECT UTENTI.*,
+					 OV.ID_ASSOCIAZIONE as OV_ID_ASSOCIAZIONE,
+					 OV.ID_OPERATORE as OV_ID_OPERATORE,
+					 OV.ID_AGENTE as OV_ID_AGENTE,  
+					 OV.DATA_INIZIO_ASS as OV_DATA_INIO_ASS,
+					 OV.DATA_FINE_ASS as OV_DATA_FINE_ASS,
+					 RA.ID_ASSOCIAZIONE as RA_ID_ASSOCIAZIONE,
+					 RA.ID_RESPONSABILE as RA_ID_RESPONSABILE,
+					 RA.ID_AGENTE as RA_ID_AGENTE,  
+					 RA.DATA_INIZIO_ASS as RA_DATA_INIO_ASS,
+					 RA.DATA_FINE_ASS as RA_DATA_FINE_ASS,
+					 SR.ID_ASSOCIAZIONE as SR_ID_ASSOCIAZIONE,
+					 SR.ID_RESPONSABILE as SR_ID_RESPONSABILE,
+					 SR.ID_SUPERVISORE as SR_ID_SUPERVISORE,  
+					 SR.DATA_INIZIO_ASS as SR_DATA_INIO_ASS,
+					 SR.DATA_FINE_ASS as SR_DATA_FINE_ASS 
+					
+					FROM UTENTI
+					
+					LEFT JOIN OPERATORI_VENDITORI OV ON TIPO<>"OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL 
+					LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL 
+					LEFT JOIN SUPERVISORE_RESPONSABILI SR ON TIPO="RESPONSABILE_AGENTI" AND SR.ID_RESPONSABILE=UTENTI.ID_UTENTE AND SR.DATA_FINE_ASS IS NULL  
+					WHERE ID_UTENTE=?` ,id, function (err, rows, fields) {
 			
 					connection.release();
 					if(err){
@@ -1131,6 +1149,9 @@ app.post('/editDateAdmin', ensureToken,requireAdmin, function (req, res) {
 		var noteOperatore = req.body.noteOperatore;
 		var recapiti = req.body.recapiti;
 		var esitoAppuntamento = req.body.esitoAppuntamento;
+		if(esitoAppuntamento &&  !esitoAppuntamento.trim()){
+			esitoAppuntamento = null;
+		}
 		var noteAgente = req.body.noteAgente;
 		 //VERIFICARE SE SONO NULL O VUOTI COME LI GESTISCE VISTO CHE IL CAMPO è INT
 		 var numLuce = req.body.numLuce;
@@ -1209,7 +1230,9 @@ app.post('/editDateVenditore', ensureToken, function (req, res) {
 	var data = {};
 	   var idAppuntamento = req.body.idAppuntamento;
 	   var esitoAppuntamento = req.body.esitoAppuntamento;
-
+	   if(esitoAppuntamento &&  !esitoAppuntamento.trim()){
+			esitoAppuntamento = null;
+		}
 	   //VERIFICARE SE SONO NULL O VUOTI COME LI GESTISCE VISTO CHE IL CAMPO è INT
 	   var numLuce = req.body.numLuce;
 	   var numGas = req.body.numGas;
@@ -1293,6 +1316,9 @@ app.post('/editDateOperatore', ensureToken, function (req, res) {
 		var noteOperatore = req.body.noteOperatore;
 		var recapiti = req.body.recapiti;
 		var esitoAppuntamento = req.body.esitoAppuntamento;
+		if(esitoAppuntamento &&  !esitoAppuntamento.trim()){
+			esitoAppuntamento = null;
+		}
 		var noteAgente = req.body.noteAgente;
 
 	pool.getConnection(function (err, connection) {
@@ -2343,19 +2369,19 @@ app.post('/dateStats', ensureToken, function (req, res) {
 					group by UTENTI.ID_UTENTE) as tab1 
 					 left join (
 						select 
-							APPUNTAMENTI.ID_VENDITORE AS ID_UTENTE,
+							APPUNTAMENTI.ID_VENDITORE AS ID_UTENTE_2,
 							COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) AS OK_PRECEDENTI
 							FROM APPUNTAMENTI
 							WHERE 1=1  ${Q_dateOK_From} ${Q_dateOK_To} ${Qagente} ${Qoperatore} 
 							 group by APPUNTAMENTI.ID_VENDITORE
 							UNION 
 								select 
-							APPUNTAMENTI.ID_OPERATORE AS ID_UTENTE,
+							APPUNTAMENTI.ID_OPERATORE AS ID_UTENTE_2,
 							COUNT(APPUNTAMENTI.ID_APPUNTAMENTO) AS OK_PRECEDENTI
 							FROM APPUNTAMENTI
 							WHERE 1=1 ${Q_dateOK_From} ${Q_dateOK_To} ${Qagente} ${Qoperatore}
 							 group by APPUNTAMENTI.ID_OPERATORE
-					) as tab2 on tab1.ID_UTENTE = tab2.ID_UTENTE`, function (err, rows, fields) {
+					) as tab2 on tab1.ID_UTENTE = tab2.ID_UTENTE_2`, function (err, rows, fields) {
 					connection.release();
 					if(err){
 					
@@ -2389,7 +2415,7 @@ app.post('/dateStats', ensureToken, function (req, res) {
 	});
 });
 //VERIFICA STATISTICHE APPUNTAMENTI
-app.post('/verifyDateStats', ensureToken,requireAdminOrBackOffice, function (req, res) {
+app.post('/verifyDateStats', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
 			res.sendStatus(403); 

@@ -100,4 +100,62 @@ app.controller('statisticheAppuntamentiGruppoVenditaCtrl',['$scope', '$http', '$
             });
     };
 
+    $scope.statsDate.mostraAppuntamenti = function(idUtente){
+
+        $.blockUI();
+       
+        var dateFROM = "";
+        var dateTO = "";
+
+        if(typeof $scope.statsDate.dataAppuntamentoDAL != 'undefined' && $scope.statsDate.dataAppuntamentoDAL){
+            dateFROM = $scope.statsDate.dataAppuntamentoDAL.getFullYear() + "-" + ($scope.statsDate.dataAppuntamentoDAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoDAL.getDate();
+        }
+        if(typeof $scope.statsDate.dataAppuntamentoAL != 'undefined' && $scope.statsDate.dataAppuntamentoAL){
+            dateTO = $scope.statsDate.dataAppuntamentoAL.getFullYear() + "-" + ($scope.statsDate.dataAppuntamentoAL.getMonth()+1) + "-" + $scope.statsDate.dataAppuntamentoAL.getDate();
+        }
+
+        $http.post("/verifyDateStats", {
+            'dateFROM': dateFROM,
+            'dateTO': dateTO,
+            'operatore': $scope.statsDate.operatoriSelected,
+            'agente': $scope.statsDate.venditoreSelected,
+            'idUtente':idUtente
+        }).then((result) => {
+        
+            $scope.statsDate.recapStatisticheAppuntamenti = result.data.verifyStats;
+            $('#recapStatisticheAppuntamenti').modal('show');
+            $.unblockUI();
+
+            }).catch((err) => {
+                if(err.status === 403){
+                    alertify.alert("Utente non autorizzato");
+                    $.unblockUI();
+                    $location.path('/logout');
+                    return;
+                }
+                if(err.status === 404){
+                    $.unblockUI();
+                    alertify.alert("Non ci sono statistiche per i parametri selezionati");
+                    return;
+                }
+                $.unblockUI();
+                alertify.alert("Impossibile reperire le statistiche");
+            });
+    };
+
+    $scope.statsDate.tdEsitoClass = function (esito) {
+        if (esito=='OK'){
+            return 'green-background'
+        }else if (esito=='KO'){
+            return 'red-background'
+        }else if(esito == 'VALUTA'){
+            return 'yellow-background'
+        } else if(esito == 'ASSENTE' || esito == 'NON VISITATO'){
+            return 'grey-background'
+        }else{
+            return 'white-background'
+        }
+        
+    };
+
 }]);

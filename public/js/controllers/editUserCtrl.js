@@ -20,12 +20,12 @@ app.controller('editUserCtrl',[ '$scope', '$http', '$location','$routeParams', '
         //preseleziono lo usertype dai radio button
         $scope.editUser.userType = result.data.utente.TIPO;
         $scope.previousUserType = result.data.utente.TIPO;
-        $scope.editUser.operatoreAssociato = result.data.utente.ID_OPERATORE;
-        $scope.previousOperatoreAssociato = result.data.utente.ID_OPERATORE;
-        $scope.editUser.responsabileAssociato = result.data.utente.ID_RESPONSABILE;
-        $scope.previousResponsabileAssociato = result.data.utente.ID_RESPONSABILE;
-        $scope.editUser.supervisoreAssociato = result.data.utente.ID_SUPERVISORE;
-        $scope.previousSupervisoreAssociato = result.data.utente.ID_SUPERVISORE;
+        $scope.editUser.operatoreAssociato = result.data.utente.OV_ID_OPERATORE;
+        $scope.previousOperatoreAssociato = result.data.utente.OV_ID_OPERATORE;
+        $scope.editUser.responsabileAssociato = result.data.utente.RA_ID_RESPONSABILE;
+        $scope.previousResponsabileAssociato = result.data.utente.RA_ID_RESPONSABILE;
+        $scope.editUser.supervisoreAssociato = result.data.utente.SR_ID_SUPERVISORE;
+        $scope.previousSupervisoreAssociato = result.data.utente.SR_ID_SUPERVISORE;
 
         if($scope.editUser.userType != 'ADMIN'){
             $http.get('/listaResponsabiliAgentiWS').then((result) => {

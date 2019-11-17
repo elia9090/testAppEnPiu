@@ -74,10 +74,9 @@
                     <table class="table  table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col">Cognome</th>
-                                <th scope="col">Nome</th>
+                                <th scope="col">Agente</th>
                                 <th scope="col">Appuntamenti</th>
-                                <th scope="col">OK PRECEDENTI</th>
+                                <th scope="col">OK Precedenti</th>
                                 <th scope="col">Contratti</th>
                                 <th scope="col">% Contratti</th>
                                 <th scope="col">OK</th>
@@ -97,13 +96,11 @@
                         <tbody>
                             <tr ng-repeat="X in statsDate.statsVenditori">
                                 <td>
-                                    {{X.COGNOME}}
+                                    <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="mostra-appuntamenti"> {{X.COGNOME}} {{X.NOME}}</span>
                                 </td>
-                                <td>
-                                    {{X.NOME}}
-                                </td>
-                                    <td >
-                                        <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="bold mostra-appuntamenti">{{X.APPUNTAMENTI}}</span>
+                              
+                                    <td>
+                                        {{X.APPUNTAMENTI}}
                                     </td>
                                     <td >
                                         {{X.OK_PRECEDENTI}}
@@ -149,8 +146,7 @@
                     <table class="table  table-bordered" style="display: none;" id="tabella-agenti">
                         <thead>
                             <tr>
-                                <th scope="col">Cognome</th>
-                                <th scope="col">Nome</th>
+                                <th scope="col">Agente</th>
                                 <th scope="col">Appuntamenti</th>
                                 <th scope="col">Contratti</th>
                                 <th scope="col">% Contratti</th>
@@ -175,11 +171,9 @@
                         <tbody>
                             <tr ng-repeat="X in statsDate.statsVenditori">
                                 <td>
-                                    {{X.COGNOME}}
+                                    {{X.COGNOME}} {{X.NOME}}
                                 </td>
-                                <td>
-                                    {{X.NOME}}
-                                </td>
+                                
                                 <td>
                                     <span class="bold">{{X.APPUNTAMENTI}}</span>
                                 </td>
@@ -243,10 +237,9 @@
                     <table class="table  table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col">Cognome</th>
-                                <th scope="col">Nome</th>
+                                <th scope="col">Operatore</th>
                                 <th scope="col">Appuntamenti</th>
-    
+                                <th scope="col">OK Precedenti</th>
                                 <th scope="col">% Chiusure</th>
                                 <th scope="col">OK</th>
     
@@ -267,15 +260,15 @@
                         <tbody>
                             <tr ng-repeat="X in statsDate.statsOperatori">
                                 <td>
-                                    {{X.COGNOME}}
+                                    <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="mostra-appuntamenti"> {{X.COGNOME}} {{X.NOME}}</span>
                                 </td>
-                                <td>
-                                    {{X.NOME}}
+                              
+                                <td >
+                                    {{X.APPUNTAMENTI}}
                                 </td>
                                 <td >
-                                    <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="bold mostra-appuntamenti">{{X.APPUNTAMENTI}}</span>
+                                    {{X.OK_PRECEDENTI}}
                                 </td>
-    
                                 <td>
                                     <span class="bold">{{X.PERC_CONTRATTI_O_APPUNTAMENTI}}%</span>
                                 </td>
@@ -318,8 +311,7 @@
                     <table class="table  table-bordered" style="display: none;"  id="tabella-operatori">
                         <thead>
                             <tr>
-                                <th scope="col">Cognome</th>
-                                <th scope="col">Nome</th>
+                                <th scope="col">Operatore</th>
                                 <th scope="col">Appuntamenti</th>
     
                                 <th scope="col">% Chiusure</th>
@@ -345,11 +337,9 @@
                         <tbody>
                             <tr ng-repeat="X in statsDate.statsOperatori">
                                 <td>
-                                    {{X.COGNOME}}
+                                    {{X.COGNOME}} {{X.NOME}}
                                 </td>
-                                <td>
-                                    {{X.NOME}}
-                                </td>
+                               
                                 <td>
                                     <span class="bold">{{X.APPUNTAMENTI}}</span>
                                 </td>
@@ -423,9 +413,9 @@
                     <table class="table  table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col">Cognome</th>
-                                <th scope="col">Nome</th>
+                                <th scope="col">Agente</th>
                                 <th scope="col">Appuntamenti</th>
+                                <th scope="col">OK Precedenti</th>
                                 <th scope="col">Contratti</th>
                                 <th scope="col">% Contratti</th>
                                 <th scope="col">OK</th>
@@ -445,13 +435,14 @@
                         <tbody>
                             <tr ng-repeat="X in statsDate.statsVenditori">
                                 <td>
-                                    {{X.COGNOME}}
+                                    <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="mostra-appuntamenti"> {{X.COGNOME}} {{X.NOME}}</span>
                                 </td>
-                                <td>
-                                    {{X.NOME}}
-                                </td>
+                              
                                 <td>
                                     <span class="bold">{{X.APPUNTAMENTI}}</span>
+                                </td>
+                                <td >
+                                    {{X.OK_PRECEDENTI}}
                                 </td>
                                 <td>
                                     <span class="bold">{{X.CONTRATTI}}</span>
@@ -512,9 +503,9 @@
                     <table class="table  table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col">Cognome</th>
-                                <th scope="col">Nome</th>
+                                <th scope="col">Operatore</th>
                                 <th scope="col">Appuntamenti</th>
+                                <th scope="col">OK Precedenti</th>
                                 <th scope="col">% Chiusure</th>
                                 <th scope="col">OK</th>
     
@@ -533,13 +524,14 @@
                         <tbody>
                             <tr ng-repeat="X in statsDate.statsOperatori">
                                 <td>
-                                    {{X.COGNOME}}
+                                    <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="mostra-appuntamenti"> {{X.COGNOME}} {{X.NOME}}</span>
                                 </td>
-                                <td>
-                                    {{X.NOME}}
-                                </td>
+                               
                                 <td>
                                     <span class="bold">{{X.APPUNTAMENTI}}</span>
+                                </td>
+                                <td>
+                                    {{X.OK_PRECEDENTI}}
                                 </td>
     
                                 <td>
@@ -586,7 +578,7 @@
 
     <!-- Modal -->
 <div class="modal fade" id="recapStatisticheAppuntamenti" tabindex="-1" role="dialog" aria-labelledby="recapStatisticheAppuntamentiLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" style="max-width: 1200px;" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title" id="recapStatisticheAppuntamentiLabel">Recap appuntamenti</b></h4>

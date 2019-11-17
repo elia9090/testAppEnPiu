@@ -57,9 +57,9 @@
         <table class="table  table-bordered">
           <thead>
             <tr>
-                <th scope="col">Cognome</th>
-                <th scope="col">Nome</th>
+                <th scope="col">Agente</th>
                 <th scope="col">Appuntamenti</th>
+                <th scope="col">OK Precedenti</th>
                 <th scope="col">Contratti</th>
                 <th scope="col">% Contratti</th>
                 <th scope="col">OK</th>
@@ -79,14 +79,15 @@
           <tbody>
               <tr  ng-repeat="X in statsDate.statsVenditori" >
                 <td>
-                    {{X.COGNOME}}
+                        <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="mostra-appuntamenti"> {{X.COGNOME}} {{X.NOME}}</span>
                 </td>
-                <td>
-                    {{X.NOME}}
-                </td>
+                
                 <td>
                     <span class="bold">{{X.APPUNTAMENTI}}</span>
                 </td>
+                <td >
+                        {{X.OK_PRECEDENTI}}
+                    </td>
                 <td>
                     <span class="bold">{{X.CONTRATTI}}</span>
                 </td>
@@ -131,9 +132,9 @@
         <table class="table  table-bordered">
           <thead>
             <tr>
-                <th scope="col">Cognome</th>
-                <th scope="col">Nome</th>
+                <th scope="col">Operatore</th>
                 <th scope="col">Appuntamenti</th>
+                <th scope="col">OK Precedenti</th>
                 <th scope="col">Contratti</th>
                 <th scope="col">% Contratti</th>
                 <th scope="col">OK</th>
@@ -153,14 +154,15 @@
           <tbody>
               <tr  ng-repeat="X in statsDate.statsOperatori" >
                 <td>
-                    {{X.COGNOME}}
+                        <span ng-click="statsDate.mostraAppuntamenti(X.ID_UTENTE)" class="mostra-appuntamenti"> {{X.COGNOME}} {{X.NOME}}</span>
                 </td>
-                <td>
-                    {{X.NOME}}
-                </td>
+                
                 <td>
                     <span class="bold">{{X.APPUNTAMENTI}}</span>
                 </td>
+                <td >
+                        {{X.OK_PRECEDENTI}}
+                    </td>
                 <td>
                     <span class="bold">{{X.CONTRATTI}}</span>
                 </td>
@@ -203,3 +205,70 @@
        
       </div>
 </div>
+
+   <!-- Modal -->
+   <div class="modal fade" id="recapStatisticheAppuntamenti" tabindex="-1" role="dialog" aria-labelledby="recapStatisticheAppuntamentiLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="max-width: 1200px;" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="recapStatisticheAppuntamentiLabel">Recap appuntamenti</b></h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="container" >
+                    <div class="table-responsive">
+                        <table class="table  table-bordered">
+                          <thead>
+                            <tr>
+                              <th scope="col">Data Appuntamento</th>
+                              <th scope="col">Esito</th>
+                              <th scope="col">Data OK</th>
+                              <th scope="col">Cliente</th>
+                              <th scope="col">Luogo</th>      
+                              <th scope="col">Agente</th>
+                              <th scope="col">Operatore</th>
+                              
+                            </tr>
+                          </thead>
+                          <tbody>
+                              <tr  ng-repeat="x in statsDate.recapStatisticheAppuntamenti | orderBy : ['DATA_APPUNTAMENTO'] " >
+                                <td >
+                                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
+                                </td>
+                                <td ng-class="statsDate.tdEsitoClass(x.ESITO)">
+                                    {{x.ESITO}}
+                                </td>
+                                
+                                <td>
+                                    {{x.DATA_OK | date:'dd/MM/yyyy'}}
+                                </td>
+                                <td>
+                                    {{x.NOME_ATTIVITA}} 
+                                        
+                                </td> 
+                                <td>
+                                    {{x.PROVINCIA}} - {{x.COMUNE}}
+                                    
+                                </td>
+                                
+                                <td>
+                                     {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
+                                  </td> 
+                                  
+                                <td>
+                                    {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
+                                </td>
+                              
+                              
+                              </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                </div>
+            </div>
+          
+          </div>
+        </div>
+      </div>
