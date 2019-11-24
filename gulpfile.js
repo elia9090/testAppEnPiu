@@ -9,7 +9,7 @@ gulp.task('combine', function () {
    return gulp.src([
          './public/js/controllers/*.js'
       ])
-      .pipe(uglify())
+      //.pipe(uglify())
       .pipe(concat('ng-app.js'))
       .pipe(gulp.dest('./public/js/dist/'));
       

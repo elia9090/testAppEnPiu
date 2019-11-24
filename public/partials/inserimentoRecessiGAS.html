@@ -1,0 +1,27 @@
+
+
+<div class="container" >
+     
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 " method="POST" name="insertRecessesGASForm" >
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Recessi Gas</h2>
+                <hr>
+            </div>
+        </div>
+        <div class="row col-12" >
+            <div class="col-6">
+                <div class="form-group">
+                        
+                        <input type="file" class="form-control-file" name="excelGas" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"  id="excelGAS" placeholder="" >
+                        
+                </div>
+            </div>
+            <div class="col-6">
+                <button type="button" class="btn btn-orange" ng-click="insertRecessesGAS.caricaRecessi()">Carica excel Gas</button>
+            </div>
+          
+            
+        </div>
+    </form>
+</div>
