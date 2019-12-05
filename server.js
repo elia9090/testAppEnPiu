@@ -869,7 +869,7 @@ app.get('/listaOperatoriWS', ensureToken, function (req, res) {
 		}
 	});
 });
-//lsita Agenti non relazionati agli operatori
+//lsita Agenti ATTIVI e non relazionati agli operatori 
 app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function (req, res) {
 	jwt.verify(req.token, config.secretKey, function(err, data) {
 		if (err) {
@@ -3328,7 +3328,7 @@ function ensureToken(req, res, next) {
   }
 
 
-var server = app.listen(1234, function () {
+var server = app.listen(config.ServerPort, function () {
 
   var host = server.address().address;
   var port = server.address().port;

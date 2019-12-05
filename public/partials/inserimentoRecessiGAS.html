@@ -1,27 +1,113 @@
+<div class="container max-100">
 
-
-<div class="container" >
-     
-    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 " method="POST" name="insertRecessesGASForm" >
-        <div class="row col-12">
-            <div class="col-md-12">
-                <h2>Recessi Gas</h2>
-                <hr>
-            </div>
-        </div>
-        <div class="row col-12" >
-            <div class="col-6">
-                <div class="form-group">
-                        
-                        <input type="file" class="form-control-file" name="excelGas" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"  id="excelGAS" placeholder="" >
-                        
+        <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 " method="POST"
+            name="insertRecessesGASForm">
+            <div class="row col-12">
+                <div class="col-md-12">
+                    <h2>Recessi Gas</h2>
+                    <hr>
                 </div>
             </div>
-            <div class="col-6">
-                <button type="button" class="btn btn-orange" ng-click="insertRecessesGAS.caricaRecessi()">Carica excel Gas</button>
+            <div class="row col-12">
+                <div class="col-6">
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" name="excelGas"
+                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                            id="excelGas" placeholder="">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <button type="button" class="btn btn-orange" ng-click="insertRecessesGAS.caricaRecessi()">Carica
+                        excel GAS</button>
+                </div>
             </div>
-          
-            
+        </form>
+    
+        <div ng-if="insertRecessesGAS.showRisultati"
+            class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+            <div class="col-md-12">
+                <h2>Recessi gas</h2>
+                <hr>
+            </div>
+    
+            <div class="input-group mb-3 col-md-4">
+    
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id=""><i class="fas fa-search"></i></span>
+                    </div>
+                    <input  type="text" class="form-control" placeholder="Cerca" ng-model="filtraRecessi" >
+           
+            </div>
+            <div class="table-responsive">
+                <table class="table  table-bordered table-hover">
+                    <thead>
+                        <tr>
+                                <th scope="col">PDR</th>
+                                <th scope="col">DENOMINAZIONE</th>
+                                <th scope="col">CONSUMO CONTRATTUALE</th>
+                                <th scope="col">DATA INIZIO FORNITURA</th>
+                                <th scope="col">DATA OUT</th>
+                                <th scope="col">RIF TELEFONICI</th>
+                                <th scope="col">INDIRIZZO FORNITURA</th>
+                                <th scope="col">AGENTE</th>
+                                <th scope="col">Agente </th>
+                                <th scope="col">Edit</th>
+                        </tr>
+                    </thead>
+    
+                    <tbody>
+                        <tr ng-repeat="x in insertRecessesGAS.jsonGas | filter : filtraRecessi  ">
+    
+                            <td>
+                                {{x.PDR}}
+                            </td>
+                            
+                            <td>
+                                {{x.DENOMINAZIONE}}
+                            </td>
+                            <td>
+                                {{x.RAGIONE_SOCIALE}}
+                            </td>
+                            <td>
+                                {{x.INDIRIZZO_SEDE_LEGALE}} - {{x.LOCALITA_SEDE_LEGALE}}
+                            </td>
+                           
+                            <td>
+                                {{x.INDIRIZZO_FORN}} - {{x.LOCALITA_FORN}}
+                            </td>
+                            
+                            <td>
+                                {{x.TELEFONO}} {{x.CELLULARE}}
+                            </td>
+                          
+                            <td>
+                                {{x.KWH_ANNUI}}
+                            </td>
+                            <td>
+                                {{x.DATA_ATTIVAZIONE}}
+                            </td>
+                            <td>
+                                {{x.DATA_VALIDITA_RECESSO}}
+                            </td>
+                           
+                            <td>
+                                {{x.GRUPPO}}
+                            </td>
+                            <td>
+                                {{x.AGENZIA}}
+                            </td>
+                            <td>
+                                TEST
+                            </td>
+                            <td>
+                                BET
+                            </td>
+    
+    
+    
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </form>
-</div>
+    </div>

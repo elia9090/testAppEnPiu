@@ -415,6 +415,15 @@ textarea{
   overflow-y: scroll;
 }
 
+.container.max-100{
+  max-width: 100% !important;
+}
+
+.container.max-100 table td, .container.max-100 table td {
+  padding: .25rem !important;
+  font-size: 12px !important;
+}
+
 @media screen and (max-width: 450px) {
  .modificaUtenteForm button.btn-white, .editAppuntamentoAdmin button.btn-white{
    max-width: 75px;
