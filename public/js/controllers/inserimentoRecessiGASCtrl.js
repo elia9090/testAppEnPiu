@@ -5,8 +5,7 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
     $scope.insertRecessesGAS = {};
-    
-    $scope.insertRecessesGAS.jsonGas = {};
+    $scope.insertRecessesGAS.jsonGas= [];
 
     $scope.insertRecessesGAS.venditori = {};
 
@@ -30,6 +29,8 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
         $.blockUI();
        
         var files = document.getElementById("excelGas").files;
+        //svuoto il precedente
+        $scope.insertRecessesGAS.jsonGas= [];
         
         var i,f;
         for (i = 0, f = files[i]; i != files.length; ++i) {
@@ -40,10 +41,25 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
        
                var workbook = XLSX.read(data, {type: 'binary'});
                var sheet_name_list = workbook.SheetNames;
-                $scope.insertRecessesGAS.jsonGas = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {raw: false, defval:null});
-                $scope.insertRecessesGAS.showRisultati = true;
-                $scope.$digest();
-                $.unblockUI();
+                 var jsonGas= XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {raw: false, defval:null});
+                 // rimuovo i caratteri speciali e gli spazi con _
+                jsonGas.map( item => {
+                    $scope.insertRecessesGAS.jsonGas.push(
+                        _.mapKeys( item, ( value, key ) => {
+                            var newKey = key.replace(/[^a-zA-Z ]/g, "");
+                            newKey = newKey.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
+                            newKey = newKey.replace(/\s/g, "_");
+                            return newKey;
+                        })
+                    )
+                });
+                
+               
+                setTimeout(function(){ 
+                    $scope.insertRecessesGAS.showRisultati = true;
+                    $scope.$digest(); 
+                    $.unblockUI();
+                },1500);
            };
            reader.readAsBinaryString(f);
        }

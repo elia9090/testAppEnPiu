@@ -6,7 +6,7 @@ app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'al
 
     $scope.insertRecessesLUCE = {};
     
-    $scope.insertRecessesLUCE.jsonLuce = {};
+    $scope.insertRecessesLUCE.jsonLuce = [];
 
     $scope.insertRecessesLUCE.venditori = {};
 
@@ -30,7 +30,9 @@ app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'al
         $.blockUI();
        
         var files = document.getElementById("excelLuce").files;
-        
+        //svuoto il prcedente
+        $scope.insertRecessesLUCE.jsonLuce = [];
+
         var i,f;
         for (i = 0, f = files[i]; i != files.length; ++i) {
            var reader = new FileReader();
@@ -40,10 +42,25 @@ app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'al
        
                var workbook = XLSX.read(data, {type: 'binary'});
                var sheet_name_list = workbook.SheetNames;
-                $scope.insertRecessesLUCE.jsonLuce = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {raw: false, defval:null});
-                $scope.insertRecessesLUCE.showRisultati = true;
-                $scope.$digest();
-                $.unblockUI();
+                var jsonLuce = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {raw: false, defval:null});
+                // rimuovo i caratteri speciali e gli spazi con _
+                jsonLuce.map( item => {
+                    $scope.insertRecessesLUCE.jsonLuce.push(
+                        _.mapKeys( item, ( value, key ) => {
+                            var newKey = key.replace(/[^a-zA-Z ]/g, "");
+                            newKey = newKey.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
+                            newKey = newKey.replace(/\s/g, "_");
+                            return newKey;
+                        })
+                    )
+                });
+
+                setTimeout(function(){ 
+                    $scope.insertRecessesLUCE.showRisultati = true;
+                    $scope.$digest(); 
+                    $.unblockUI();
+                },1500);
+               
            };
            reader.readAsBinaryString(f);
        }

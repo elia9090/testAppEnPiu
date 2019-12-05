@@ -49,6 +49,8 @@
                                 <th scope="col">DATA OUT</th>
                                 <th scope="col">RIF TELEFONICI</th>
                                 <th scope="col">INDIRIZZO FORNITURA</th>
+                                <th scope="col">OFFERTA</th>
+                                <th scope="col">CAPO AREA</th>
                                 <th scope="col">AGENTE</th>
                                 <th scope="col">Agente </th>
                                 <th scope="col">Edit</th>
@@ -66,35 +68,33 @@
                                 {{x.DENOMINAZIONE}}
                             </td>
                             <td>
-                                {{x.RAGIONE_SOCIALE}}
+                                {{x.CONSUMO_CONTRATTUALE}}
                             </td>
                             <td>
-                                {{x.INDIRIZZO_SEDE_LEGALE}} - {{x.LOCALITA_SEDE_LEGALE}}
+                                {{x.DATA_INIZIO_FORNITURA}}
                             </td>
                            
                             <td>
-                                {{x.INDIRIZZO_FORN}} - {{x.LOCALITA_FORN}}
+                                {{x.DATA_OUT}}
                             </td>
                             
                             <td>
-                                {{x.TELEFONO}} {{x.CELLULARE}}
+                                {{x.RIF_TELEFONICI}}
                             </td>
                           
                             <td>
-                                {{x.KWH_ANNUI}}
+                                {{x.VIA}}  {{x.LOCALITA}} - {{x.PROVINCIA}} 
                             </td>
                             <td>
-                                {{x.DATA_ATTIVAZIONE}}
+                                {{x.OFFERTA}}
                             </td>
                             <td>
-                                {{x.DATA_VALIDITA_RECESSO}}
+                                {{x.CAPO_AREA}}
                             </td>
                            
+                            
                             <td>
-                                {{x.GRUPPO}}
-                            </td>
-                            <td>
-                                {{x.AGENZIA}}
+                                {{x.AGENTE}}
                             </td>
                             <td>
                                 TEST
