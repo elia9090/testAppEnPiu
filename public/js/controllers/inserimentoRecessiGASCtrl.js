@@ -19,6 +19,13 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
             }
         });
 
+        $scope.insertRecessesGAS.changeAgente = function(x,index){
+            $scope.insertRecessesGAS.jsonGas[index].VENDITORE_ASSEGNATO = parseInt(x.VENDITORE_ASSEGNATO);
+           
+            
+        }
+    
+
     $scope.insertRecessesGAS.caricaRecessi = function() {
 
 
@@ -44,9 +51,21 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
                  var jsonGas= XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {raw: false, defval:null});
                  // rimuovo i caratteri speciali e gli spazi con _
                 jsonGas.map( item => {
+                    //associo al record dell'excel il relativo id utente proveniente dalle API
+                    var agente = _.find($scope.insertRecessesGAS.venditori, function(o) { 
+                        var nomeCognomeFoglioExcel = item.AGENTE.toLowerCase().replace(/\s/g, "");
+                        var nomeCognomeFromApi = o.COGNOME.toLowerCase().replace(/\s/g, "")+o.NOME.toLowerCase().replace(/\s/g, "");
+                        return nomeCognomeFoglioExcel == nomeCognomeFromApi; 
+                    });
+                    if(agente){
+                         //associo al record dell'excel il relativo id utente proveniente dalle API
+                        item.VENDITORE_ASSEGNATO = agente.ID_UTENTE;
+                    }else{
+                        item.VENDITORE_ASSEGNATO = null;
+                    }
                     $scope.insertRecessesGAS.jsonGas.push(
                         _.mapKeys( item, ( value, key ) => {
-                            var newKey = key.replace(/[^a-zA-Z ]/g, "");
+                            var newKey = key.trim();
                             newKey = newKey.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
                             newKey = newKey.replace(/\s/g, "_");
                             return newKey;

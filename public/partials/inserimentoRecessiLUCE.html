@@ -100,7 +100,12 @@
                             {{x.AGENZIA}}
                         </td>
                         <td>
-                            TEST
+                            <select convert-to-number ng-class="{'error-rosso': x.VENDITORE_ASSEGNATO == null}" name="venditoreSelect-{{$index}}" class="form-control" id="venditoreSelect-{{$index}}"  ng-change="insertRecessesLUCE.changeAgente(x,$index)" ng-model="x.VENDITORE_ASSEGNATO">
+                                <option value="" ></option>
+                                <option value="111111" >1 NON GESTIRE</option>
+                                <option value="222222" >2 RIMANDA ASSOCIAZIONE</option>
+                                <option ng-repeat="option1 in insertRecessesLUCE.venditori track by option1.ID_UTENTE" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                            </select>
                         </td>
                         <td>
                             BET

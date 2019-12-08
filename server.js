@@ -846,7 +846,7 @@ app.get('/listaOperatoriWS', ensureToken, function (req, res) {
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI where TIPO = "OPERATORE" AND UTENTE_ATTIVO = 1' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI where TIPO = "OPERATORE" AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["operatori"] = rows;
@@ -878,7 +878,7 @@ app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function (req, res)
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") AND UTENTE_ATTIVO = 1' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["agenti"] = rows;
@@ -910,7 +910,7 @@ app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS', ensureToken, funct
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") ' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") ORDER BY COGNOME ASC' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["agenti"] = rows;
@@ -944,7 +944,7 @@ app.get('/listaUtenti', ensureToken,requireAdmin, function (req, res) {
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI WHERE UTENTE_ATTIVO=1 ' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI WHERE UTENTE_ATTIVO=1 ORDER BY COGNOME ASC' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["utenti"] = rows;
@@ -3264,7 +3264,7 @@ app.get('/listaResponsabiliAgentiWS', ensureToken, function (req, res) {
 		} else {
 			var data = {};
 			pool.getConnection(function (err, connection) {
-				connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE_AGENTI" AND UTENTE_ATTIVO = 1' , function (err, rows, fields) {
+				connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE_AGENTI" AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC' , function (err, rows, fields) {
 					connection.release();
 					if (rows.length !== 0 && !err) {
 						data["responsabili"] = rows;

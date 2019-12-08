@@ -20,6 +20,13 @@ app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'al
             }
         });
 
+     
+    $scope.insertRecessesLUCE.changeAgente = function(x,index){
+        $scope.insertRecessesLUCE.jsonLuce[index].VENDITORE_ASSEGNATO = parseInt(x.VENDITORE_ASSEGNATO);
+       
+        
+    }
+
     $scope.insertRecessesLUCE.caricaRecessi = function() {
 
 
@@ -45,13 +52,27 @@ app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'al
                 var jsonLuce = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {raw: false, defval:null});
                 // rimuovo i caratteri speciali e gli spazi con _
                 jsonLuce.map( item => {
+                    //associo al record dell'excel il relativo id utente proveniente dalle API
+                    var agente = _.find($scope.insertRecessesLUCE.venditori, function(o) { 
+                        var nomeCognomeFoglioExcel = item.AGENZIA.toLowerCase().replace(/\s/g, "");
+                        var nomeCognomeFromApi = o.COGNOME.toLowerCase().replace(/\s/g, "")+o.NOME.toLowerCase().replace(/\s/g, "");
+                        return nomeCognomeFoglioExcel == nomeCognomeFromApi; 
+                    });
+                    if(agente){
+                         //associo al record dell'excel il relativo id utente proveniente dalle API
+                        item.VENDITORE_ASSEGNATO = agente.ID_UTENTE;
+                    }else{
+                        item.VENDITORE_ASSEGNATO = null;
+                    }
                     $scope.insertRecessesLUCE.jsonLuce.push(
                         _.mapKeys( item, ( value, key ) => {
-                            var newKey = key.replace(/[^a-zA-Z ]/g, "");
-                            newKey = newKey.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
+                            // NEL FOGLIO RECESSI LUCE NON C'E' BISOGNO DI fare operazioni nell'header
+                            // IL FILE ARRIVA GIA' SENZA CARATTERI SPECIALI E SENZA SPAZI MA CON GLI UNDERSCORE
+                            var newKey = key.trim();
                             newKey = newKey.replace(/\s/g, "_");
                             return newKey;
                         })
+                        
                     )
                 });
 

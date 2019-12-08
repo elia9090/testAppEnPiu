@@ -178,6 +178,9 @@ select{
   border-color: rgb(255, 5, 5, 0.747) !important;
   box-shadow: 0 0 0 1px rgba(255, 5, 5, 0.747);
 }
+.error-rosso{
+  border: 2px solid red;
+}
 
 .red-background{
   background-color:  rgba(232,76,61,0.5);
