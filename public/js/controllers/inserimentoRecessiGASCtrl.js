@@ -1,4 +1,4 @@
-app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'alertify', function ( $scope, $http, $location, alertify) {
+app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'alertify','$route', function ( $scope, $http, $location, alertify, $route) {
    
     $scope.user = JSON.parse(sessionStorage.user);
   
@@ -63,6 +63,9 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
                     }else{
                         item.VENDITORE_ASSEGNATO = null;
                     }
+
+                    item["DATA INIZIO FORNITURA"] = new Date(item["DATA INIZIO FORNITURA"]);
+                    item["DATA OUT"] = new Date(item["DATA OUT"]);
                     $scope.insertRecessesGAS.jsonGas.push(
                         _.mapKeys( item, ( value, key ) => {
                             var newKey = key.trim();
@@ -83,6 +86,31 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
            reader.readAsBinaryString(f);
        }
        
+       }
+
+       
+       $scope.insertRecessesGAS.inserisciRecessi = function() {
+
+       
+
+        $http.post('/insertRecessesGas', {
+            'jsonGas': $scope.insertRecessesGAS.jsonGas
+            
+         }).then((result) => {
+             alertify.alert('Recessi Gas inseriti correttamente');
+             $route.reload();
+         }).catch((err) => {
+             if(err.status === 500){
+                 alertify.alert("Errore nell'inserimento dei recessi");
+             }
+             if(err.status === 400){
+                alertify.alert("Bad Request JsonGas non popolato");
+            }
+             if(err.status === 403){
+                 alertify.alert("Utente non autorizzato");
+                 $location.path('/logout');
+             }
+         });
        }
 
 }]);

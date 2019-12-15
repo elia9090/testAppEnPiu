@@ -86,10 +86,10 @@
                             {{x.KWH_ANNUI}}
                         </td>
                         <td>
-                            {{x.DATA_ATTIVAZIONE}}
+                            {{x.DATA_ATTIVAZIONE |  date:'dd/MM/yyyy'}}
                         </td>
                         <td>
-                            {{x.DATA_VALIDITA_RECESSO}}
+                            {{x.DATA_VALIDITA_RECESSO |  date:'dd/MM/yyyy'}}
                         </td>
                        
                         <td>
@@ -110,6 +110,11 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="col-md-12 col-xl-12 mt-3 ">
+            <button type="button" class="btn btn-orange" ng-click="insertRecessesLUCE.inserisciRecessi()">
+               Inserisci recessi LUCE</button>
+            
         </div>
     </div>
 </div>

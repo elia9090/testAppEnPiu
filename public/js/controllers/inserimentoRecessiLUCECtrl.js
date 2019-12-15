@@ -1,4 +1,4 @@
-app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'alertify', function ( $scope, $http, $location, alertify) {
+app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'alertify','$route', function ( $scope, $http, $location, alertify,$route) {
    
     $scope.user = JSON.parse(sessionStorage.user);
   
@@ -64,6 +64,10 @@ app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'al
                     }else{
                         item.VENDITORE_ASSEGNATO = null;
                     }
+                    
+                    item.DATA_ATTIVAZIONE = new Date(item.DATA_ATTIVAZIONE);
+                    item.DATA_VALIDITA_RECESSO = new Date(item.DATA_VALIDITA_RECESSO);
+
                     $scope.insertRecessesLUCE.jsonLuce.push(
                         _.mapKeys( item, ( value, key ) => {
                             // NEL FOGLIO RECESSI LUCE NON C'E' BISOGNO DI fare operazioni nell'header
@@ -86,6 +90,33 @@ app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'al
            reader.readAsBinaryString(f);
        }
        
+       }
+
+       $scope.insertRecessesLUCE.inserisciRecessi = function() {
+
+        if(document.getElementsByClassName("error-rosso").length > 0){
+            alertify.alert('Attenzione - Ci sono recessi da gestire');
+            return;
+        }
+
+        $http.post('/insertRecessesLuce', {
+            'jsonLuce': $scope.insertRecessesLUCE.jsonLuce
+            
+         }).then((result) => {
+             alertify.alert('Recessi luce inseriti correttamente');
+             $route.reload();
+         }).catch((err) => {
+             if(err.status === 500){
+                 alertify.alert("Errore nell'inserimento dei recessi");
+             }
+             if(err.status === 400){
+                alertify.alert("Bad Request JsonLuce non popolato");
+            }
+             if(err.status === 403){
+                 alertify.alert("Utente non autorizzato");
+                 $location.path('/logout');
+             }
+         });
        }
 
 }]);
