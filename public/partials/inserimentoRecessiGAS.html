@@ -1,0 +1,117 @@
+<div class="container max-100">
+
+        <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 " method="POST"
+            name="insertRecessesGASForm">
+            <div class="row col-12">
+                <div class="col-md-12">
+                    <h2>Recessi Gas</h2>
+                    <hr>
+                </div>
+            </div>
+            <div class="row col-12">
+                <div class="col-6">
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" name="excelGas"
+                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                            id="excelGas" placeholder="">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <button type="button" class="btn btn-orange" ng-click="insertRecessesGAS.caricaRecessi()">Carica
+                        excel GAS</button>
+                </div>
+            </div>
+        </form>
+    
+        <div ng-if="insertRecessesGAS.showRisultati"
+            class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+            <div class="col-md-12">
+                <h2>Recessi gas</h2>
+                <hr>
+            </div>
+    
+            <div class="input-group mb-3 col-md-4">
+    
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id=""><i class="fas fa-search"></i></span>
+                    </div>
+                    <input  type="text" class="form-control" placeholder="Cerca" ng-model="filtraRecessi" >
+           
+            </div>
+            <div class="table-responsive">
+                <table class="table  table-bordered table-hover">
+                    <thead>
+                        <tr>
+                                <th scope="col">PDR</th>
+                                <th scope="col">DENOMINAZIONE</th>
+                                <th scope="col">CONSUMO</th>
+                                <th scope="col">DATA IN</th>
+                                <th scope="col">DATA OUT</th>
+                                <th scope="col">RIF TELEFONICI</th>
+                                <th scope="col">INDIRIZZO FORNITURA</th>
+                                <th scope="col">OFFERTA</th>
+                                <th scope="col">CAPO AREA</th>
+                                <th scope="col">AGENTE</th>
+                                <th scope="col">ASSOCIA </th>
+                        </tr>
+                    </thead>
+    
+                    <tbody>
+                        <tr ng-repeat="x in insertRecessesGAS.jsonGas | filter : filtraRecessi  ">
+    
+                            <td>
+                                {{x.PDR}}
+                            </td>
+                            
+                            <td>
+                                {{x.DENOMINAZIONE}}
+                            </td>
+                            <td>
+                                {{x.CONSUMO_CONTRATTUALE}}
+                            </td>
+                            <td>
+                                {{x.DATA_INIZIO_FORNITURA |  date:'dd/MM/yyyy'}}
+                            </td>
+                           
+                            <td>
+                                {{x.DATA_OUT |  date:'dd/MM/yyyy'}}
+                            </td>
+                            
+                            <td>
+                                {{x.RIF_TELEFONICI}}
+                            </td>
+                          
+                            <td>
+                                {{x.VIA}}  {{x.LOCALITA}} - {{x.PROVINCIA}} 
+                            </td>
+                            <td>
+                                {{x.OFFERTA}}
+                            </td>
+                            <td>
+                                {{x.CAPO_AREA}}
+                            </td>
+                           
+                            
+                            <td>
+                                {{x.AGENTE}}
+                            </td>
+                            <td>
+                                <select convert-to-number ng-class="{'error-rosso': x.VENDITORE_ASSEGNATO == null}"  name="venditoreSelect-{{$index}}" class="form-control" id="venditoreSelect-{{$index}}" ng-change="insertRecessesGAS.changeAgente(x,$index)" ng-model="x.VENDITORE_ASSEGNATO">
+                                    <option value="" ></option>
+                                    <option value="111111" >1 NON GESTIRE</option>
+                                    <option value="222222" >2 RIMANDA ASSOCIAZIONE</option>
+                                    <option  ng-repeat="option1 in insertRecessesGAS.venditori track by option1.ID_UTENTE" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                                </select>
+                            </td>
+                           
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-12 col-xl-12 mt-3 ">
+                <button type="button" class="btn btn-orange" ng-click="insertRecessesGAS.inserisciRecessi()">
+                   Inserisci recessi GAS</button>
+                
+            </div>
+        </div>
+    </div>

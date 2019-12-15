@@ -27,6 +27,7 @@ app.controller('dateListCtrl',['$scope', '$http', '$location','alertify', functi
             $.unblockUI();
             alertify.alert("Nessuno appuntamento trovato");
         }else{
+            
             $scope.dateList = result.data.appuntamenti;
             $.unblockUI();
         } 

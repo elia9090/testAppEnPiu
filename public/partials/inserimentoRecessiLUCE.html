@@ -1,0 +1,120 @@
+<div class="container max-100">
+
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 " method="POST"
+        name="insertRecessesLUCEForm">
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Recessi Luce</h2>
+                <hr>
+            </div>
+        </div>
+        <div class="row col-12">
+            <div class="col-6">
+                <div class="form-group">
+                    <input type="file" class="form-control-file" name="excelLuce"
+                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                        id="excelLuce" placeholder="">
+                </div>
+            </div>
+            <div class="col-6">
+                <button type="button" class="btn btn-orange" ng-click="insertRecessesLUCE.caricaRecessi()">Carica
+                    excel luce</button>
+            </div>
+        </div>
+    </form>
+
+    <div ng-if="insertRecessesLUCE.showRisultati"
+        class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+        <div class="col-md-12">
+            <h2>Recessi luce</h2>
+            <hr>
+        </div>
+
+        <div class="input-group mb-3 col-md-4">
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id=""><i class="fas fa-search"></i></span>
+                </div>
+                <input  type="text" class="form-control" placeholder="Cerca" ng-model="filtraRecessi" >
+       
+        </div>
+        <div class="table-responsive">
+            <table class="table  table-bordered table-hover">
+                <thead>
+                    <tr>
+                            <th scope="col">POD</th>
+                            <th scope="col">INSOLUTO</th>
+                            <th scope="col">RAGIONE SOCIALE</th>
+                            <th scope="col">SEDE LEGALE</th>
+                            <th scope="col">LUOGO FORNITURA</th>
+                            <th scope="col">CONTATTI</th>
+                            <th scope="col">KWH ANNUI</th>
+                            <th scope="col">DATA ATTIVAZIONE</th>
+                            <th scope="col">DATA VALIDITA RECESSO</th>
+                            <th scope="col">GRUPPO</th>
+                            <th scope="col">AGENZIA</th>
+                            <th scope="col">ASSOCIA </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr ng-repeat="x in insertRecessesLUCE.jsonLuce | filter : filtraRecessi  ">
+
+                        <td>
+                            {{x.POD}}
+                        </td>
+                        
+                        <td>
+                            {{x.insoluto}}
+                        </td>
+                        <td>
+                            {{x.RAGIONE_SOCIALE}}
+                        </td>
+                        <td>
+                            {{x.INDIRIZZO_SEDE_LEGALE}} - {{x.LOCALITA_SEDE_LEGALE}}
+                        </td>
+                       
+                        <td>
+                            {{x.INDIRIZZO_FORN}} - {{x.LOCALITA_FORN}}
+                        </td>
+                        
+                        <td>
+                            {{x.TELEFONO}} {{x.CELLULARE}}
+                        </td>
+                      
+                        <td>
+                            {{x.KWH_ANNUI}}
+                        </td>
+                        <td>
+                            {{x.DATA_ATTIVAZIONE |  date:'dd/MM/yyyy'}}
+                        </td>
+                        <td>
+                            {{x.DATA_VALIDITA_RECESSO |  date:'dd/MM/yyyy'}}
+                        </td>
+                       
+                        <td>
+                            {{x.GRUPPO}}
+                        </td>
+                        <td>
+                            {{x.AGENZIA}}
+                        </td>
+                        <td>
+                            <select convert-to-number ng-class="{'error-rosso': x.VENDITORE_ASSEGNATO == null}" name="venditoreSelect-{{$index}}" class="form-control" id="venditoreSelect-{{$index}}"  ng-change="insertRecessesLUCE.changeAgente(x,$index)" ng-model="x.VENDITORE_ASSEGNATO">
+                                <option value="" ></option>
+                                <option value="111111" >1 NON GESTIRE</option>
+                                <option value="222222" >2 RIMANDA ASSOCIAZIONE</option>
+                                <option ng-repeat="option1 in insertRecessesLUCE.venditori track by option1.ID_UTENTE" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                            </select>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-12 col-xl-12 mt-3 ">
+            <button type="button" class="btn btn-orange" ng-click="insertRecessesLUCE.inserisciRecessi()">
+               Inserisci recessi LUCE</button>
+            
+        </div>
+    </div>
+</div>

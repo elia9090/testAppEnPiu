@@ -20,14 +20,15 @@
     <script src="js/librerieJs/angular.min.js"></script>
     <script src="js/librerieJs/angular-route.min.js"></script>
     <script src="js/librerieJs/ngAlertify.js"></script>
-    <script src="js/librerieJs/chart.js-s/dist/Chart.min.js"></script>
-    <script src="js/librerieJs/angular-chart.js-s/dist/angular-chart.min.js"></script>
+    <script src="js/librerieJs/Chart.min.js"></script>
+    <script src="js/librerieJs/angular-chart.min.js"></script>
 
     <script src="js/librerieJs/popper.min.js"></script>
     <script src="js/librerieJs/angular-locale_it-it.js"></script>
     <script src="js/librerieJs/ui-bootstrap-tpls-2.5.0.min.js"></script>
     <script src="js/librerieJs/FileSaver.min.js"></script>
     <script src="js/librerieJs/xlsx.full.min.js"></script>
+    <script src="js/librerieJs/lodash.js"></script>
     <script src="js/customDom.js"></script>
     <script src="js/app.js"></script>
     <script src="js/dist/ng-app.js"></script>
@@ -78,8 +79,11 @@
                                   <a class="nav-link" href="#statisticheAppuntamentiGruppoVendita">Statistiche gruppo vendita</a>
                               </li>
                               <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'BACK_OFFICE'">
-                                <a class="nav-link" href="#inserimentoRecessi">Inserimento recessi</a>
+                                <a class="nav-link" href="#inserimentoRecessiLuce">Inserimento recessi Luce</a>
                               </li>
+                              <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'BACK_OFFICE'">
+                                  <a class="nav-link" href="#inserimentoRecessiGas">Inserimento recessi Gas</a>
+                                </li>
                                 <li class="nav-item" ng-show="userType === 'ADMIN'">
                                     <a class="nav-link" href="#aggiuntiUtente">Aggiungi utente</a>
                                 </li>

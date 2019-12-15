@@ -178,6 +178,9 @@ select{
   border-color: rgb(255, 5, 5, 0.747) !important;
   box-shadow: 0 0 0 1px rgba(255, 5, 5, 0.747);
 }
+.error-rosso{
+  border: 2px solid red;
+}
 
 .red-background{
   background-color:  rgba(232,76,61,0.5);
@@ -413,6 +416,15 @@ textarea{
 #recapStatisticheAppuntamenti .modal-body{
   height: 600px;
   overflow-y: scroll;
+}
+
+.container.max-100{
+  max-width: 100% !important;
+}
+
+.container.max-100 table td, .container.max-100 table td {
+  padding: .25rem !important;
+  font-size: 12px !important;
 }
 
 @media screen and (max-width: 450px) {

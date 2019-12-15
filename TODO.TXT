@@ -1,4 +1,4 @@
-manca la searchdate responsabili e le statistche gruppo vendita
 
+per riprendere il nome provincia by code dell'excel
 
-
+$scope.searchDate.province.filter(p => p.code == 'AG')[0].nome
