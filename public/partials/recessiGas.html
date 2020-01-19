@@ -1,0 +1,84 @@
+<div class="container" >
+     
+  <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="recessesGasForm" ng-submit="recessesGas.submitrecessesGas('submit')">
+      
+      <div class="row col-12">
+          <div class="col-md-12">
+              <h2>Recessi Gas</h2>
+              <hr>
+          </div>
+      </div>
+
+      <div class="row col-12" >
+          <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
+              <label for="dataRecessoDAL">Data recesso DAL</label>
+              <p class="input-group datepicker">
+                      <input type="text" name="dataRecessoDAL" id="dataRecessoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="recessesGas.searchParam.dataRecessoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                      <span class="input-group-btn">
+                          <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
+                      </span>
+                  </p>
+          </div>
+          <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
+              <label for="dataRecessoAL">Data recesso AL</label>
+              <p class="input-group datepicker">
+                      <input type="text" name="dataRecessoAL" id="dataRecessoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="recessesGas.searchParam.dataRecessoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
+                      <span class="input-group-btn">
+                          <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
+                      </span>
+                  </p>
+          </div>
+         
+      
+      <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+          <label for="provinceSelect">Provincia</label>
+          <select  name="provinceSelect" class="form-control" id="provinceSelect" ng-change="recessesGas.showComuni()" ng-model="recessesGas.searchParam.provinciaSelected">
+              
+              <option ng-repeat="option in recessesGas.province" value="{{option.code}}">{{option.nome}}</option>
+          </select>
+      </div>
+     
+  </div>
+  <div class="row col-12" >
+      <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+              <label for="ragioneSociale">Rag.Sociale</label>
+              <input type="text" id="ragioneSociale"   class="form-control w-100"    ng-model="recessesGas.searchParam.ragioneSociale">
+      </div>
+      <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
+          <label for="esitoAppuntamento">Esito appuntamento</label>
+          <select   ng-model="recessesGas.searchParam.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in recessesGas.Esiti"></select>      
+      </div>
+     
+  </div>
+
+  <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+  
+      <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+          <label for="venditoreSelect">Agente</label>
+          <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="recessesGas.searchParam.venditoreSelected">
+              <option value="" ></option>
+              <option ng-repeat="option1 in recessesGas.agenti" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
+          </select>
+      </div>
+  </div>
+
+  <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">
+          <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                  <label for="venditoreSelect">Agente</label>
+                  <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="recessesGas.searchParam.venditoreSelected">
+                      <option value="" ></option>
+                      <option ng-value="user.Id" value="{{user.Id}}" >{{user.Id}} - {{user.SURNAME}} {{user.NAME}}</option>
+                      <option ng-repeat="option1 in recessesGas.venditoriForResponsabili" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
+                  </select>
+          </div>
+  </div>
+
+
+  <div class="row col-12" >
+      <div class="col-md-12 col-xl-12 mt-3 ">
+          <button ng-disabled="recessesGasForm.$invalid "  type="submit" class="btn btn-orange ">Ricerca recessi Gas</button> 
+      </div>
+  </div>
+  </form>
+  <ul ng-if="recessesGas.totalItems > recessesGas.searchParam.itemsPerPage" uib-pagination items-per-page="recessesGas.searchParam.itemsPerPage" total-items="recessesGas.totalItems" ng-model="recessesGas.searchParam.currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="true" max-size="5"></ul>
+</div>

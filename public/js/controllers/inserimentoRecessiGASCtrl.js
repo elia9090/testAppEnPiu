@@ -90,7 +90,11 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
 
        
        $scope.insertRecessesGAS.inserisciRecessi = function() {
-
+           
+        if(document.getElementsByClassName("error-rosso").length > 0){
+            alertify.alert('Attenzione - Ci sono recessi da gestire');
+            return;
+        }
        
 
         $http.post('/insertRecessesGas', {
