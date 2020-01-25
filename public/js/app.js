@@ -1,5 +1,5 @@
 
-var app = angular.module('gestionaleApp', ["ngRoute","chart.js",'ui.bootstrap','ngAlertify']);
+var app = angular.module('gestionaleApp', ["ngRoute","chart.js",'ui.bootstrap','ngAlertify','angularMoment']);
 
 app.run(['$rootScope', '$location', function($rootScope, $location, ) {
     $rootScope.$on('$routeChangeStart', function(event, currRoute, prevRoute){
