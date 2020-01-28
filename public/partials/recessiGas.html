@@ -1,7 +1,7 @@
 <div class="container">
 
     <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST"
-        name="recessesGasForm" ng-submit="recessesGas.submitrecessesGas('submit')">
+        name="recessesGasForm" ng-submit="recessesGas.submitRecessesGas('submit')">
 
         <div class="row col-12">
             <div class="col-md-12">
@@ -42,7 +42,7 @@
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                 <label for="provinceSelect">Provincia</label>
                 <select name="provinceSelect" class="form-control" id="provinceSelect"
-                    ng-change="recessesGas.showComuni()" ng-model="recessesGas.searchParam.provinciaSelected">
+                    ng-model="recessesGas.searchParam.provinciaSelected">
 
                     <option ng-repeat="option in recessesGas.province" value="{{option.code}}">{{option.nome}}</option>
                 </select>
@@ -56,10 +56,10 @@
                     ng-model="recessesGas.searchParam.ragioneSociale">
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
-                <label for="esitoAppuntamento">Esito appuntamento</label>
-                <select ng-model="recessesGas.searchParam.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"
+                <label for="statoRecesso">Stato recesso</label>
+                <select ng-model="recessesGas.searchParam.stato.value" id="statoRecesso" name="statoRecesso"
                     class="form-control"
-                    ng-options="Esito.Value as Esito.Name  for Esito in recessesGas.Esiti"></select>
+                    ng-options="Stato.Value as Stato.Name  for Stato in recessesGas.Stati"></select>
             </div>
 
         </div>
@@ -104,11 +104,11 @@
     <div ng-if="recessesGas.showRisultati"
         class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
         <div class="col-md-12">
-            <h2>Risultato ricerca appuntamenti</h2>
+            <h2>Risultato ricerca recessi</h2>
             <hr>
         </div>
         <div ng-if="recessesGas.totalItems == 0">
-            <h3>Nessun appuntamento trovato, modificare i parametri di ricerca</h3>
+            <h3>Nessun recesso trovato, modificare i parametri di ricerca</h3>
         </div>
 
         <div ng-if="recessesGas.totalItems > 0" class="table-responsive">
@@ -127,11 +127,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    
+                    <tr ng-repeat="x in recessesGas.recessiGasResult" >
+                        <td>
+                            {{x.DENOMINAZIONE}}
+                        </td> 
+                        <td>
+                            {{x.VIA}} {{x.LOCALITA}} {{x.PROVINCIA}} 
+                        </td> 
+                        <td>
+                            {{x.CONSUMO_CONTRATTUALE}}
+                        </td> 
+                        <td>
+                            {{x.DATA_OUT | date:'dd/MM/yyyy'}}
+                        </td> 
+                        <td>
+                            {{recessesGas.permanenza(x.DATA_INIZIO_FORNITURA, x.DATA_OUT)}}
+                        </td> 
+                        <td>
+                            {{x.NOME_ATTIVITA}}
+                        </td> 
+                        <td>
+                            {{x.NOME_ATTIVITA}}
+                        </td> 
+                        <td>
+                            {{x.NOME_ATTIVITA}}
+                        </td> 
                         <td>
                             <button class="btn btn-orange btn-modifyUtente"
-                                ng-click="recessesGas.modifyRecess(x.ID_APPUNTAMENTO)">
+                                ng-click="recessesGas.modifyRecess(x.ID_RECESSO_GAS)">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
 

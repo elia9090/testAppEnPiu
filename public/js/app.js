@@ -108,6 +108,14 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
             templateUrl: '../partials/inserimentoRecessiGAS.html',
             controller:'inserimentoRecessiGASCtrl'
         })
+        .when('/recessiLuce', {
+            templateUrl: '../partials/recessiLuce.html',
+            controller:'luceRecessesCtrl'
+        }) 
+        .when('/recessiGas', {
+            templateUrl: '../partials/recessiGas.html',
+            controller:'gasRecessesCtrl'
+        })
         .when('/editDateVenditore/:id', {
             templateUrl: '../partials/editAppuntamentoVenditore.html',
             controller:'editDateVenditoreCtrl'

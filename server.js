@@ -3474,9 +3474,6 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
             var jsonGas = req.body.jsonGas;
             if (jsonGas && jsonGas.length > 0) {
 
-
-
-
                 pool.getConnection(function(err, connection) {
                     connection.beginTransaction(function(errTrans) {
                         if (errTrans) { //Transaction Error (Rollback and release connection)
@@ -3646,13 +3643,13 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
 
             var offset = req.body.offset;
 
-            var dateFrom = req.body.dateFROM;
+            var dateFrom = req.body.dataRecessoDAL;
             var QdateFrom = " ";
             if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
                 QdateFrom = ' AND DATA_VALIDITA_RECESSO >= "' + dateFrom + '" ';
             }
 
-            var dateTo = req.body.dateTO;
+            var dateTo = req.body.dataRecessoAL;
             var QdateTo = " ";
             if (dateTo !== '' && dateTo !== undefined && dateTo != null) {
                 QdateTo = ' AND DATA_VALIDITA_RECESSO <= "' + dateTo + '" ';
@@ -3662,14 +3659,14 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
             var ragioneSociale = req.body.ragioneSociale;
             var QragioneSociale = " ";
             if (ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale != null) {
-                QragioneSociale = ' AND LOWER(RAGIONE_SOCIALE) LIKE LOWER("%' + ragioneSociale + '%") ';
+                QragioneSociale = ' AND LOWER(DENOMINAZIONE) LIKE LOWER("%' + ragioneSociale + '%") ';
             }
 
-            var esito = req.body.esito;
-            var Qesito = " ";
-            if (esito !== '' && esito !== undefined && esito != null) {
+            var stato = req.body.stato;
+            var Qstato = " ";
+            if (stato !== '' && stato !== undefined && stato != null) {
                
-                Qesito = ' AND STATO = "' + esito + '" ';
+                Qstato = ' AND STATO = "' + stato + '" ';
                 
             }
 
@@ -3682,48 +3679,49 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
             var agente = req.body.agente;
             var Qagente = " ";
             if (agente !== '' && agente !== undefined && agente != null) {
-                Qagente = ' AND ID_VENDITORE = "' + agente + '" ';
+                Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
             }
 
           
 
             pool.getConnection(function(err, connection) {
-                connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qoperatore + Qesito + ' ORDER BY DATA_APPUNTAMENTO', function(err, rows, fields) {
-                    connection.release();
-                    if (err) {
-                        log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
-                        res.sendStatus(500);
-                    } else {
+                connection.query(`SELECT COUNT(*) AS TotalCount from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  `, 
+                    function(err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL RICERCA COUNT RECESSI GAS ' + err);
+                            res.sendStatus(500);
+                        } else {
 
-                        data["totaleAppuntamenti"] = rows[0].TotalCount;
+                            data["totaleRecessiGas"] = rows[0].TotalCount;
 
-                        pool.getConnection(function(err, connection) {
-                            connection.query(
-                                'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
-                                ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*' +
-                                ' FROM APPUNTAMENTI' +
-                                ' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE' +
-                                ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
-                                ' WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qoperatore + Qesito + ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?', [limit, offset],
-                                function(err, rows, fields) {
-                                    connection.release();
-                                    if (err) {
-                                        log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
-                                        res.sendStatus(500);
-                                    } else {
-                                        if (rows.length !== 0) {
-                                            data["appuntamenti"] = rows;
-                                            res.json(data);
+                            pool.getConnection(function(err, connection) {
+                                connection.query(`select 
+                                rg.*, drg.*, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
+                                from recessi_gas as rg 
+                                inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
+                                left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
+                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ORDER BY DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
+                                    function(err, rows, fields) {
+                                        connection.release();
+                                        if (err) {
+                                            log.error('ERRORE SQL RICERCA recessiGas: --> ' + err);
+                                            res.sendStatus(500);
                                         } else {
-                                            data["appuntamenti"] = [];
-                                            res.json(data);
+                                            if (rows.length !== 0) {
+                                                data["recessiGas"] = rows;
+                                                res.json(data);
+                                            } else {
+                                                data["recessiGas"] = [];
+                                                res.json(data);
+                                            }
                                         }
-                                    }
 
-                                });
+                                    });
 
-                        });
-                    }
+                            });
+                        }
                 });
             });
 
