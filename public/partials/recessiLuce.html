@@ -1,0 +1,291 @@
+<div class="container">
+
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST"
+        name="recessesLuceForm" ng-submit="recessesLuce.submitrecessesLuce('submit')">
+
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Recessi Luce</h2>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row col-12">
+            <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
+                <label for="dataRecessoDAL">Data recesso DAL</label>
+                <p class="input-group datepicker">
+                    <input type="text" name="dataRecessoDAL" id="dataRecessoDAL" ng-click="openDAL()"
+                        class="form-control " readonly uib-datepicker-popup="{{format}}"
+                        ng-model="recessesLuce.searchParam.dataRecessoDAL" value="" is-open="popupDAL.opened"
+                        datepicker-options="dateOptions" clear-text="Rimuovi" close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="openDAL()"><i
+                                class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
+            </div>
+            <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
+                <label for="dataRecessoAL">Data recesso AL</label>
+                <p class="input-group datepicker">
+                    <input type="text" name="dataRecessoAL" id="dataRecessoAL" ng-click="openAL()" class="form-control "
+                        readonly uib-datepicker-popup="{{format}}" ng-model="recessesLuce.searchParam.dataRecessoAL"
+                        value="" is-open="popupAL.opened" datepicker-options="dateOptions" clear-text="Rimuovi"
+                        close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="openAL()"><i
+                                class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
+            </div>
+
+
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="provinceSelect">Provincia</label>
+                <select name="provinceSelect" class="form-control" id="provinceSelect"
+                    ng-model="recessesLuce.searchParam.provinciaSelected">
+                   
+                    <option ng-repeat="option in recessesLuce.province" value="{{option.code}}">{{option.nome}}</option>
+                </select>
+            </div>
+
+        </div>
+        <div class="row col-12">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="ragioneSociale">Rag.Sociale</label>
+                <input type="text" id="ragioneSociale" class="form-control w-100"
+                    ng-model="recessesLuce.searchParam.ragioneSociale">
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
+                <label for="statoRecesso">Stato recesso</label>
+                <select ng-model="recessesLuce.searchParam.stato.value" id="statoRecesso" name="statoRecesso"
+                    class="form-control"
+                    ng-options="Stato.Value as Stato.Name  for Stato in recessesLuce.Stati"></select>
+            </div>
+
+        </div>
+
+        <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="venditoreSelect">Agente</label>
+                <select name="venditoreSelect" class="form-control" id="venditoreSelect"
+                    ng-model="recessesLuce.searchParam.venditoreSelected">
+                    <option value=""></option>
+                    <option ng-repeat="option1 in recessesLuce.agenti" ng-value="option1.ID_UTENTE"
+                        value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="venditoreSelect">Agente</label>
+                <select name="venditoreSelect" class="form-control" id="venditoreSelect"
+                    ng-model="recessesLuce.searchParam.venditoreSelected">
+                    <option value=""></option>
+                    <option ng-value="user.Id" value="{{user.Id}}">{{user.Id}} - {{user.SURNAME}} {{user.NAME}}</option>
+                    <option ng-repeat="option1 in recessesLuce.venditoriForResponsabili" ng-value="option1.ID_UTENTE"
+                        value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="row col-12">
+            <div class="col-md-12 col-xl-12 mt-3 ">
+                <button ng-disabled="recessesLuceForm.$invalid " type="submit" class="btn btn-orange ">Ricerca recessi
+                    Luce</button>
+            </div>
+        </div>
+    </form>
+
+    <div ng-if="recessesLuce.showRisultati"
+        class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+        <div class="col-md-12">
+            <h2>Risultato ricerca recessi</h2>
+            <hr>
+        </div>
+        <div ng-if="recessesLuce.totalItems == 0">
+            <h3>Nessun recesso trovato, modificare i parametri di ricerca</h3>
+        </div>
+
+        <div ng-if="recessesLuce.totalItems > 0" class="table-responsive">
+            <table class="table  table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Cliente</th>
+                        <th scope="col">Indirizzo</th>
+                        <th scope="col">KWH_ANNUI</th>
+                        <th scope="col">Data recesso</th>
+                        <th scope="col">Permanenza</th>
+                        <th scope="col">Agente assegnato</th>
+                        <th scope="col">Stato</th>
+                        <th scope="col">Referente</th>
+                        <th scope="col">Modifica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="x in recessesLuce.recessiLuceResult" >
+                        <td>
+                            {{x.RAGIONE_SOCIALE}}
+                        </td> 
+                        <td>
+                            {{x.INDIRIZZO_FORN}} {{x.LOCALITA_FORN}} 
+                        </td> 
+                        <td>
+                            {{x.KWH_ANNUI}}
+                        </td> 
+                        <td>
+                            {{x.DATA_VALIDITA_RECESSO | date:'dd/MM/yyyy'}}
+                        </td> 
+                        <td>
+                            {{recessesLuce.permanenza(x.DATA_ATTIVAZIONE, x.DATA_VALIDITA_RECESSO)}}
+                        </td> 
+                        <td>
+                            {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
+                         </td> 
+                        <td>
+                            {{x.STATO}}
+                        </td> 
+                        <td>
+                            {{x.REFERENTE_RECESSO}}
+                        </td> 
+                        <td>
+                            <button class="btn btn-orange btn-modifyUtente"
+                                ng-click="recessesLuce.modifyRecess(x)">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ul ng-if="recessesLuce.totalItems > recessesLuce.searchParam.itemsPerPage" uib-pagination
+            items-per-page="recessesLuce.searchParam.itemsPerPage" total-items="recessesLuce.totalItems"
+            ng-model="recessesLuce.searchParam.currentPage" ng-change="pageChanged()" boundary-link-numbers="true"
+            rotate="true" max-size="5"></ul>
+
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="recessModal" tabindex="-1" role="dialog" aria-labelledby="recessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="recessModalLabel">Recesso: <b>{{recessesLuce.dettaglioRecesso.ID_RECESSO_LUCE}}</b></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container" >
+              <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12" method="POST" name="viewDettaglioRecesso" >
+        
+              <div class="row col-12" >
+                  <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-3 mr-2">
+                      <label for="dataValiditaRecessoDettaglioRecesso">Data Recesso: &nbsp;  </label>
+                      <p id="dataValiditaRecessoDettaglioRecesso" class="input-group datepicker font-weight-bold">
+                          {{recessesLuce.dettaglioRecesso.DATA_VALIDITA_RECESSO | date:'dd/MM/yyyy'}}
+                      </p>
+                  </div>
+                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-3">
+                      <label for="dataAttivazioneDettaglioRecesso">Data attivazione: &nbsp;</label>
+                      <p  id="dataAttivazioneDettaglioRecesso" class="input-group datepicker font-weight-bold">
+                        {{recessesLuce.dettaglioRecesso.DATA_ATTIVAZIONE | date:'dd/MM/yyyy'}}
+                      </p>
+                  </div>
+                  <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                    <label for="ragSociale">Rag.Sociale: &nbsp;</label>
+                    <p id="ragSociale" class="input-group datepicker font-weight-bold">
+                        {{recessesLuce.dettaglioRecesso.RAGIONE_SOCIALE}} 
+                    </p>
+                </div>
+                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-3">
+                    <label for="pod">POD: &nbsp;</label>
+                    <p  id="pod" class="input-group datepicker font-weight-bold">
+                      {{recessesLuce.dettaglioRecesso.POD }}
+                    </p>
+                </div>
+              </div>
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                  <label for="indirizzoForn">Indirizzo Fornitura: &nbsp;</label>
+                  <p id="indirizzoForn" class="input-group datepicker font-weight-bold">
+                      {{recessesLuce.dettaglioRecesso.INDIRIZZO_FORN}} {{recessesLuce.dettaglioRecesso.LOCALITA_FORN}}
+                  </p>
+              </div>
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="indirizzoLegale">Indirizzo Sede legale: &nbsp;</label>
+                <p id="indirizzoLegale" class="input-group datepicker font-weight-bold">
+                    {{recessesLuce.dettaglioRecesso.INDIRIZZO_SEDE_LEGALE}} {{recessesLuce.dettaglioRecesso.LOCALITA_SEDE_LEGALE}}
+                </p>
+              </div>
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="recapiti">Recapiti: &nbsp;</label>
+                <p id="recapiti" class="input-group datepicker font-weight-bold">
+                    {{recessesLuce.dettaglioRecesso.TELEFONO}} {{recessesLuce.dettaglioRecesso.CELLULARE}} 
+                </p>
+            </div>
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                  <label for="consumi">Consumi KWH Annui: &nbsp;</label>
+                  <p id="consumi" class="input-group datepicker font-weight-bold">
+                      {{recessesLuce.dettaglioRecesso.KWH_ANNUI}}
+                  </p>
+              </div>
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="insoluto">Insoluto: &nbsp;</label>
+                <p id="insoluto" class="input-group datepicker font-weight-bold">
+                    {{recessesLuce.dettaglioRecesso.INSOLUTO}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="agente">Contratto stipulato da: &nbsp;</label>
+                <p id="agente" class="input-group datepicker font-weight-bold">
+                    {{recessesGas.dettaglioRecesso.AGENZIA}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="agente">Agente assegnato: &nbsp;</label>
+                <p id="agente" class="input-group datepicker font-weight-bold">
+                    {{recessesLuce.dettaglioRecesso.COGNOME_VENDITORE}} {{recessesLuce.dettaglioRecesso.NOME_VENDITORE}} 
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="agente">Referente Recesso: &nbsp;</label>
+                <p id="agente" class="input-group datepicker font-weight-bold">
+                    {{recessesLuce.dettaglioRecesso.REFERENTE_RECESSO}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+                <label for="noteRecesso">Note recesso:</label>
+                <textarea  rows="4" cols="50"  maxlength="480"  type="text" name="note" class="form-control w-100" id="note"  ng-model="recessesLuce.dettaglioRecesso.NOTE" ></textarea>         
+            </div>
+            <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
+                    <label for="dataInserimentoSistema">Data inserimento a sistema: &nbsp;</label>
+                    <p id="dataInserimentoSistema" class="input-group datepicker font-weight-bold">
+                        {{recessesLuce.dettaglioRecesso.DATA_INSERIMENTO | date:'dd/MM/yyyy'}}
+                    </p>
+                </div>
+                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
+                    <label for="dataUltimaModifica">Data ultima modifica: &nbsp;</label>
+                    <p id="dataUltimaModifica" class="input-group datepicker font-weight-bold">
+                        {{recessesLuce.dettaglioRecesso.ULTIMA_MODIFICA | date:'dd/MM/yyyy'}}
+                    </p>
+                </div>
+            </div>
+           
+           
+            
+          
+         </form>
+      </div>
+        </div>
+      
+      </div>
+    </div>
+  </div>

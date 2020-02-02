@@ -3646,13 +3646,13 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
             var dateFrom = req.body.dataRecessoDAL;
             var QdateFrom = " ";
             if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
-                QdateFrom = ' AND DATA_VALIDITA_RECESSO >= "' + dateFrom + '" ';
+                QdateFrom = ' AND DATA_OUT >= "' + dateFrom + '" ';
             }
 
             var dateTo = req.body.dataRecessoAL;
             var QdateTo = " ";
             if (dateTo !== '' && dateTo !== undefined && dateTo != null) {
-                QdateTo = ' AND DATA_VALIDITA_RECESSO <= "' + dateTo + '" ';
+                QdateTo = ' AND DATA_OUT <= "' + dateTo + '" ';
             }
 
         
@@ -3668,12 +3668,14 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
                
                 Qstato = ' AND STATO = "' + stato + '" ';
                 
+            }else{
+                Qstato = ' AND STATO != "NON_GESTIRE" ';
             }
 
             var provincia = req.body.provincia;
             var Qprovincia = " ";
             if (provincia !== '' && provincia !== undefined && provincia != null) {
-                Qprovincia = ' AND PROVINCIA = "' + provincia + '" ';
+                Qprovincia = ' AND LOWER(LOCALITA) LIKE LOWER("%('+ provincia +')%") ';
             }
 
             var agente = req.body.agente;
@@ -3748,13 +3750,13 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
 
             var offset = req.body.offset;
 
-            var dateFrom = req.body.dateFROM;
+            var dateFrom = req.body.dataRecessoDAL;
             var QdateFrom = " ";
             if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
                 QdateFrom = ' AND DATA_VALIDITA_RECESSO >= "' + dateFrom + '" ';
             }
 
-            var dateTo = req.body.dateTO;
+            var dateTo = req.body.dataRecessoAL;
             var QdateTo = " ";
             if (dateTo !== '' && dateTo !== undefined && dateTo != null) {
                 QdateTo = ' AND DATA_VALIDITA_RECESSO <= "' + dateTo + '" ';
@@ -3767,12 +3769,14 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
                 QragioneSociale = ' AND LOWER(RAGIONE_SOCIALE) LIKE LOWER("%' + ragioneSociale + '%") ';
             }
 
-            var esito = req.body.esito;
-            var Qesito = " ";
-            if (esito !== '' && esito !== undefined && esito != null) {
+            var stato = req.body.stato;
+            var Qstato = " ";
+            if (stato !== '' && stato !== undefined && stato != null) {
                
-                Qesito = ' AND STATO = "' + esito + '" ';
+                Qstato = ' AND STATO = "' + stato + '" ';
                 
+            }else{
+                Qstato = ' AND STATO != "NON_GESTIRE" ';
             }
 
             var provincia = req.body.provincia;
@@ -3784,48 +3788,49 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
             var agente = req.body.agente;
             var Qagente = " ";
             if (agente !== '' && agente !== undefined && agente != null) {
-                Qagente = ' AND ID_VENDITORE = "' + agente + '" ';
+                Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
             }
 
           
 
             pool.getConnection(function(err, connection) {
-                connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qoperatore + Qesito + ' ORDER BY DATA_APPUNTAMENTO', function(err, rows, fields) {
-                    connection.release();
-                    if (err) {
-                        log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
-                        res.sendStatus(500);
-                    } else {
+                connection.query(`SELECT COUNT(*) AS TotalCount from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  `, 
+                    function(err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL RICERCA COUNT RECESSI luce ' + err);
+                            res.sendStatus(500);
+                        } else {
 
-                        data["totaleAppuntamenti"] = rows[0].TotalCount;
+                            data["totaleRecessiLuce"] = rows[0].TotalCount;
 
-                        pool.getConnection(function(err, connection) {
-                            connection.query(
-                                'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
-                                ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*' +
-                                ' FROM APPUNTAMENTI' +
-                                ' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE' +
-                                ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
-                                ' WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qoperatore + Qesito + ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?', [limit, offset],
-                                function(err, rows, fields) {
-                                    connection.release();
-                                    if (err) {
-                                        log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
-                                        res.sendStatus(500);
-                                    } else {
-                                        if (rows.length !== 0) {
-                                            data["appuntamenti"] = rows;
-                                            res.json(data);
+                            pool.getConnection(function(err, connection) {
+                                connection.query(`select 
+                                rl.*, drl.*, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
+                                from recessi_luce as rl 
+                                inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
+                                left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
+                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ORDER BY DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
+                                    function(err, rows, fields) {
+                                        connection.release();
+                                        if (err) {
+                                            log.error('ERRORE SQL RICERCA recessiLuce: --> ' + err);
+                                            res.sendStatus(500);
                                         } else {
-                                            data["appuntamenti"] = [];
-                                            res.json(data);
+                                            if (rows.length !== 0) {
+                                                data["recessiLuce"] = rows;
+                                                res.json(data);
+                                            } else {
+                                                data["recessiLuce"] = [];
+                                                res.json(data);
+                                            }
                                         }
-                                    }
 
-                                });
+                                    });
 
-                        });
-                    }
+                            });
+                        }
                 });
             });
 
@@ -3835,6 +3840,7 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
         }
     });
 });
+
 
 
 

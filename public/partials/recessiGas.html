@@ -144,17 +144,17 @@
                             {{recessesGas.permanenza(x.DATA_INIZIO_FORNITURA, x.DATA_OUT)}}
                         </td> 
                         <td>
-                            {{x.NOME_ATTIVITA}}
+                            {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
+                         </td> 
+                        <td>
+                            {{x.STATO}}
                         </td> 
                         <td>
-                            {{x.NOME_ATTIVITA}}
-                        </td> 
-                        <td>
-                            {{x.NOME_ATTIVITA}}
+                            {{x.REFERENTE_RECESSO}}
                         </td> 
                         <td>
                             <button class="btn btn-orange btn-modifyUtente"
-                                ng-click="recessesGas.modifyRecess(x.ID_RECESSO_GAS)">
+                                ng-click="recessesGas.modifyRecess(x)">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
 
@@ -171,3 +171,110 @@
     </div>
 
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="recessModal" tabindex="-1" role="dialog" aria-labelledby="recessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="recessModalLabel">Recesso: <b>{{recessesGas.dettaglioRecesso.ID_RECESSO_GAS}}</b></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container" >
+              <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12" method="POST" name="viewDettaglioRecesso" >
+        
+              <div class="row col-12" >
+                  <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-3 mr-2">
+                      <label for="dataValiditaRecessoDettaglioRecesso">Data Recesso: &nbsp;  </label>
+                      <p id="dataValiditaRecessoDettaglioRecesso" class="input-group datepicker font-weight-bold">
+                          {{recessesGas.dettaglioRecesso.DATA_OUT | date:'dd/MM/yyyy'}}
+                      </p>
+                  </div>
+                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-3">
+                      <label for="dataAttivazioneDettaglioRecesso">Data attivazione: &nbsp;</label>
+                      <p  id="dataAttivazioneDettaglioRecesso" class="input-group datepicker font-weight-bold">
+                        {{recessesGas.dettaglioRecesso.DATA_INIZIO_FORNITURA | date:'dd/MM/yyyy'}}
+                      </p>
+                  </div>
+                  <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                    <label for="ragSociale">Rag.Sociale: &nbsp;</label>
+                    <p id="ragSociale" class="input-group datepicker font-weight-bold">
+                        {{recessesGas.dettaglioRecesso.DENOMINAZIONE}} 
+                    </p>
+                </div>
+                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-3">
+                    <label for="pdr">PDR: &nbsp;</label>
+                    <p  id="pdr" class="input-group datepicker font-weight-bold">
+                      {{recessesGas.dettaglioRecesso.PDR }}
+                    </p>
+                </div>
+              </div>
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                  <label for="indirizzoForn">Indirizzo Fornitura: &nbsp;</label>
+                  <p id="indirizzoForn" class="input-group datepicker font-weight-bold">
+                      {{recessesGas.dettaglioRecesso.VIA}} {{recessesGas.dettaglioRecesso.LOCALITA}}
+                  </p>
+              </div>
+           
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="recapiti">Recapiti: &nbsp;</label>
+                <p id="recapiti" class="input-group datepicker font-weight-bold">
+                    {{recessesGas.dettaglioRecesso.RIF_TELEFONICI}} 
+                </p>
+            </div>
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                  <label for="consumi">Consumo contrattuale: &nbsp;</label>
+                  <p id="consumi" class="input-group datepicker font-weight-bold">
+                      {{recessesGas.dettaglioRecesso.CONSUMO_CONTRATTUALE}}
+                  </p>
+              </div>
+              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="agente">Contratto stipulato da: &nbsp;</label>
+                <p id="agente" class="input-group datepicker font-weight-bold">
+                    {{recessesGas.dettaglioRecesso.AGENTE}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="agente">Agente assegnato: &nbsp;</label>
+                <p id="agente" class="input-group datepicker font-weight-bold">
+                    {{recessesGas.dettaglioRecesso.COGNOME_VENDITORE}} {{recessesGas.dettaglioRecesso.NOME_VENDITORE}} 
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="agente">Referente Recesso: &nbsp;</label>
+                <p id="agente" class="input-group datepicker font-weight-bold">
+                    {{recessesGas.dettaglioRecesso.REFERENTE_RECESSO}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+                <label for="noteRecesso">Note recesso:</label>
+                <textarea  rows="4" cols="50"  maxlength="480"  type="text" name="note" class="form-control w-100" id="note"  ng-model="recessesGas.dettaglioRecesso.NOTE" ></textarea>         
+            </div>
+            <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
+                    <label for="dataInserimentoSistema">Data inserimento a sistema: &nbsp;</label>
+                    <p id="dataInserimentoSistema" class="input-group datepicker font-weight-bold">
+                        {{recessesGas.dettaglioRecesso.DATA_INSERIMENTO | date:'dd/MM/yyyy'}}
+                    </p>
+                </div>
+                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
+                    <label for="dataUltimaModifica">Data ultima modifica: &nbsp;</label>
+                    <p id="dataUltimaModifica" class="input-group datepicker font-weight-bold">
+                        {{recessesGas.dettaglioRecesso.ULTIMA_MODIFICA | date:'dd/MM/yyyy'}}
+                    </p>
+                </div>
+            </div>
+           
+           
+            
+          
+         </form>
+      </div>
+        </div>
+      
+      </div>
+    </div>
+  </div>

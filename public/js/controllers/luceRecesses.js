@@ -1,9 +1,9 @@
-app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','moment', function ( $scope, $http, $location,alertify,moment) {
+app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','moment', function ( $scope, $http, $location,alertify,moment) {
 
     $scope.user = JSON.parse(sessionStorage.user);
 
-    $scope.recessesGas = {};
-    $scope.recessesGas.searchParam={};
+    $scope.recessesLuce = {};
+    $scope.recessesLuce.searchParam={};
   
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
@@ -31,17 +31,17 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
     };
 
     $http.get('../../utility/province_comuni.json').then((result) => {
-       // $scope.recessesGas.searchParam.provinciaSelected = "";
-        $scope.recessesGas.province = result.data.province;
+       // $scope.recessesLuce.searchParam.provinciaSelected = "";
+        $scope.recessesLuce.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
-        $scope.recessesGas.province.splice(0, 0, ({code:"",comuni:"",nome:""}));
+        $scope.recessesLuce.province.splice(0, 0, ({code:"",comuni:"",nome:""}));
     }).catch((err) => {
         alertify.alert("Impossibile reperire la lista dei comuni");
     });
 
     
     if($scope.user.TYPE === 'ADMIN' || $scope.user.TYPE === 'BACK_OFFICE'){
-        $scope.recessesGas.Stati =    [
+        $scope.recessesLuce.Stati =    [
             {
                 "Name":" ",
                 "Value":""
@@ -61,7 +61,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             
         ];
     }else{
-        $scope.recessesGas.Stati =    [
+        $scope.recessesLuce.Stati =    [
             {
                 "Name":" ",
                 "Value":""
@@ -75,13 +75,13 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
   
 
  
-    $scope.recessesGas.searchParam.stato={};
+    $scope.recessesLuce.searchParam.stato={};
 
    
 
-    $scope.recessesGas.URLgasRecessesList = "gasRecessesList";
+    $scope.recessesLuce.URLluceRecessesList = "luceRecessesList";
 
-    $scope.recessesGas.searchParam.venditoreSelected = "";
+    $scope.recessesLuce.searchParam.venditoreSelected = "";
 
     if($scope.user.TYPE == "ADMIN" || $scope.user.TYPE == "BACK_OFFICE"){
        
@@ -90,7 +90,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
         
         //LISTA AGENTI SENZA RELAZIONI CON GLI OPERATORI E ELIMINATI LOGICAMENTE
         $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS').then((result) => {
-            $scope.recessesGas.agenti =  result.data.agenti;
+            $scope.recessesLuce.agenti =  result.data.agenti;
            
             
         }).catch((err) => {
@@ -106,10 +106,10 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
 
 
     }else if( $scope.user.TYPE == "RESPONSABILE_AGENTI"){
-        $scope.recessesGas.venditoreSelected = $scope.user.Id;
+        $scope.recessesLuce.venditoreSelected = $scope.user.Id;
 
         $http.get('/listaAgentiForResponsabile/'+$scope.user.Id).then((result) => {
-            $scope.recessesGas.venditoriForResponsabili = result.data.utenti;
+            $scope.recessesLuce.venditoriForResponsabili = result.data.utenti;
            
             }).catch((err) => {
                 if(err.status === 403){
@@ -118,44 +118,44 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
                     return;
                 }
                 
-                $scope.recessesGas.venditoriForResponsabili = [];
+                $scope.recessesLuce.venditoriForResponsabili = [];
             });
         
     }
     else if( $scope.user.TYPE == "AGENTE"){
         
-        $scope.recessesGas.searchParam.venditoreSelected = $scope.user.Id;
+        $scope.recessesLuce.searchParam.venditoreSelected = $scope.user.Id;
         
     }
 
-    $scope.recessesGas.showRisultati = false;
+    $scope.recessesLuce.showRisultati = false;
     //PAGINATION START
    
-    $scope.recessesGas.searchParam.currentPage = 1;
-    $scope.recessesGas.searchParam.itemsPerPage = 10;
+    $scope.recessesLuce.searchParam.currentPage = 1;
+    $scope.recessesLuce.searchParam.itemsPerPage = 10;
 
     $scope.pageChanged = function() {
-        $scope.recessesGas.searchParam.startQuery = ($scope.recessesGas.searchParam.currentPage - 1) * $scope.recessesGas.searchParam.itemsPerPage;
-        $scope.recessesGas.submitRecessesGas("pageChanged");
+        $scope.recessesLuce.searchParam.startQuery = ($scope.recessesLuce.searchParam.currentPage - 1) * $scope.recessesLuce.searchParam.itemsPerPage;
+        $scope.recessesLuce.submitrecessesLuce("pageChanged");
     };
   
-    /* $scope.recessesGas.previousSearch = {};
+    /* $scope.recessesLuce.previousSearch = {};
 
     //CONTROLLO SE CI SONO PARAMETRI DI RICERCA
 
     if(localStorage.getItem("searchParam")){
-        $scope.recessesGas.searchParam = angular.fromJson(localStorage.getItem("searchParam"));
-        if($scope.recessesGas.searchParam.venditoreSelected){
-            $scope.recessesGas.searchParam.venditoreSelected = parseInt($scope.recessesGas.searchParam.venditoreSelected);
+        $scope.recessesLuce.searchParam = angular.fromJson(localStorage.getItem("searchParam"));
+        if($scope.recessesLuce.searchParam.venditoreSelected){
+            $scope.recessesLuce.searchParam.venditoreSelected = parseInt($scope.recessesLuce.searchParam.venditoreSelected);
         }
-        if($scope.recessesGas.searchParam.operatoriSelected){
-            $scope.recessesGas.searchParam.operatoriSelected = parseInt($scope.recessesGas.searchParam.operatoriSelected);
+        if($scope.recessesLuce.searchParam.operatoriSelected){
+            $scope.recessesLuce.searchParam.operatoriSelected = parseInt($scope.recessesLuce.searchParam.operatoriSelected);
         }
-        if($scope.recessesGas.searchParam.dataAppuntamentoDAL){
-            $scope.recessesGas.searchParam.dataAppuntamentoDAL = new Date($scope.recessesGas.searchParam.dataAppuntamentoDAL);
+        if($scope.recessesLuce.searchParam.dataAppuntamentoDAL){
+            $scope.recessesLuce.searchParam.dataAppuntamentoDAL = new Date($scope.recessesLuce.searchParam.dataAppuntamentoDAL);
         }
-        if($scope.recessesGas.searchParam.dataAppuntamentoAL){
-            $scope.recessesGas.searchParam.dataAppuntamentoAL = new Date($scope.recessesGas.searchParam.dataAppuntamentoAL);
+        if($scope.recessesLuce.searchParam.dataAppuntamentoAL){
+            $scope.recessesLuce.searchParam.dataAppuntamentoAL = new Date($scope.recessesLuce.searchParam.dataAppuntamentoAL);
         }     
     }
  */
@@ -163,52 +163,53 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
 
     //PAGINATION END
 
-    $scope.recessesGas.submitRecessesGas = function(pageChangedOrSubmit){
+    $scope.recessesLuce.submitrecessesLuce = function(pageChangedOrSubmit){
         
         $.blockUI();
 
         if(pageChangedOrSubmit === 'submit'){
-            $scope.recessesGas.searchParam.currentPage = 1;
+            $scope.recessesLuce.searchParam.currentPage = 1;
         }
             
-        $scope.recessesGas.searchParam.startQuery = ($scope.recessesGas.searchParam.currentPage - 1) * $scope.recessesGas.searchParam.itemsPerPage;
+        $scope.recessesLuce.searchParam.startQuery = ($scope.recessesLuce.searchParam.currentPage - 1) * $scope.recessesLuce.searchParam.itemsPerPage;
 
        /*  //SALVO I PARAMETRI DI RICERCA START
         localStorage.removeItem("searchParam");
 
-        localStorage.setItem("searchParam",angular.toJson($scope.recessesGas.searchParam) ); */
+        localStorage.setItem("searchParam",angular.toJson($scope.recessesLuce.searchParam) ); */
 
          //SALVO I PARAMETRI DI RICERCA END
 
+
          // UTILE PER FAR VISUALIZZARE SOLO I RECESSI DEL RESPONSABILE O DEI RELATIVI AGENTI SELEZIOANTI
-         var agente = '';
-         if(($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI") && !$scope.recessesGas.searchParam.venditoreSelected){
-            agente = $scope.user.Id;
-         }else{
-             agente =  $scope.recessesGas.searchParam.venditoreSelected;
-         }
-          // UTILE PER FAR VISUALIZZARE SOLO I RECESSI DEL RESPONSABILE O DEI RELATIVI AGENTI SELEZIOANTI
-        $http.post($scope.recessesGas.URLgasRecessesList,{
-            'limit' :$scope.recessesGas.searchParam.itemsPerPage,
-            'offset':$scope.recessesGas.searchParam.startQuery,
-            'dataRecessoDAL': $scope.recessesGas.searchParam.dataRecessoDAL,
-            'dataRecessoAL': $scope.recessesGas.searchParam.dataRecessoAL,
-            'provincia': $scope.recessesGas.searchParam.provinciaSelected,
-            'ragioneSociale':$scope.recessesGas.searchParam.ragioneSociale,
-            'stato': $scope.recessesGas.searchParam.stato.value,
-            'agente': $scope.recessesGas.searchParam.venditoreSelected,
+        var agente = '';
+        if(($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI") && !$scope.recessesLuce.searchParam.venditoreSelected){
+           agente = $scope.user.Id;
+        }else{
+            agente =  $scope.recessesLuce.searchParam.venditoreSelected;
+        }
+        // UTILE PER FAR VISUALIZZARE SOLO I RECESSI DEL RESPONSABILE O DEI RELATIVI AGENTI SELEZIOANTI
+        $http.post($scope.recessesLuce.URLluceRecessesList,{
+            'limit' :$scope.recessesLuce.searchParam.itemsPerPage,
+            'offset':$scope.recessesLuce.searchParam.startQuery,
+            'dataRecessoDAL': $scope.recessesLuce.searchParam.dataRecessoDAL,
+            'dataRecessoAL': $scope.recessesLuce.searchParam.dataRecessoAL,
+            'provincia': $scope.recessesLuce.searchParam.provinciaSelected,
+            'ragioneSociale':$scope.recessesLuce.searchParam.ragioneSociale,
+            'stato': $scope.recessesLuce.searchParam.stato.value,
+            'agente': agente,
             
 
         }).then((result) => {
 
-            if(result.data.recessiGas.length == 0){
+            if(result.data.recessiLuce.length == 0){
                 $.unblockUI();
-                $scope.recessesGas.showRisultati = false;
-                alertify.alert("Nessun RecessiGas trovato per i parametri selezionati");
+                $scope.recessesLuce.showRisultati = false;
+                alertify.alert("Nessun RecessiLuce trovato per i parametri selezionati");
             }else{
-                $scope.recessesGas.totalItems = parseInt(result.data.totaleRecessiGas);
-                $scope.recessesGas.recessiGasResult = result.data.recessiGas;
-                $scope.recessesGas.showRisultati = true;
+                $scope.recessesLuce.totalItems = parseInt(result.data.totaleRecessiLuce);
+                $scope.recessesLuce.recessiLuceResult = result.data.recessiLuce;
+                $scope.recessesLuce.showRisultati = true;
                 $.unblockUI();
             }
            
@@ -221,7 +222,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
                 return;
             }
             if(err.status === 500){
-                alertify.alert("Errore nella ricerca RecessiGas");
+                alertify.alert("Errore nella ricerca RecessiLuce");
             }
             
          
@@ -232,15 +233,15 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
 
   /*   //se c'è l'oggetto searchParam in local storage rifaccio la query e mi metto nella paginazione corretta
     if(localStorage.getItem("searchParam")){
-        $scope.recessesGas.submitRecessesGas("pageChanged");
+        $scope.recessesLuce.submitrecessesLuce("pageChanged");
     } */
    
 
-    $scope.recessesGas.viewDate = function (id) {
+    $scope.recessesLuce.viewDate = function (id) {
         $location.path('/viewDate/'+id);
     };
 
-    $scope.recessesGas.modifyDate = function (id) {
+    $scope.recessesLuce.modifyDate = function (id) {
         if($scope.user.TYPE == "ADMIN"){
             $location.path('/editDateAdmin/'+id);
         }
@@ -253,7 +254,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
        
     };
 
-    $scope.recessesGas.permanenza = function (dateOUT,dateIN){
+    $scope.recessesLuce.permanenza = function (dateOUT,dateIN){
         var a = moment(dateIN);
         var b = moment(dateOUT);
 
@@ -275,9 +276,9 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
         return permanenza;
     }
 
-    $scope.recessesGas.dettaglioRecesso = {};
-    $scope.recessesGas.modifyRecess = function(recesso){
-        $scope.recessesGas.dettaglioRecesso = recesso;
+    $scope.recessesLuce.dettaglioRecesso = {};
+    $scope.recessesLuce.modifyRecess = function(recesso){
+        $scope.recessesLuce.dettaglioRecesso = recesso;
         $('#recessModal').modal('show');
     }
 }]);
