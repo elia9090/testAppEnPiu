@@ -163,6 +163,26 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
 
     //PAGINATION END
 
+
+    // SEARCH AND ORDER BY kwhAnnui
+    $scope.recessesLuce.searchParam.order = ''
+
+    $scope.recessesLuce.searchParam.orderByConsumo=function(){
+        
+        if($scope.recessesLuce.searchParam.order == ''){
+            $scope.recessesLuce.searchParam.order = 'DESC';
+        }else if($scope.recessesLuce.searchParam.order == 'DESC'){
+            $scope.recessesLuce.searchParam.order = 'ASC';
+        }else if($scope.recessesLuce.searchParam.order == 'ASC'){
+            $scope.recessesLuce.searchParam.order = '';
+        }
+        // RESETTO L'OFFSET E LA PAGINAZIONE
+        $scope.recessesLuce.submitrecessesLuce('submit');
+    }
+
+
+
+
     $scope.recessesLuce.submitrecessesLuce = function(pageChangedOrSubmit){
         
         $.blockUI();
@@ -188,14 +208,18 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
         }else{
             agente =  $scope.recessesLuce.searchParam.venditoreSelected;
         }
+
+
         // UTILE PER FAR VISUALIZZARE SOLO I RECESSI DEL RESPONSABILE O DEI RELATIVI AGENTI SELEZIOANTI
         $http.post($scope.recessesLuce.URLluceRecessesList,{
             'limit' :$scope.recessesLuce.searchParam.itemsPerPage,
             'offset':$scope.recessesLuce.searchParam.startQuery,
+            'order':$scope.recessesLuce.searchParam.order,
             'dataRecessoDAL': $scope.recessesLuce.searchParam.dataRecessoDAL,
             'dataRecessoAL': $scope.recessesLuce.searchParam.dataRecessoAL,
             'provincia': $scope.recessesLuce.searchParam.provinciaSelected,
             'ragioneSociale':$scope.recessesLuce.searchParam.ragioneSociale,
+            'kwhAnnui':$scope.recessesLuce.searchParam.kwhAnnui,
             'stato': $scope.recessesLuce.searchParam.stato.value,
             'agente': agente,
             
@@ -278,7 +302,7 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
 
     $scope.recessesLuce.dettaglioRecesso = {};
     $scope.recessesLuce.modifyRecess = function(recesso){
-        $scope.recessesLuce.dettaglioRecesso = recesso;
+        $scope.recessesLuce.dettaglioRecesso = Object.assign({},recesso);
         $('#recessModal').modal('show');
     }
 }]);

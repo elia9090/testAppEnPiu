@@ -54,7 +54,7 @@
     <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
         <label for="venditoreSelect">Agente*</label>
         <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect" ng-disabled="editDateAdmin.disabledListaAgenti"  ng-model="editDateAdmin.venditoreSelected">
-            <option ng-repeat="option1 in editDateAdmin.venditoriForOperatore" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === editDateAdmin.venditoreSelected" value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
+            <option ng-repeat="option1 in editDateAdmin.venditoriForOperatore" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === editDateAdmin.venditoreSelected" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
         </select>
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">

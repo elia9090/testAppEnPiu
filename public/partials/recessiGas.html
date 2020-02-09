@@ -50,16 +50,28 @@
 
         </div>
         <div class="row col-12">
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="ragioneSociale">Rag.Sociale</label>
                 <input type="text" id="ragioneSociale" class="form-control w-100"
                     ng-model="recessesGas.searchParam.ragioneSociale">
             </div>
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                 <label for="statoRecesso">Stato recesso</label>
                 <select ng-model="recessesGas.searchParam.stato.value" id="statoRecesso" name="statoRecesso"
                     class="form-control"
                     ng-options="Stato.Value as Stato.Name  for Stato in recessesGas.Stati"></select>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="mcAnnui">Metri cubi annui</label>
+                <select ng-model="recessesGas.searchParam.mcAnnui" id="MCAnnui" name="MCAnnui"
+                    class="form-control">
+                    <option  value=""></option>
+                    <option  value="0-1000">da 0 a 1.000 m³</option>
+                    <option  value="1000-5000">da 1.000 a 5000 m³</option>
+                    <option  value="5000-10000">da 5.000 a 10.000 m³</option>
+                    <option  value="10000-50000">da 10.000 a 50.000 m³</option>
+                    <option  value="50000">+ di 50.000 m³</option>
+                </select>
             </div>
 
         </div>
@@ -70,7 +82,7 @@
                 <label for="venditoreSelect">Agente</label>
                 <select name="venditoreSelect" class="form-control" id="venditoreSelect"
                     ng-model="recessesGas.searchParam.venditoreSelected">
-                    <option value=""></option>
+                    
                     <option ng-repeat="option1 in recessesGas.agenti" ng-value="option1.ID_UTENTE"
                         value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}
                     </option>
@@ -117,7 +129,11 @@
                     <tr>
                         <th scope="col">Cliente</th>
                         <th scope="col">Indirizzo</th>
-                        <th scope="col">Consumo</th>
+                        <th scope="col" class="cursor-pointer" ng-click="recessesGas.searchParam.orderByConsumo()">Consumo m³ 
+                            <i ng-show="recessesGas.searchParam.order == '' " class="fas fa-sort"></i>
+                            <i ng-show="recessesGas.searchParam.order == 'DESC' " class="orangeText fas fa-sort-down"></i>
+                            <i ng-show="recessesGas.searchParam.order == 'ASC' " class="orangeText fas fa-sort-up"></i>
+                         </th>
                         <th scope="col">Data recesso</th>
                         <th scope="col">Permanenza</th>
                         <th scope="col">Agente assegnato</th>
@@ -135,7 +151,7 @@
                             {{x.VIA}} {{x.LOCALITA}} {{x.PROVINCIA}} 
                         </td> 
                         <td>
-                            {{x.CONSUMO_CONTRATTUALE}}
+                            {{x.CONSUMO_CONTRATTUALE  | number}}
                         </td> 
                         <td>
                             {{x.DATA_OUT | date:'dd/MM/yyyy'}}
@@ -184,16 +200,15 @@
         </div>
         <div class="modal-body">
           <div class="container" >
-              <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12" method="POST" name="viewDettaglioRecesso" >
+              <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12 d-flex flex-row justify-content-between align-items-baseline" method="POST" name="viewDettaglioRecesso" >
         
-              <div class="row col-12" >
-                  <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-3 mr-2">
+                  <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-4">
                       <label for="dataValiditaRecessoDettaglioRecesso">Data Recesso: &nbsp;  </label>
                       <p id="dataValiditaRecessoDettaglioRecesso" class="input-group datepicker font-weight-bold">
                           {{recessesGas.dettaglioRecesso.DATA_OUT | date:'dd/MM/yyyy'}}
                       </p>
                   </div>
-                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-3">
+                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
                       <label for="dataAttivazioneDettaglioRecesso">Data attivazione: &nbsp;</label>
                       <p  id="dataAttivazioneDettaglioRecesso" class="input-group datepicker font-weight-bold">
                         {{recessesGas.dettaglioRecesso.DATA_INIZIO_FORNITURA | date:'dd/MM/yyyy'}}
@@ -205,13 +220,13 @@
                         {{recessesGas.dettaglioRecesso.DENOMINAZIONE}} 
                     </p>
                 </div>
-                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-3">
+                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
                     <label for="pdr">PDR: &nbsp;</label>
                     <p  id="pdr" class="input-group datepicker font-weight-bold">
                       {{recessesGas.dettaglioRecesso.PDR }}
                     </p>
                 </div>
-              </div>
+              
               <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                   <label for="indirizzoForn">Indirizzo Fornitura: &nbsp;</label>
                   <p id="indirizzoForn" class="input-group datepicker font-weight-bold">
@@ -242,6 +257,9 @@
                 <p id="agente" class="input-group datepicker font-weight-bold">
                     {{recessesGas.dettaglioRecesso.COGNOME_VENDITORE}} {{recessesGas.dettaglioRecesso.NOME_VENDITORE}} 
                 </p>
+                <select ng-required="true" name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
+                    <option ng-repeat="option1 in recessesGas.agenti" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesGas.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                </select>
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="agente">Referente Recesso: &nbsp;</label>
@@ -249,10 +267,23 @@
                     {{recessesGas.dettaglioRecesso.REFERENTE_RECESSO}}
                 </p>
             </div>
+
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="stato">Stato: &nbsp;</label>
+                <p id="stato" class="input-group datepicker font-weight-bold">
+                    {{recessesGas.dettaglioRecesso.STATO}}
+                </p>
+            </div>
+
+
+            
+           
+
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
                 <label for="noteRecesso">Note recesso:</label>
                 <textarea  rows="4" cols="50"  maxlength="480"  type="text" name="note" class="form-control w-100" id="note"  ng-model="recessesGas.dettaglioRecesso.NOTE" ></textarea>         
             </div>
+
             <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
                 <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
                     <label for="dataInserimentoSistema">Data inserimento a sistema: &nbsp;</label>
@@ -267,7 +298,9 @@
                     </p>
                 </div>
             </div>
-           
+      
+
+
            
             
           

@@ -50,16 +50,28 @@
 
         </div>
         <div class="row col-12">
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="ragioneSociale">Rag.Sociale</label>
                 <input type="text" id="ragioneSociale" class="form-control w-100"
                     ng-model="recessesLuce.searchParam.ragioneSociale">
             </div>
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                 <label for="statoRecesso">Stato recesso</label>
                 <select ng-model="recessesLuce.searchParam.stato.value" id="statoRecesso" name="statoRecesso"
                     class="form-control"
                     ng-options="Stato.Value as Stato.Name  for Stato in recessesLuce.Stati"></select>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="kwhAnnui">KWh annui</label>
+                <select ng-model="recessesLuce.searchParam.kwhAnnui" id="kwhAnnui" name="kwhAnnui"
+                    class="form-control">
+                    <option  value=""></option>
+                    <option  value="0-1000">da 0 a 1.000 kWh</option>
+                    <option  value="1000-5000">da 1.000 a 5.000 kWh</option>
+                    <option  value="5000-10000">da 5.000 a 10.000 kWh</option>
+                    <option  value="10000-50000">da 10.000 a 50.000 kWh</option>
+                    <option  value="50000">+ di 50.000 kWh</option>
+                </select>
             </div>
 
         </div>
@@ -117,7 +129,11 @@
                     <tr>
                         <th scope="col">Cliente</th>
                         <th scope="col">Indirizzo</th>
-                        <th scope="col">KWH_ANNUI</th>
+                        <th scope="col" class="cursor-pointer" ng-click="recessesLuce.searchParam.orderByConsumo()">KWH_ANNUI 
+                            <i ng-show="recessesLuce.searchParam.order == '' " class="fas fa-sort"></i>
+                            <i ng-show="recessesLuce.searchParam.order == 'DESC' " class="orangeText fas fa-sort-down"></i>
+                            <i ng-show="recessesLuce.searchParam.order == 'ASC' " class="orangeText fas fa-sort-up"></i>
+                         </th>
                         <th scope="col">Data recesso</th>
                         <th scope="col">Permanenza</th>
                         <th scope="col">Agente assegnato</th>
@@ -135,7 +151,7 @@
                             {{x.INDIRIZZO_FORN}} {{x.LOCALITA_FORN}} 
                         </td> 
                         <td>
-                            {{x.KWH_ANNUI}}
+                            {{x.KWH_ANNUI | number}}
                         </td> 
                         <td>
                             {{x.DATA_VALIDITA_RECESSO | date:'dd/MM/yyyy'}}
@@ -184,16 +200,15 @@
         </div>
         <div class="modal-body">
           <div class="container" >
-              <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12" method="POST" name="viewDettaglioRecesso" >
+              <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12 d-flex flex-row justify-content-between align-items-baseline" method="POST" name="viewDettaglioRecesso" >
         
-              <div class="row col-12" >
-                  <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-3 mr-2">
+                  <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-4">
                       <label for="dataValiditaRecessoDettaglioRecesso">Data Recesso: &nbsp;  </label>
                       <p id="dataValiditaRecessoDettaglioRecesso" class="input-group datepicker font-weight-bold">
                           {{recessesLuce.dettaglioRecesso.DATA_VALIDITA_RECESSO | date:'dd/MM/yyyy'}}
                       </p>
                   </div>
-                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-3">
+                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
                       <label for="dataAttivazioneDettaglioRecesso">Data attivazione: &nbsp;</label>
                       <p  id="dataAttivazioneDettaglioRecesso" class="input-group datepicker font-weight-bold">
                         {{recessesLuce.dettaglioRecesso.DATA_ATTIVAZIONE | date:'dd/MM/yyyy'}}
@@ -205,13 +220,13 @@
                         {{recessesLuce.dettaglioRecesso.RAGIONE_SOCIALE}} 
                     </p>
                 </div>
-                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-3">
+                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
                     <label for="pod">POD: &nbsp;</label>
                     <p  id="pod" class="input-group datepicker font-weight-bold">
                       {{recessesLuce.dettaglioRecesso.POD }}
                     </p>
                 </div>
-              </div>
+            
               <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                   <label for="indirizzoForn">Indirizzo Fornitura: &nbsp;</label>
                   <p id="indirizzoForn" class="input-group datepicker font-weight-bold">
@@ -245,7 +260,7 @@
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="agente">Contratto stipulato da: &nbsp;</label>
                 <p id="agente" class="input-group datepicker font-weight-bold">
-                    {{recessesGas.dettaglioRecesso.AGENZIA}}
+                    {{recessesLuce.dettaglioRecesso.AGENZIA}}
                 </p>
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
@@ -258,6 +273,12 @@
                 <label for="agente">Referente Recesso: &nbsp;</label>
                 <p id="agente" class="input-group datepicker font-weight-bold">
                     {{recessesLuce.dettaglioRecesso.REFERENTE_RECESSO}}
+                </p>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="stato">Stato: &nbsp;</label>
+                <p id="stato" class="input-group datepicker font-weight-bold">
+                    {{recessesLuce.dettaglioRecesso.STATO}}
                 </p>
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">

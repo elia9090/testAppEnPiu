@@ -167,6 +167,10 @@ button.uib-datepicker-current {
 .orangeText{
   color: #f47320;
 }
+
+.cursor-pointer{
+  cursor: pointer;
+}
 .colorBlack{
   color: #000;
 }

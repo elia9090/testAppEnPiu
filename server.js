@@ -3643,6 +3643,12 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
 
             var offset = req.body.offset;
 
+            var order = req.body.order;
+            var Qorder = " ";
+            if (order !== '' && order !== undefined && order != null) {
+                Qorder = ' CAST(CONSUMO_CONTRATTUALE AS UNSIGNED) ' + order + ', ';
+            }
+
             var dateFrom = req.body.dataRecessoDAL;
             var QdateFrom = " ";
             if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
@@ -3672,6 +3678,24 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
                 Qstato = ' AND STATO != "NON_GESTIRE" ';
             }
 
+            var mcAnnui = req.body.mcAnnui;
+            var QmcAnnui = " ";
+            if (mcAnnui !== '' && mcAnnui !== undefined && mcAnnui != null) {
+               
+                if(mcAnnui == '50000'){
+                    QmcAnnui = ' AND CONSUMO_CONTRATTUALE > 50000 ' ;
+                }else{
+                    var from = mcAnnui.split("-")[0];
+
+                    var to = mcAnnui.split("-")[1];
+    
+                    QmcAnnui = ' AND CONSUMO_CONTRATTUALE BETWEEN '+from+' AND '+to+' ' ;
+                }
+                
+                
+            }
+
+
             var provincia = req.body.provincia;
             var Qprovincia = " ";
             if (provincia !== '' && provincia !== undefined && provincia != null) {
@@ -3688,7 +3712,7 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
 
             pool.getConnection(function(err, connection) {
                 connection.query(`SELECT COUNT(*) AS TotalCount from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
-                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  `, 
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QmcAnnui} `, 
                     function(err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -3700,11 +3724,11 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
 
                             pool.getConnection(function(err, connection) {
                                 connection.query(`select 
-                                rg.*, drg.*, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
+                                rg.*, drg.*,VENDITORE.ID_UTENTE ID_VENDITORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
                                 from recessi_gas as rg 
                                 inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
                                 left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
-                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ORDER BY DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
+                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
                                     function(err, rows, fields) {
                                         connection.release();
                                         if (err) {
@@ -3750,6 +3774,13 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
 
             var offset = req.body.offset;
 
+            var order = req.body.order;
+            var Qorder = " ";
+            if (order !== '' && order !== undefined && order != null) {
+                Qorder = ' CAST(KWH_ANNUI AS UNSIGNED) ' + order + ', ';
+            }
+
+
             var dateFrom = req.body.dataRecessoDAL;
             var QdateFrom = " ";
             if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
@@ -3779,6 +3810,25 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
                 Qstato = ' AND STATO != "NON_GESTIRE" ';
             }
 
+
+            var kwhAnnui = req.body.kwhAnnui;
+            var QkwhAnnui = " ";
+            if (kwhAnnui !== '' && kwhAnnui !== undefined && kwhAnnui != null) {
+               
+                if(kwhAnnui == '50000'){
+                    QkwhAnnui = ' AND KWH_ANNUI > 50000 ' ;
+                }else{
+                    var from = kwhAnnui.split("-")[0];
+
+                    var to = kwhAnnui.split("-")[1];
+    
+                    QkwhAnnui = ' AND KWH_ANNUI BETWEEN '+from+' AND '+to+' ' ;
+                }
+                
+                
+            }
+
+
             var provincia = req.body.provincia;
             var Qprovincia = " ";
             if (provincia !== '' && provincia !== undefined && provincia != null) {
@@ -3795,7 +3845,7 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
 
             pool.getConnection(function(err, connection) {
                 connection.query(`SELECT COUNT(*) AS TotalCount from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
-                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  `, 
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui}  `, 
                     function(err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -3807,11 +3857,11 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
 
                             pool.getConnection(function(err, connection) {
                                 connection.query(`select 
-                                rl.*, drl.*, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
+                                rl.*, drl.*, VENDITORE.ID_UTENTE ID_VENDITORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
                                 from recessi_luce as rl 
                                 inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
                                 left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
-                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ORDER BY DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
+                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
                                     function(err, rows, fields) {
                                         connection.release();
                                         if (err) {
@@ -3840,6 +3890,78 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
         }
     });
 });
+
+//UPDATE RECESSO LUCE
+app.patch('/luceRecess/:id', ensureToken, function(req, res) {
+    jwt.verify(req.token, config.secretKey, function(err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var idRecessoLuce = req.params.idRecessoLuce;
+
+           
+
+            var stato = req.body.stato;
+            var Qstato = " ";
+            if (stato !== '' && stato !== undefined && stato != null) {
+               
+                Qstato = ' AND STATO = "' + stato + '" ';
+                
+            }else{
+                Qstato = ' AND STATO != "NON_GESTIRE" ';
+            }
+
+            var agente = req.body.agente;
+            var Qagente = " ";
+            if (agente !== '' && agente !== undefined && agente != null) {
+                Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
+            }
+            connection.beginTransaction(function(errTrans) {
+                if (errTrans) { //Transaction Error (Rollback and release connection)
+                    connection.rollback(function() {
+                        connection.release();
+                    });
+                    res.sendStatus(500);
+                } else {
+                    pool.getConnection(function(err, connection) {
+                        connection.query(`UPDATE dettaglio_recesso_luce SET ULTIMA_MODIFICA=NOW() WHERE ID_DETTAGLIO_LUCE=?`,idRecessoLuce, 
+                            function(err, rows, fields) {
+                                if (err) {
+                                    connection.rollback(function() {
+                                        connection.release();
+                                        //Failure
+                                    });
+                                    res.sendStatus(500);
+                                    log.error('ERRORE SQL PATCH recessiLuce: --> ' + err);
+                                } else {
+                                    connection.commit(function(err) {
+                                        if (err) {
+                                            connection.rollback(function() {
+                                                connection.release();
+                                                //Failure
+                                            });
+                                            res.sendStatus(500);
+                                        } else {
+                                            connection.release();
+                                            res.sendStatus(200);
+                                            //Success
+                                        }
+                                    });
+                                    
+                                }
+    
+                            });
+    
+                    });
+                }
+            });
+                    
+              
+            }
+    });
+    });
+
+
 
 
 

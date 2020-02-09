@@ -163,6 +163,23 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
 
     //PAGINATION END
 
+       // SEARCH AND ORDER BY Consumo contrattuale
+       $scope.recessesGas.searchParam.order = ''
+
+       $scope.recessesGas.searchParam.orderByConsumo=function(){
+           
+           if($scope.recessesGas.searchParam.order == ''){
+               $scope.recessesGas.searchParam.order = 'DESC';
+           }else if($scope.recessesGas.searchParam.order == 'DESC'){
+               $scope.recessesGas.searchParam.order = 'ASC';
+           }else if($scope.recessesGas.searchParam.order == 'ASC'){
+               $scope.recessesGas.searchParam.order = '';
+           }
+           // RESETTO L'OFFSET E LA PAGINAZIONE
+           $scope.recessesGas.submitRecessesGas('submit');
+       }
+   
+
     $scope.recessesGas.submitRecessesGas = function(pageChangedOrSubmit){
         
         $.blockUI();
@@ -191,10 +208,12 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
         $http.post($scope.recessesGas.URLgasRecessesList,{
             'limit' :$scope.recessesGas.searchParam.itemsPerPage,
             'offset':$scope.recessesGas.searchParam.startQuery,
+            'order':$scope.recessesGas.searchParam.order,
             'dataRecessoDAL': $scope.recessesGas.searchParam.dataRecessoDAL,
             'dataRecessoAL': $scope.recessesGas.searchParam.dataRecessoAL,
             'provincia': $scope.recessesGas.searchParam.provinciaSelected,
             'ragioneSociale':$scope.recessesGas.searchParam.ragioneSociale,
+            'mcAnnui':$scope.recessesGas.searchParam.mcAnnui,
             'stato': $scope.recessesGas.searchParam.stato.value,
             'agente': $scope.recessesGas.searchParam.venditoreSelected,
             
@@ -277,7 +296,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
 
     $scope.recessesGas.dettaglioRecesso = {};
     $scope.recessesGas.modifyRecess = function(recesso){
-        $scope.recessesGas.dettaglioRecesso = recesso;
+        $scope.recessesGas.dettaglioRecesso = Object.assign({},recesso);
         $('#recessModal').modal('show');
     }
 }]);
