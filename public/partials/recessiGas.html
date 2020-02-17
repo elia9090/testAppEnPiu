@@ -254,8 +254,12 @@
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="agente">Agente assegnato: &nbsp;</label>
-                <select ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'" id="agente" ng-required="true" name="venditoreSelect" class="form-control"   ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
+                <select ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE' || user.TYPE === 'BACK_OFFICE' " id="agente" ng-required="true" name="venditoreSelect" class="form-control"   ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
                     <option ng-repeat="option1 in recessesGas.agenti" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesGas.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                </select>
+
+                <select ng-if="user.TYPE === 'RESPONSABILE_AGENTI'" id="agente" ng-required="true" name="venditoreSelect" class="form-control"   ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
+                    <option ng-repeat="option1 in recessesGas.venditoriForResponsabili" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesGas.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
                 </select>
                 <p ng-if="user.TYPE != 'ADMIN' && user.TYPE != 'BACK_OFFICE'" id="agente" class="input-group datepicker font-weight-bold">
                     {{recessesGas.dettaglioRecesso.COGNOME_VENDITORE}} {{recessesGas.dettaglioRecesso.NOME_VENDITORE}} 
@@ -263,7 +267,7 @@
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="agente">Referente Recesso: &nbsp;</label>
-                <input type="text" ng-model="recessesGas.dettaglioRecesso.REFERENTE_RECESSO"   name="referentoRecesso" class="form-control" placeholder="Nome Referente">
+                <input type="text" ng-model="recessesGas.dettaglioRecesso.REFERENTE_RECESSO" ng-required="recessesGas.dettaglioRecesso.STATO == 'RESPINTO'"  name="referentoRecesso" class="form-control" placeholder="Nome Referente">
                 <small id="recapitoHelp" class="form-text text-muted">Solo caratteri numerici</small>
                 <input type="text" maxlength="15" ng-pattern="/^[0-9]*$/" ng-required="recessesGas.dettaglioRecesso.STATO == 'RESPINTO'" ng-model="recessesGas.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO"  name="referentoRecessoRecapito" class="form-control" placeholder="Recapito Referente">
               
