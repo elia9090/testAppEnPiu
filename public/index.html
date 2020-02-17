@@ -59,6 +59,7 @@
                                 <li class="nav-item">
                                   <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                                 </li>
+                                <hr class="divider">
                                 <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'OPERATORE' ">
                                   <a class="nav-link" href="#nuovoAppuntamento">Nuovo appuntamento</a>
                                 </li>
@@ -71,6 +72,7 @@
                                 <li class="nav-item" >
                                   <a class="nav-link" href="#ricercaAppuntamenti">Ricerca appuntamenti</a>
                                 </li>
+                               
                                 <li class="nav-item" >
                                     <a class="nav-link" href="#statisticheAppuntamenti">Statistiche appuntamenti</a>
                                 </li>
@@ -80,19 +82,20 @@
                                 <li class="nav-item"  ng-show="userType === 'RESPONSABILE_AGENTI' ">
                                   <a class="nav-link" href="#statisticheAppuntamentiGruppoVendita">Statistiche gruppo vendita</a>
                               </li>
+                              <hr class="divider">
                               <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'BACK_OFFICE'">
                                 <a class="nav-link" href="#inserimentoRecessiLuce">Inserimento recessi Luce</a>
                               </li>
                               <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'BACK_OFFICE'">
                                   <a class="nav-link" href="#inserimentoRecessiGas">Inserimento recessi Gas</a>
                                 </li>
-                                <li class="nav-item" >
+                                <li class="nav-item" ng-show="userType !== 'OPERATORE'">
                                   <a class="nav-link" href="#recessiLuce">Recessi Luce</a>
                                 </li>
-                                <li class="nav-item" >
+                                <li class="nav-item" ng-show="userType !== 'OPERATORE'">
                                   <a class="nav-link" href="#recessiGas">Recessi Gas</a>
                                 </li>
-                                
+                                <hr class="divider">
                                 <li class="nav-item" ng-show="userType === 'ADMIN'">
                                     <a class="nav-link" href="#aggiuntiUtente">Aggiungi utente</a>
                                 </li>

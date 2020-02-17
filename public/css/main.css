@@ -168,6 +168,13 @@ button.uib-datepicker-current {
   color: #f47320;
 }
 
+.divider{
+  border: 1px solid WHIte;
+  height: 0px;
+  width: 14%;
+  margin: 10px 0px;
+}
+
 .cursor-pointer{
   cursor: pointer;
 }

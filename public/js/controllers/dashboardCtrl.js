@@ -88,6 +88,30 @@ app.controller('dashboardCtrl',['$scope', '$http','$location','alertify', functi
     }
     
     if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
+
+        if(sessionStorage.getItem('checkRecessi')){
+
+        }else{
+            $http.get('/checkRecessiAgente/'+$scope.user.Id).then((result) => {
+                var check = result.data;
+                if(check.countRecessiLuce > 0 && check.countRecessiGas > 0){
+                    alertify.alert("Ci sono recessi Gas e Luce da gestire");
+                }else if(check.countRecessiLuce > 0 && check.countRecessiGas == 0){
+                    alertify.alert("Ci sono recessi Luce da gestire");
+                }else if(check.countRecessiLuce == 0 && check.countRecessiGas > 0){
+                    alertify.alert("Ci sono recessi Gas gestire");
+                }
+                sessionStorage.setItem('checkRecessi', 'ok');
+            }).catch((err) => {
+                if(err.status === 403){
+                    alertify.alert("Utente non autorizzato");
+                    $location.path('/logout');
+                    return;
+                }
+            });
+        }
+       
+;
         
         $http.get('/dateStatsVenditoreDashboard/'+$scope.user.Id).then((result) => {
         

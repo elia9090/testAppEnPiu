@@ -57,10 +57,26 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             {
                 "Name":"NON GESTIRE",
                 "Value":"NON_GESTIRE"
+            },
+            {
+                "Name":"PRESO IN CARICO",
+                "Value":"PRESO_IN_CARICO"
+            },
+            {
+                "Name":"RESPINTO DA AGENTE",
+                "Value":"RESPINTO"
+            },
+            {
+                "Name":"APPUNTAMENTO",
+                "Value":"APPUNTAMENTO"
+            },
+            {
+                "Name":"RIENTRO",
+                "Value":"RIENTRO"
             }
             
         ];
-    }else{
+    }else if($scope.user.TYPE === 'AGENTE' || $scope.user.TYPE === 'RESPONSABILE_AGENTI'){
         $scope.recessesGas.Stati =    [
             {
                 "Name":" ",
@@ -69,9 +85,37 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             {
                 "Name":"ASSEGNATO",
                 "Value":"ASSEGNATO"
+            },
+            {
+                "Name":"PRESO IN CARICO",
+                "Value":"PRESO_IN_CARICO"
+            },
+            {
+                "Name":"RESPINTO",
+                "Value":"RESPINTO"
+            },
+            {
+                "Name":"RIENTRO",
+                "Value":"RIENTRO"
+            }
+        ];
+    }else if($scope.user.TYPE === 'OPERATORE'){
+        $scope.recessesGas.Stati =    [
+            {
+                "Name":" ",
+                "Value":""
+            },
+            {
+                "Name":"RESPINTO DA AGENTE",
+                "Value":"RESPINTO"
+            },
+            {
+                "Name":"APPUNTAMENTO",
+                "Value":"APPUNTAMENTO"
             }
         ];
     }
+  
   
 
  
@@ -215,7 +259,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             'ragioneSociale':$scope.recessesGas.searchParam.ragioneSociale,
             'mcAnnui':$scope.recessesGas.searchParam.mcAnnui,
             'stato': $scope.recessesGas.searchParam.stato.value,
-            'agente': $scope.recessesGas.searchParam.venditoreSelected,
+            'agente': agente,
             
 
         }).then((result) => {
@@ -255,22 +299,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
     } */
    
 
-    $scope.recessesGas.viewDate = function (id) {
-        $location.path('/viewDate/'+id);
-    };
 
-    $scope.recessesGas.modifyDate = function (id) {
-        if($scope.user.TYPE == "ADMIN"){
-            $location.path('/editDateAdmin/'+id);
-        }
-        else if($scope.user.TYPE == "OPERATORE"){
-            $location.path('/editDateOperatore/'+id);
-        }
-        else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
-            $location.path('/editDateVenditore/'+id);
-        }
-       
-    };
 
     $scope.recessesGas.permanenza = function (dateOUT,dateIN){
         var a = moment(dateIN);
@@ -294,9 +323,43 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
         return permanenza;
     }
 
+
+    $scope.$on('$viewContentLoaded', function() {
+        $scope.recessesGas.submitRecessesGas('submit');
+    });
+
     $scope.recessesGas.dettaglioRecesso = {};
     $scope.recessesGas.modifyRecess = function(recesso){
         $scope.recessesGas.dettaglioRecesso = Object.assign({},recesso);
         $('#recessModal').modal('show');
     }
+
+    $scope.recessesGas.cancel = function () {
+        $('#recessModal').modal('hide');
+    };
+
+    $scope.recessesGas.updateRecesso = function () {
+        $http.patch('/gasRecess/'+$scope.recessesGas.dettaglioRecesso.ID_DETTAGLIO_GAS, {
+            'agente': $scope.recessesGas.dettaglioRecesso.ID_VENDITORE,
+            'refRecesso':$scope.recessesGas.dettaglioRecesso.REFERENTE_RECESSO,
+            'refRecapito':$scope.recessesGas.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO,
+            'codContratto': $scope.recessesGas.dettaglioRecesso.COD_CONTRATTO,
+            'stato': $scope.recessesGas.dettaglioRecesso.STATO,
+            'note': $scope.recessesGas.dettaglioRecesso.NOTE,
+
+         }).then((result) => {
+             alertify.alert('Recesso modificato correttamente');
+             $scope.recessesGas.submitRecessesGas();
+             $('#recessModal').modal('hide');
+            
+         }).catch((err) => {
+             if(err.status === 500){
+                 alertify.alert("Errore nella modifica del Recesso");
+             }
+             if(err.status === 403){
+                 alertify.alert("Utente non autorizzato");
+                 $location.path('/logout');
+             }
+         });
+    };
 }]);

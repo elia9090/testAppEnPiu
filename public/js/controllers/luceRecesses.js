@@ -57,10 +57,26 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
             {
                 "Name":"NON GESTIRE",
                 "Value":"NON_GESTIRE"
+            },
+            {
+                "Name":"PRESO IN CARICO",
+                "Value":"PRESO_IN_CARICO"
+            },
+            {
+                "Name":"RESPINTO DA AGENTE",
+                "Value":"RESPINTO"
+            },
+            {
+                "Name":"APPUNTAMENTO",
+                "Value":"APPUNTAMENTO"
+            },
+            {
+                "Name":"RIENTRO",
+                "Value":"RIENTRO"
             }
             
         ];
-    }else{
+    }else if($scope.user.TYPE === 'AGENTE' || $scope.user.TYPE === 'RESPONSABILE_AGENTI'){
         $scope.recessesLuce.Stati =    [
             {
                 "Name":" ",
@@ -69,6 +85,33 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
             {
                 "Name":"ASSEGNATO",
                 "Value":"ASSEGNATO"
+            },
+            {
+                "Name":"PRESO IN CARICO",
+                "Value":"PRESO_IN_CARICO"
+            },
+            {
+                "Name":"RESPINTO",
+                "Value":"RESPINTO"
+            },
+            {
+                "Name":"RIENTRO",
+                "Value":"RIENTRO"
+            }
+        ];
+    }else if($scope.user.TYPE === 'OPERATORE'){
+        $scope.recessesLuce.Stati =    [
+            {
+                "Name":" ",
+                "Value":""
+            },
+            {
+                "Name":"RESPINTO DA AGENTE",
+                "Value":"RESPINTO"
+            },
+            {
+                "Name":"APPUNTAMENTO",
+                "Value":"APPUNTAMENTO"
             }
         ];
     }
@@ -261,22 +304,6 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
     } */
    
 
-    $scope.recessesLuce.viewDate = function (id) {
-        $location.path('/viewDate/'+id);
-    };
-
-    $scope.recessesLuce.modifyDate = function (id) {
-        if($scope.user.TYPE == "ADMIN"){
-            $location.path('/editDateAdmin/'+id);
-        }
-        else if($scope.user.TYPE == "OPERATORE"){
-            $location.path('/editDateOperatore/'+id);
-        }
-        else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
-            $location.path('/editDateVenditore/'+id);
-        }
-       
-    };
 
     $scope.recessesLuce.permanenza = function (dateOUT,dateIN){
         var a = moment(dateIN);
@@ -300,9 +327,43 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
         return permanenza;
     }
 
+
+    $scope.$on('$viewContentLoaded', function() {
+        $scope.recessesLuce.submitrecessesLuce('submit');
+    });
+
     $scope.recessesLuce.dettaglioRecesso = {};
     $scope.recessesLuce.modifyRecess = function(recesso){
         $scope.recessesLuce.dettaglioRecesso = Object.assign({},recesso);
         $('#recessModal').modal('show');
     }
+
+    $scope.recessesLuce.cancel = function () {
+        $('#recessModal').modal('hide');
+    };
+
+    $scope.recessesLuce.updateRecesso = function () {
+        $http.patch('/luceRecess/'+$scope.recessesLuce.dettaglioRecesso.ID_DETTAGLIO_LUCE, {
+            'agente': $scope.recessesLuce.dettaglioRecesso.ID_VENDITORE,
+            'refRecesso':$scope.recessesLuce.dettaglioRecesso.REFERENTE_RECESSO,
+            'refRecapito':$scope.recessesLuce.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO,
+            'codContratto': $scope.recessesLuce.dettaglioRecesso.COD_CONTRATTO,
+            'stato': $scope.recessesLuce.dettaglioRecesso.STATO,
+            'note': $scope.recessesLuce.dettaglioRecesso.NOTE,
+
+         }).then((result) => {
+             alertify.alert('Recesso modificato correttamente');
+             $scope.recessesLuce.submitrecessesLuce();
+             $('#recessModal').modal('hide');
+         }).catch((err) => {
+             if(err.status === 500){
+                 alertify.alert("Errore nella modifica del Recesso");
+             }
+             if(err.status === 403){
+                 alertify.alert("Utente non autorizzato");
+                 $location.path('/logout');
+             }
+         });
+    };
+
 }]);

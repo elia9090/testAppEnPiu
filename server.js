@@ -20,7 +20,7 @@ app.listen(3000,'192.168.1.187' || 'localhost',function() {
 const tenHour = 36000000;
 //STATIC FILES
 app.use(express.static(__dirname + '/public', {
-    maxAge: tenHour
+    maxAge: 3600000
 }));
 
 
@@ -3386,13 +3386,20 @@ app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(
                                     ],
                                     function(err, rows, fields) {
                                         if (err) {
-                                            connection.rollback(function() {
-                                                connection.release();
-                                                //Failure
-                                            });
-                                            res.sendStatus(500);
+                                            // SE IL RECORD è DUPLICATO SKIPPO L'IESIMO ELEMENTO TRAMITE IL return 
+                                            if(err.errno == 1062){
+                                                return;
+                                            }else{
+                                                connection.rollback(function() {
+                                                    connection.release();
+                                                    //Failure
+                                                });
+                                                res.sendStatus(500);
+                                            }
+                                    
 
-                                        } else {
+                                        }  
+                                        else {
                                             var insertedId = rows.insertId;
                                             connection.query(`INSERT INTO
 										dettaglio_recesso_luce (
@@ -3401,8 +3408,10 @@ app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(
 										  VENDITORE_ASSEGNATO,
 										  DATA_INSERIMENTO,
 										  ULTIMA_MODIFICA,
-										  REFERENTE_RECESSO,
-										  STATO
+                                          REFERENTE_RECESSO,
+                                          REFERENTE_RECESSO_RECAPITO,
+                                          STATO,
+                                          COD_CONTRATTO
 										)
 									  VALUES
 										(
@@ -3411,8 +3420,10 @@ app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(
 										  ?,
 										  NOW(),
 										  NOW(),
-										  NULL,
-										  ?
+                                          NULL,
+                                          NULL,
+                                          ?,
+                                          NULL
 										)`,
                                                 [
                                                     insertedId,
@@ -3550,11 +3561,17 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
                                     ],
                                     function(err, rows, fields) {
                                         if (err) {
-                                            connection.rollback(function() {
-                                                connection.release();
-                                                //Failure
-                                            });
-                                            res.sendStatus(500);
+                                            // SE IL RECORD è DUPLICATO SKIPPO L'IESIMO ELEMENTO TRAMITE IL return 
+                                            if(err.errno == 1062){
+                                                return;
+                                            }else{
+                                                connection.rollback(function() {
+                                                    connection.release();
+                                                    //Failure
+                                                });
+                                                res.sendStatus(500);
+                                            }
+                                    
 
                                         } else {
                                             var insertedId = rows.insertId;
@@ -3565,8 +3582,10 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
 										  VENDITORE_ASSEGNATO,
 										  DATA_INSERIMENTO,
 										  ULTIMA_MODIFICA,
-										  REFERENTE_RECESSO,
-										  STATO
+                                          REFERENTE_RECESSO,
+                                          REFERENTE_RECESSO_RECAPITO,
+                                          STATO,
+                                          COD_CONTRATTO
 										)
 									  VALUES
 										(
@@ -3575,8 +3594,10 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
 										  ?,
 										  NOW(),
 										  NOW(),
-										  NULL,
-										  ?
+                                          NULL,
+                                          NULL,
+                                          ?,
+                                          NULL
 										)`,
                                                 [
                                                     insertedId,
@@ -3891,31 +3912,98 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
     });
 });
 
+
+//VEFICA PRESENZA RECESSI
+app.get('/checkRecessiAgente/:id', ensureToken, function(req, res) {
+    jwt.verify(req.token, config.secretKey, function(err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var agente = req.params.id;
+
+            pool.getConnection(function(err, connection) {
+                connection.query(`SELECT COUNT(*) AS countRecessiLuce from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE where drl.VENDITORE_ASSEGNATO=? `,[agente],
+                    function(err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL RICERCA COUNT RECESSI luce ' + err);
+                            res.sendStatus(500);
+                        } else {
+
+                        data["countRecessiLuce"] = rows[0].countRecessiLuce;
+                        pool.getConnection(function(err, connection) {
+                            connection.query(`SELECT COUNT(*) AS countRecessiGas from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS where drg.VENDITORE_ASSEGNATO=?`,[agente],
+                                function(err, rows, fields) {
+                                    connection.release();
+                                    if (err) {
+                                        log.error('ERRORE SQL COUNT RECESSI gas: --> ' + err);
+                                    res.sendStatus(500);
+                                } else {
+                                        data["countRecessiGas"] = rows[0].countRecessiGas;
+                                        res.json(data);
+                                    }
+                                });
+                            
+                                });
+                           
+                                    }
+                                    });
+                    });
+                    }
+                    });
+});
+
 //UPDATE RECESSO LUCE
 app.patch('/luceRecess/:id', ensureToken, function(req, res) {
     jwt.verify(req.token, config.secretKey, function(err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
-            var idRecessoLuce = req.params.idRecessoLuce;
-
-           
+            var idRecessoLuce = req.params.id;
 
             var stato = req.body.stato;
-            var Qstato = " ";
-            if (stato !== '' && stato !== undefined && stato != null) {
-               
-                Qstato = ' AND STATO = "' + stato + '" ';
-                
-            }else{
-                Qstato = ' AND STATO != "NON_GESTIRE" ';
+            
+            if (stato == '' || stato == undefined || stato == null) {
+                stato = null;
             }
 
             var agente = req.body.agente;
-            var Qagente = " ";
-            if (agente !== '' && agente !== undefined && agente != null) {
-                Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
+
+            if (agente == '' || agente == undefined || agente == null) {
+                agente = null;
             }
+            
+            var refRecesso = req.body.refRecesso;
+
+            if (refRecesso == '' || refRecesso == undefined || refRecesso == null) {
+                refRecesso = null;
+            }
+            var refRecapito = req.body.refRecapito;
+
+            if (refRecapito == '' || refRecapito == undefined || refRecapito == null) {
+                refRecapito = null;
+            }
+
+            var codContratto = req.body.codContratto;
+
+            if (codContratto == '' || codContratto == undefined || codContratto == null) {
+                codContratto = null;
+            }
+            var note = req.body.note;
+
+            if (note == '' || note == undefined || note == null) {
+                note = null;
+            }
+
+            if(stato != 'RIENTRO'){
+                codContratto = null
+            }
+            if(stato == 'NON_ASSOCIATO'){
+                agente=null;
+            }
+
+            pool.getConnection(function(err, connection) {
+      
             connection.beginTransaction(function(errTrans) {
                 if (errTrans) { //Transaction Error (Rollback and release connection)
                     connection.rollback(function() {
@@ -3923,8 +4011,8 @@ app.patch('/luceRecess/:id', ensureToken, function(req, res) {
                     });
                     res.sendStatus(500);
                 } else {
-                    pool.getConnection(function(err, connection) {
-                        connection.query(`UPDATE dettaglio_recesso_luce SET ULTIMA_MODIFICA=NOW() WHERE ID_DETTAGLIO_LUCE=?`,idRecessoLuce, 
+                    
+                        connection.query(`UPDATE dettaglio_recesso_luce SET VENDITORE_ASSEGNATO = ?, REFERENTE_RECESSO=?, REFERENTE_RECESSO_RECAPITO=?, STATO=?, COD_CONTRATTO=?, ULTIMA_MODIFICA=NOW(), NOTE=? WHERE ID_DETTAGLIO_LUCE=?`,[agente, refRecesso, refRecapito, stato, codContratto,note, idRecessoLuce], 
                             function(err, rows, fields) {
                                 if (err) {
                                     connection.rollback(function() {
@@ -3952,17 +4040,112 @@ app.patch('/luceRecess/:id', ensureToken, function(req, res) {
     
                             });
     
-                    });
+                    
                 }
             });
-                    
+        });     
               
             }
     });
     });
 
 
+//UPDATE RECESSO GAS
+app.patch('/gasRecess/:id', ensureToken, function(req, res) {
+    jwt.verify(req.token, config.secretKey, function(err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var idRecessoGas = req.params.id;
 
+           
+
+            var stato = req.body.stato;
+            
+            if (stato == '' || stato == undefined || stato == null) {
+                stato = null;
+            }
+
+            var agente = req.body.agente;
+
+            if (agente == '' || agente == undefined || agente == null) {
+                agente = null;
+            }
+            
+            var refRecesso = req.body.refRecesso;
+
+            if (refRecesso == '' || refRecesso == undefined || refRecesso == null) {
+                refRecesso = null;
+            }
+            var refRecapito = req.body.refRecapito;
+
+            if (refRecapito == '' || refRecapito == undefined || refRecapito == null) {
+                refRecapito = null;
+            }
+
+            var codContratto = req.body.codContratto;
+
+            if (codContratto == '' || codContratto == undefined || codContratto == null) {
+                codContratto = null;
+            }
+            
+            var note = req.body.note;
+
+            if (note == '' || note == undefined || note == null) {
+                note = null;
+            }
+          
+            if(stato != 'RIENTRO'){
+                codContratto = null;
+            }
+            if(stato == 'NON_ASSOCIATO'){
+                agente=null;
+            }
+            pool.getConnection(function(err, connection) { 
+            connection.beginTransaction(function(errTrans) {
+                if (errTrans) { //Transaction Error (Rollback and release connection)
+                    connection.rollback(function() {
+                        connection.release();
+                    });
+                    res.sendStatus(500);
+                } else {
+                    
+                        connection.query(`UPDATE dettaglio_recesso_gas  SET VENDITORE_ASSEGNATO = ?, REFERENTE_RECESSO=?, REFERENTE_RECESSO_RECAPITO=?, STATO=?, COD_CONTRATTO=?, ULTIMA_MODIFICA=NOW(), NOTE=? WHERE ID_DETTAGLIO_GAS=?`,[agente, refRecesso, refRecapito, stato, codContratto,note, idRecessoGas], 
+                            function(err, rows, fields) {
+                                if (err) {
+                                    connection.rollback(function() {
+                                        connection.release();
+                                        //Failure
+                                    });
+                                    res.sendStatus(500);
+                                    log.error('ERRORE SQL PATCH gasRecess: --> ' + err);
+                                } else {
+                                    connection.commit(function(err) {
+                                        if (err) {
+                                            connection.rollback(function() {
+                                                connection.release();
+                                                //Failure
+                                            });
+                                            res.sendStatus(500);
+                                        } else {
+                                            connection.release();
+                                            res.sendStatus(200);
+                                            //Success
+                                        }
+                                    });
+                                    
+                                }
+    
+                            });
+    
+                    
+                }
+            });
+               });      
+              
+            }
+    });
+    });
 
 
 
