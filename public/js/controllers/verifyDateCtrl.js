@@ -119,7 +119,7 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
 
     $scope.verifyDate.submitverifyDate = function(pageChangedOrSubmit){
         
-        $.blockUI();
+        
 
         if(pageChangedOrSubmit === 'submit'){
             $scope.verifyDate.verifyParam.currentPage = 1;
@@ -147,19 +147,19 @@ app.controller('verifyDateCtrl',['$scope', '$http', '$location','alertify', func
         }).then((result) => {
 
             if(result.data.appuntamenti.length == 0){
-                $.unblockUI();
+                
                 $scope.verifyDate.showRisultati = false;
                 alertify.alert("Nessun appuntamento trovato per i parametri selezionati");
             }else{
                 $scope.verifyDate.totalItems = parseInt(result.data.totaleAppuntamenti);
                 $scope.verifyDate.dateList = result.data.appuntamenti;
                 $scope.verifyDate.showRisultati = true;
-                $.unblockUI();
+                
             }
            
         }).catch((err) => {
 
-            $.unblockUI();
+            
             if(err.status === 403){
                 alertify.alert("Utente non autorizzato");
                 $location.path('/logout');

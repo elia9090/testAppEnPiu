@@ -206,7 +206,7 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
 
     $scope.searchDate.submitSearchDate = function(pageChangedOrSubmit){
         
-        $.blockUI();
+        
 
         if(pageChangedOrSubmit === 'submit'){
             $scope.searchDate.searchParam.currentPage = 1;
@@ -239,19 +239,19 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
         }).then((result) => {
 
             if(result.data.appuntamenti.length == 0){
-                $.unblockUI();
+                
                 $scope.searchDate.showRisultati = false;
                 alertify.alert("Nessun appuntamento trovato per i parametri selezionati");
             }else{
                 $scope.searchDate.totalItems = parseInt(result.data.totaleAppuntamenti);
                 $scope.searchDate.dateList = result.data.appuntamenti;
                 $scope.searchDate.showRisultati = true;
-                $.unblockUI();
+                
             }
            
         }).catch((err) => {
 
-            $.unblockUI();
+            
             if(err.status === 403){
                 alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
@@ -281,19 +281,19 @@ app.controller('dateSearchCtrl',['$scope', '$http', '$location','alertify', func
         }).then((result) => {
 
             if(result.data.appuntamenti.length == 0){
-                $.unblockUI();
+                
                 $scope.searchDate.showRisultati = false;
                 alertify.alert("Nessun appuntamento trovato per i parametri selezionati");
             }else{
                 $scope.searchDate.totalItems = parseInt(result.data.totaleAppuntamenti);
                 $scope.searchDate.dateList = result.data.appuntamenti;
                 $scope.searchDate.showRisultati = true;
-                $.unblockUI();
+                
             }
            
         }).catch((err) => {
 
-            $.unblockUI();
+            
             if(err.status === 403){
                 alertify.alert("Utente non autorizzato");
                 $location.path('/logout');

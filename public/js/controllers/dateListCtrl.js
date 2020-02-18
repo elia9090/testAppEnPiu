@@ -19,20 +19,20 @@ app.controller('dateListCtrl',['$scope', '$http', '$location','alertify', functi
 
 
 
-    $.blockUI();
+    
     
     $http.get(url).then((result) => {
     
         if(result.data.error){
-            $.unblockUI();
+            
             alertify.alert("Nessuno appuntamento trovato");
         }else{
             
             $scope.dateList = result.data.appuntamenti;
-            $.unblockUI();
+            
         } 
     }).catch((err) => {
-        $.unblockUI();
+        
             if(err.status === 403){
                 alertify.alert("Utente non autorizzato");
                 $location.path('/logout');

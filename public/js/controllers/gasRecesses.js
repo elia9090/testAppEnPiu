@@ -39,7 +39,6 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
         alertify.alert("Impossibile reperire la lista dei comuni");
     });
 
-    
     if($scope.user.TYPE === 'ADMIN' || $scope.user.TYPE === 'BACK_OFFICE'){
         $scope.recessesGas.Stati =    [
             {
@@ -76,7 +75,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             }
             
         ];
-    }else if($scope.user.TYPE === 'AGENTE' || $scope.user.TYPE === 'RESPONSABILE_AGENTI'){
+    }else if($scope.user.TYPE === 'RESPONSABILE_AGENTI'){
         $scope.recessesGas.Stati =    [
             {
                 "Name":" ",
@@ -91,8 +90,27 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
                 "Value":"PRESO_IN_CARICO"
             },
             {
-                "Name":"RESPINTO",
+                "Name":"RESPINTO DA AGENTE",
                 "Value":"RESPINTO"
+            },
+            {
+                "Name":"RIENTRO",
+                "Value":"RIENTRO"
+            }
+        ];
+    }else if($scope.user.TYPE === 'AGENTE' || $scope.user.TYPE === 'AGENTE_JUNIOR'){
+        $scope.recessesGas.Stati =    [
+            {
+                "Name":" ",
+                "Value":""
+            },
+            {
+                "Name":"ASSEGNATO",
+                "Value":"ASSEGNATO"
+            },
+            {
+                "Name":"PRESO IN CARICO",
+                "Value":"PRESO_IN_CARICO"
             },
             {
                 "Name":"RIENTRO",
@@ -115,7 +133,6 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             }
         ];
     }
-  
   
 
  
@@ -166,7 +183,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             });
         
     }
-    else if( $scope.user.TYPE == "AGENTE"){
+    else if( $scope.user.TYPE == "AGENTE" || $scope.user.TYPE === 'AGENTE_JUNIOR'){
         
         $scope.recessesGas.searchParam.venditoreSelected = $scope.user.Id;
         
@@ -226,7 +243,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
 
     $scope.recessesGas.submitRecessesGas = function(pageChangedOrSubmit){
         
-        $.blockUI();
+        
 
         if(pageChangedOrSubmit === 'submit'){
             $scope.recessesGas.searchParam.currentPage = 1;
@@ -243,7 +260,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
 
          // UTILE PER FAR VISUALIZZARE SOLO I RECESSI DEL RESPONSABILE O DEI RELATIVI AGENTI SELEZIOANTI
          var agente = '';
-         if(($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI") && !$scope.recessesGas.searchParam.venditoreSelected){
+         if(($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI" || $scope.user.TYPE === 'AGENTE_JUNIOR') && !$scope.recessesGas.searchParam.venditoreSelected){
             agente = $scope.user.Id;
          }else{
              agente =  $scope.recessesGas.searchParam.venditoreSelected;
@@ -260,24 +277,25 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             'mcAnnui':$scope.recessesGas.searchParam.mcAnnui,
             'stato': $scope.recessesGas.searchParam.stato.value,
             'agente': agente,
+            'userType':$scope.user.TYPE
             
 
         }).then((result) => {
 
             if(result.data.recessiGas.length == 0){
-                $.unblockUI();
+                
                 $scope.recessesGas.showRisultati = false;
                 alertify.alert("Nessun RecessiGas trovato per i parametri selezionati");
             }else{
                 $scope.recessesGas.totalItems = parseInt(result.data.totaleRecessiGas);
                 $scope.recessesGas.recessiGasResult = result.data.recessiGas;
                 $scope.recessesGas.showRisultati = true;
-                $.unblockUI();
+                
             }
            
         }).catch((err) => {
 
-            $.unblockUI();
+            
             if(err.status === 403){
                 alertify.alert("Utente non autorizzato");
                 $location.path('/logout');

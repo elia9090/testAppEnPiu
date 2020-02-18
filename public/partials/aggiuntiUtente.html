@@ -26,25 +26,31 @@
     </div>
     <fieldset class="form-group">
         <legend>Tipo utente</legend>
-        <div class="form-check">
+        <div class="form-check ">
+          <label class="form-check-label">
+              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" ng-model="userType" value="AGENTE_JUNIOR" >
+              Agente Junior
+            </label>
+          </div>
+        <div ng-show="user.TYPE === 'ADMIN'" class="form-check">
           <label class="form-check-label ">
             <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1"  ng-model="userType" value="AGENTE" checked="checked">
            Agente
           </label>
         </div>
-        <div class="form-check">
+        <div ng-show="user.TYPE === 'ADMIN'" class="form-check">
         <label class="form-check-label">
             <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" ng-model="userType" value="RESPONSABILE_AGENTI">
             Responsabile agenti
           </label>
         </div>
-        <div class="form-check ">
+        <div ng-show="user.TYPE === 'ADMIN'" class="form-check ">
         <label class="form-check-label">
             <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" ng-model="userType" value="OPERATORE" >
             Operatore
           </label>
         </div>
-        <div class="form-check ">
+        <div ng-show="user.TYPE === 'ADMIN'" class="form-check ">
           <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" ng-model="userType" value="BACK_OFFICE" >
               Back office
@@ -52,7 +58,7 @@
           </div>
       </fieldset>
       
-    <div class="form-group" ng-show="userType === 'AGENTE' || userType === 'RESPONSABILE_AGENTI'">
+    <div class="form-group" ng-show="(userType === 'AGENTE' || userType === 'RESPONSABILE_AGENTI') && user.TYPE==='ADMIN'">
       <label for="exampleSelect1">Operatore associato</label>
       <select class="form-control" name="operatoreAssociatoSelect" id="operatoreAssociatoSelect"  ng-model="operatoreAssociato">
         <option ng-repeat="option in operatori" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
@@ -60,13 +66,13 @@
   
     </div>
 
-    <div class="form-group" ng-show="userType === 'AGENTE'">
+    <div class="form-group" ng-show="(userType === 'AGENTE' || userType==='AGENTE_JUNIOR') && user.TYPE==='ADMIN'">
       <label for="exampleSelect2">Responsabile associato</label>
       <select class="form-control" name="responsabileAssociatoSelect" id="responsabileAssociatoSelect" ng-model="responsabileAssociato">
         <option ng-repeat="option in responsabili" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>
     </select>
     </div>
-    <div class="form-group" ng-show="userType === 'RESPONSABILE_AGENTI'">
+    <div class="form-group" ng-show="userType === 'RESPONSABILE_AGENTI' && user.TYPE==='ADMIN'">
       <label for="exampleSelect2">Supervisionato da</label>
       <select class="form-control" name="supervisoreAssociatoSelect" id="supervisoreAssociatoSelect" ng-model="supervisoreAssociato">
         <option ng-repeat="option in responsabili" value="{{option.ID_UTENTE}}">{{option.NOME}} {{option.COGNOME}}</option>

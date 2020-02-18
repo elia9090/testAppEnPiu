@@ -111,7 +111,7 @@ app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$rout
 
     $scope.newDate.showComuniAndLoadCompanyNameForProvince = function(){
         
-        $.blockUI();
+        
 
         var newArray = $scope.newDate.province.filter(function (el) {
             return el.nome ===  $scope.newDate.provinciaSelected;
@@ -132,15 +132,15 @@ app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$rout
         $http.get('/listaNomiAziendaAndIdAppunamentoForProvincia/'+$scope.newDate.provinciaSelected).then((result) => {
             $scope.newDate.oldDateForProvince = result.data.listaAziendaAndIdAppuntamento;
             $scope.newDate.disabledNomeAttivita = false;
-            $.unblockUI();
+            
             }).catch((err) => {
                 if(err.status === 403){
-                    $.unblockUI();
+                    
                     alertify.alert("Utente non autorizzato");
                     $location.path('/logout');
                     return;
                 }
-                $.unblockUI();
+                
                
                 $scope.newDate.disabledNomeAttivita = false;
             });
@@ -170,7 +170,7 @@ app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$rout
 
     $scope.newDate.viewDateInModal=function(idAppuntamento){
         
-        $.blockUI();
+        
 
         $http.get('/appuntamento/'+idAppuntamento).then((result) => {
 
@@ -191,16 +191,16 @@ app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$rout
             $scope.newDate.hasEsito_OK = false;
         }
             $('#exampleModal').modal('show');
-            $.unblockUI();
+            
     
         }).catch((err) => {
             if(err.status === 403){
-            $.unblockUI();
+            
                 alertify.alert("Utente non autorizzato");
                 $location.path('/logout');
                 return;
             }
-            $.unblockUI();
+            
             alertify.alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
         });
     }

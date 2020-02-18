@@ -2,7 +2,7 @@ app.controller('addUserCtrl',[ '$scope', '$http', '$location','$route','alertify
    
     $scope.user = JSON.parse(sessionStorage.user);
    
-    if(!$scope.user.TYPE == "ADMIN"){
+    if(!$scope.user.TYPE == "ADMIN" && !$scope.user.TYPE == "RESPONSABILE_AGENTI"){
         $location.path('/dashboard');
     }
 
@@ -14,7 +14,7 @@ app.controller('addUserCtrl',[ '$scope', '$http', '$location','$route','alertify
     $scope.username = "";
     $scope.password = "";
     //preseleziono lo usertype dai radio button
-    $scope.userType = "AGENTE";
+    $scope.userType = "AGENTE_JUNIOR";
     $scope.operatoreAssociato = "";
     $scope.responsabileAssociato = "";
     $scope.supervisoreAssociato = "";
@@ -22,6 +22,10 @@ app.controller('addUserCtrl',[ '$scope', '$http', '$location','$route','alertify
     $scope.responsabili = "";
 
 
+    if($scope.user.TYPE == "RESPONSABILE_AGENTI"){
+        // se l'utente loggato è responsabile agente il responsabile dell'AGENTE JUNIOR è LUI
+        $scope.responsabileAssociato = $scope.user.Id  
+    }
 
     $http.get('/listaResponsabiliAgentiWS').then((result) => {
         

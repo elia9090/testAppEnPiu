@@ -17,10 +17,10 @@ app.listen(3000,'192.168.1.187' || 'localhost',function() {
   );*/
 
 
-const tenHour = 36000000;
+const fiveHour = 18000000;
 //STATIC FILES
 app.use(express.static(__dirname + '/public', {
-    maxAge: 3600000
+    maxAge: fiveHour
 }));
 
 
@@ -90,14 +90,24 @@ app.post('/login', function(req, res) {
                     }, config.secretKey, {
                         expiresIn: "8h"
                     });
-                } else if (rows[0].TIPO == 'BACK_OFFICE') {
+                } 
+                else if (rows[0].TIPO == 'BACK_OFFICE') {
                     token = jwt.sign({
                         user: rows[0].ID_UTENTE,
                         role: 'BACK_OFFICE'
                     }, config.secretKey, {
                         expiresIn: "8h"
                     });
-                } else {
+                }
+                else if (rows[0].TIPO == 'RESPONSABILE_AGENTI') {
+                    token = jwt.sign({
+                        user: rows[0].ID_UTENTE,
+                        role: 'RESPONSABILE_AGENTI'
+                    }, config.secretKey, {
+                        expiresIn: "8h"
+                    });
+                }
+                else {
                     token = jwt.sign({
                         user: rows[0].ID_UTENTE,
                         role: 'OTHER'
@@ -190,7 +200,7 @@ app.post('/editPassword', ensureToken, function(req, res) {
 
 
 // INSERT USER
-app.post('/addUser', ensureToken, requireAdmin, function(req, res) {
+app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res) {
     jwt.verify(req.token, config.secretKey, function(err, data) {
         if (err) {
             res.sendStatus(403);
@@ -302,9 +312,10 @@ app.post('/addUser', ensureToken, requireAdmin, function(req, res) {
                                             }
                                         });
                                     });
-                                } else if (userType === 'AGENTE') {
+                                } else if (userType === 'AGENTE' || userType === 'AGENTE_JUNIOR') {
+                                    var insertedId = rows.insertId;
                                     if (operatoreAssociato) {
-                                        var insertedId = rows.insertId;
+                                        
                                         connection.query('INSERT INTO OPERATORI_VENDITORI (ID_ASSOCIAZIONE, ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [insertedId, operatoreAssociato], function(err, rows, fields) {
                                             if (err) {
                                                 connection.rollback(function() {
@@ -3696,8 +3707,10 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
                 Qstato = ' AND STATO = "' + stato + '" ';
                 
             }else{
-                Qstato = ' AND STATO != "NON_GESTIRE" ';
+                //DI DEFAULT NON MOSTRO I NON GESTIRE E I RESPINTI
+                Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO" ';
             }
+
 
             var mcAnnui = req.body.mcAnnui;
             var QmcAnnui = " ";
@@ -3828,9 +3841,11 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
                 Qstato = ' AND STATO = "' + stato + '" ';
                 
             }else{
-                Qstato = ' AND STATO != "NON_GESTIRE" ';
+                //DI DEFAULT NON MOSTRO I NON GESTIRE E I RESPINTI 
+                Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO"';
             }
 
+          
 
             var kwhAnnui = req.body.kwhAnnui;
             var QkwhAnnui = " ";
@@ -4171,6 +4186,16 @@ function requireAdminOrBackOffice(request, response, next) {
 
     var test = jwt.decode(request.token);
     if (test.role != 'ADMIN' && test.role != 'BACK_OFFICE') {
+        response.sendStatus(403);
+    } else {
+        next();
+    }
+}
+
+function requireAdminOrResponsabile(request, response, next) {
+
+    var test = jwt.decode(request.token);
+    if (test.role != 'ADMIN' && test.role != 'RESPONSABILE_AGENTI') {
         response.sendStatus(403);
     } else {
         next();

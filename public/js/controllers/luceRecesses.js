@@ -76,7 +76,7 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
             }
             
         ];
-    }else if($scope.user.TYPE === 'AGENTE' || $scope.user.TYPE === 'RESPONSABILE_AGENTI'){
+    }else if($scope.user.TYPE === 'RESPONSABILE_AGENTI'){
         $scope.recessesLuce.Stati =    [
             {
                 "Name":" ",
@@ -91,8 +91,27 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
                 "Value":"PRESO_IN_CARICO"
             },
             {
-                "Name":"RESPINTO",
+                "Name":"RESPINTO DA AGENTE",
                 "Value":"RESPINTO"
+            },
+            {
+                "Name":"RIENTRO",
+                "Value":"RIENTRO"
+            }
+        ];
+    }else if($scope.user.TYPE === 'AGENTE' || $scope.user.TYPE === 'AGENTE_JUNIOR' ){
+        $scope.recessesLuce.Stati =    [
+            {
+                "Name":" ",
+                "Value":""
+            },
+            {
+                "Name":"ASSEGNATO",
+                "Value":"ASSEGNATO"
+            },
+            {
+                "Name":"PRESO IN CARICO",
+                "Value":"PRESO_IN_CARICO"
             },
             {
                 "Name":"RIENTRO",
@@ -165,7 +184,7 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
             });
         
     }
-    else if( $scope.user.TYPE == "AGENTE"){
+    else if( $scope.user.TYPE == "AGENTE" || $scope.user.TYPE === 'AGENTE_JUNIOR'){
         
         $scope.recessesLuce.searchParam.venditoreSelected = $scope.user.Id;
         
@@ -228,7 +247,7 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
 
     $scope.recessesLuce.submitrecessesLuce = function(pageChangedOrSubmit){
         
-        $.blockUI();
+        
 
         if(pageChangedOrSubmit === 'submit'){
             $scope.recessesLuce.searchParam.currentPage = 1;
@@ -246,7 +265,7 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
 
          // UTILE PER FAR VISUALIZZARE SOLO I RECESSI DEL RESPONSABILE O DEI RELATIVI AGENTI SELEZIOANTI
         var agente = '';
-        if(($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI") && !$scope.recessesLuce.searchParam.venditoreSelected){
+        if(($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI" || $scope.user.TYPE === 'AGENTE_JUNIOR') && !$scope.recessesLuce.searchParam.venditoreSelected){
            agente = $scope.user.Id;
         }else{
             agente =  $scope.recessesLuce.searchParam.venditoreSelected;
@@ -265,24 +284,25 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
             'kwhAnnui':$scope.recessesLuce.searchParam.kwhAnnui,
             'stato': $scope.recessesLuce.searchParam.stato.value,
             'agente': agente,
+            'userType':$scope.user.TYPE
             
 
         }).then((result) => {
 
             if(result.data.recessiLuce.length == 0){
-                $.unblockUI();
+                
                 $scope.recessesLuce.showRisultati = false;
                 alertify.alert("Nessun RecessiLuce trovato per i parametri selezionati");
             }else{
                 $scope.recessesLuce.totalItems = parseInt(result.data.totaleRecessiLuce);
                 $scope.recessesLuce.recessiLuceResult = result.data.recessiLuce;
                 $scope.recessesLuce.showRisultati = true;
-                $.unblockUI();
+                
             }
            
         }).catch((err) => {
 
-            $.unblockUI();
+            
             if(err.status === 403){
                 alertify.alert("Utente non autorizzato");
                 $location.path('/logout');

@@ -37,6 +37,44 @@ app.run(['$rootScope', '$location', function($rootScope, $location, ) {
       }
     };
   });;
+app.factory('httpInterceptor', function ($q, $rootScope, $log) {
+
+    var numLoadings = 0;
+
+    return {
+        request: function (config) {
+
+            numLoadings++;
+            $.blockUI();
+            // Show loader
+            return config || $q.when(config)
+
+        },
+        response: function (response) {
+
+            if ((--numLoadings) === 0) {
+                // Hide loader
+                $.unblockUI();
+            }
+
+            return response || $q.when(response);
+
+        },
+        responseError: function (response) {
+
+            if (!(--numLoadings)) {
+                // Hide loader
+                $.unblockUI();
+            }
+
+            return $q.reject(response);
+        }
+    };
+});
+app.config(function ($httpProvider) {
+    $httpProvider.interceptors.push('httpInterceptor');
+});
+
 
 app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($routeProvider, $locationProvider, ChartJsProvider) {
     $locationProvider.hashPrefix('');

@@ -169,7 +169,7 @@ button.uib-datepicker-current {
 }
 
 .divider{
-  border: 1px solid WHIte;
+  border: 0.08rem solid #fff;
   height: 0px;
   width: 14%;
   margin: 10px 0px;

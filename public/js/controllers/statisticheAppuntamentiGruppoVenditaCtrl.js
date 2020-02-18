@@ -51,7 +51,7 @@ app.controller('statisticheAppuntamentiGruppoVenditaCtrl',['$scope', '$http', '$
 
     $scope.statsDate.submitstatsDate = function(){
 
-        $.blockUI();
+        
        
         var dateFROM = "";
         var dateTO = "";
@@ -81,28 +81,28 @@ app.controller('statisticheAppuntamentiGruppoVenditaCtrl',['$scope', '$http', '$
             });
      
             $scope.statsDate.showRisultati = true;
-            $.unblockUI();
+            
 
             }).catch((err) => {
                 if(err.status === 403){
                     alertify.alert("Utente non autorizzato");
-                    $.unblockUI();
+                    
                     $location.path('/logout');
                     return;
                 }
                 if(err.status === 404){
-                    $.unblockUI();
+                    
                     alertify.alert("Non ci sono statistiche per i parametri selezionati");
                     return;
                 }
-                $.unblockUI();
+                
                 alertify.alert("Impossibile reperire le statistiche");
             });
     };
 
     $scope.statsDate.mostraAppuntamenti = function(idUtente){
 
-        $.blockUI();
+        
        
         var dateFROM = "";
         var dateTO = "";
@@ -124,21 +124,21 @@ app.controller('statisticheAppuntamentiGruppoVenditaCtrl',['$scope', '$http', '$
         
             $scope.statsDate.recapStatisticheAppuntamenti = result.data.verifyStats;
             $('#recapStatisticheAppuntamenti').modal('show');
-            $.unblockUI();
+            
 
             }).catch((err) => {
                 if(err.status === 403){
                     alertify.alert("Utente non autorizzato");
-                    $.unblockUI();
+                    
                     $location.path('/logout');
                     return;
                 }
                 if(err.status === 404){
-                    $.unblockUI();
+                    
                     alertify.alert("Non ci sono statistiche per i parametri selezionati");
                     return;
                 }
-                $.unblockUI();
+                
                 alertify.alert("Impossibile reperire le statistiche");
             });
     };
