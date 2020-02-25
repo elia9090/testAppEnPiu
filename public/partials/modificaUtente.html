@@ -28,19 +28,25 @@
         <legend>Tipo utente</legend>
         <div class="form-check">
           <label class="form-check-label ">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1"  ng-model="editUser.userType" value="AGENTE" checked="checked">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1"  ng-model="editUser.userType" value="AGENTE_JUNIOR" >
+           Agente junior
+          </label>
+        </div>
+        <div class="form-check">
+          <label class="form-check-label ">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2"  ng-model="editUser.userType" value="AGENTE" >
            Agente
           </label>
         </div>
         <div class="form-check">
         <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" ng-model="editUser.userType" value="RESPONSABILE_AGENTI">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" ng-model="editUser.userType" value="RESPONSABILE_AGENTI">
             Responsabile agenti
           </label>
         </div>
         <div class="form-check ">
         <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" ng-model="editUser.userType" value="OPERATORE" >
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" ng-model="editUser.userType" value="OPERATORE" >
             Operatore
           </label>
         </div>
@@ -54,7 +60,7 @@
   
     </div>
 
-    <div class="form-group" ng-show="editUser.userType === 'AGENTE'">
+    <div class="form-group" ng-show="editUser.userType === 'AGENTE' || editUser.userType === 'AGENTE_JUNIOR'">
       <label for="exampleSelect2">Responsabile associato</label>
       <select class="form-control" name="responsabileAssociatoSelect" id="responsabileAssociatoSelect" ng-selected="editUser.responsabileAssociato" ng-model="editUser.responsabileAssociato" ng-options='operator.ID_UTENTE as (operator.NOME+" "+operator.COGNOME ) for operator in editUser.responsabili'>
       </select>

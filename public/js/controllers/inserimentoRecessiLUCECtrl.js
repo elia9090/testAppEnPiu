@@ -10,7 +10,7 @@ app.controller('inserimentoRecessiLUCECtrl',['$scope', '$http', '$location', 'al
 
     $scope.insertRecessesLUCE.venditori = {};
 
-    $http.get('/listaAgentiNoRelationWithOperatorWS').then((result) => {
+    $http.get('/listaAgentiNoRelationWithOperatorWSrecessi').then((result) => {
         $scope.insertRecessesLUCE.venditori = result.data.agenti;
         }).catch((err) => {
             if(err.status === 403){

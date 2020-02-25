@@ -910,6 +910,40 @@ app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function(req, res) 
         }
     });
 });
+
+//lsita Agenti ATTIVI e non relazionati agli operatori RECESSI
+app.get('/listaAgentiNoRelationWithOperatorWSrecessi', ensureToken, function(req, res) {
+    jwt.verify(req.token, config.secretKey, function(err, data) {
+        if (err) {
+            res.sendStatus(403);
+
+        } else {
+            var data = {};
+            pool.getConnection(function(err, connection) {
+                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI" OR TIPO="AGENTE_JUNIOR") AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function(err, rows, fields) {
+                    connection.release();
+                    if (rows.length !== 0 && !err) {
+                        data["agenti"] = rows;
+                        res.json(data);
+                    } else if (rows.length === 0) {
+                        //Error code 2 = no rows in db.
+                        data["error"] = 2;
+                        data["agenti"] = 'Nessun agente trovato';
+                        res.status(404).json(data);
+                    } else {
+                        data["agenti"] = 'Errore in fase di reperimento agenti';
+                        res.status(500).json(data);
+                        console.log('Errore in fase di reperimento agenti: ' + err);
+                        log.error('Errore in fase di reperimento agenti: ' + err);
+                    }
+                });
+
+            });
+
+        }
+    });
+});
+
 //lsita Agenti non relazionati agli operatori E ELIMINATI LOGICAMENTE
 app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS', ensureToken, function(req, res) {
     jwt.verify(req.token, config.secretKey, function(err, data) {
@@ -943,6 +977,38 @@ app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS', ensureToken, funct
     });
 });
 
+//lsita Agenti non relazionati agli operatori E ELIMINATI LOGICAMENTE
+app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWSrecessi', ensureToken, function(req, res) {
+    jwt.verify(req.token, config.secretKey, function(err, data) {
+        if (err) {
+            res.sendStatus(403);
+
+        } else {
+            var data = {};
+            pool.getConnection(function(err, connection) {
+                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI" OR TIPO = "AGENTE_JUNIOR") ORDER BY COGNOME ASC', function(err, rows, fields) {
+                    connection.release();
+                    if (rows.length !== 0 && !err) {
+                        data["agenti"] = rows;
+                        res.json(data);
+                    } else if (rows.length === 0) {
+                        //Error code 2 = no rows in db.
+                        data["error"] = 2;
+                        data["agenti"] = 'Nessun agente trovato';
+                        res.status(404).json(data);
+                    } else {
+                        data["agenti"] = 'Errore in fase di reperimento agenti';
+                        res.status(500).json(data);
+                        console.log('Errore in fase di reperimento agenti: ' + err);
+                        log.error('Errore in fase di reperimento agenti: ' + err);
+                    }
+                });
+
+            });
+
+        }
+    });
+});
 
 //lsita utenti
 app.get('/listaUtenti', ensureToken, requireAdmin, function(req, res) {
@@ -1011,7 +1077,7 @@ app.get('/edituser/:id', ensureToken, requireAdmin, function(req, res) {
 					FROM UTENTI
 					
 					LEFT JOIN OPERATORI_VENDITORI OV ON TIPO<>"OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL 
-					LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL 
+					LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" OR TIPO="AGENTE_JUNIOR" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL 
 					LEFT JOIN SUPERVISORE_RESPONSABILI SR ON TIPO="RESPONSABILE_AGENTI" AND SR.ID_RESPONSABILE=UTENTI.ID_UTENTE AND SR.DATA_FINE_ASS IS NULL  
 					WHERE ID_UTENTE=?`, id,
                     function(err, rows, fields) {
@@ -3707,8 +3773,14 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
                 Qstato = ' AND STATO = "' + stato + '" ';
                 
             }else{
-                //DI DEFAULT NON MOSTRO I NON GESTIRE E I RESPINTI
-                Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO" ';
+                if(req.body.userType && (req.body.userType == 'AGENTE' || req.body.userType == 'AGENTE_JUNIOR' || req.body.userType == 'RESPONSABILE_AGENTI')){
+                    //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
+                    Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO" AND STATO != "RIENTRO" ';
+                }
+                else {
+                    //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
+                    Qstato = ' AND STATO != "NON_GESTIRE" ';
+                }
             }
 
 
@@ -3841,9 +3913,16 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
                 Qstato = ' AND STATO = "' + stato + '" ';
                 
             }else{
-                //DI DEFAULT NON MOSTRO I NON GESTIRE E I RESPINTI 
-                Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO"';
+                if(req.body.userType && (req.body.userType == 'AGENTE' || req.body.userType == 'AGENTE_JUNIOR' || req.body.userType == 'RESPONSABILE_AGENTI')){
+                    //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
+                    Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO" AND STATO != "RIENTRO" ';
+                }
+                else {
+                    //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
+                    Qstato = ' AND STATO != "NON_GESTIRE" ';
+                }
             }
+            
 
           
 

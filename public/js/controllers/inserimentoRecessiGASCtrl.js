@@ -9,7 +9,7 @@ app.controller('inserimentoRecessiGASCtrl',['$scope', '$http', '$location', 'ale
 
     $scope.insertRecessesGAS.venditori = {};
 
-    $http.get('/listaAgentiNoRelationWithOperatorWS').then((result) => {
+    $http.get('/listaAgentiNoRelationWithOperatorWSrecessi').then((result) => {
         $scope.insertRecessesGAS.venditori = result.data.agenti;
         }).catch((err) => {
             if(err.status === 403){

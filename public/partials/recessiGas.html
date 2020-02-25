@@ -277,17 +277,19 @@
 
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="stato">Stato: &nbsp;</label>
-                <select  ng-required="true" name="statoSelected" class="form-control" id="stato"   ng-model="recessesGas.dettaglioRecesso.STATO">
+                <select ng-if="recessesGas.dettaglioRecesso.STATO != 'RIENTRO' || user.TYPE == 'ADMIN' || user.TYPE == 'BACK_OFFICE' " ng-required="true" name="statoSelected" class="form-control" id="stato"   ng-model="recessesGas.dettaglioRecesso.STATO_DA_INVIARE">
                     <option ng-repeat="option1 in recessesGas.Stati" ng-value="option1.Value" ng-selected="option1.Value === recessesGas.dettaglioRecesso.STATO" value="{{option1.Value}}">{{option1.Name}} </option>
                     <!-- INSERITO SOLO PER AGENTE JUNIOR E AGENTE, PER NON DUPLICARE L'OGGETTO .Stati dato che gli agenti possono respingere ma
                     non ricercare i recessi respinti -->
                     <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"  ng-value="'RESPINTO'"  value="RESPINTO">RESPINTO </option>
+                    <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"  ng-value="'RIENTRO'"  value="RIENTRO">RIENTRO </option>
                 </select>
+                <p ng-if="recessesGas.dettaglioRecesso.STATO == 'RIENTRO' && user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE'">{{recessesGas.dettaglioRecesso.STATO}}</p>
                 
             </div>
-            <div ng-if="recessesGas.dettaglioRecesso.STATO == 'RIENTRO'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <div ng-if="recessesGas.dettaglioRecesso.STATO == 'RIENTRO' || recessesGas.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="stato">Codice Contratto: &nbsp;</label>
-                <input id="stato" maxlength="6" ng-pattern="/^[0-9]{6}$/" type="text" ng-required="recessesGas.dettaglioRecesso.STATO == 'RIENTRO'" ng-model="recessesGas.dettaglioRecesso.COD_CONTRATTO"   name="codContratto" class="form-control" placeholder="Inserisci Cod Contratto">
+                <input id="stato" maxlength="6" ng-pattern="/^[0-9]{6}$/" type="text" ng-required="recessesGas.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'" ng-model="recessesGas.dettaglioRecesso.COD_CONTRATTO"   name="codContratto" class="form-control" placeholder="Inserisci Cod Contratto">
             </div>
 
 
@@ -318,7 +320,7 @@
 
            
             <div class="col-md-12 col-xl-12 mt-3 ">
-                <button ng-disabled="viewDettaglioRecesso.$invalid"  type="submit" class="btn btn-orange ">Salva modifiche</button>
+                <button ng-show="recessesGas.dettaglioRecesso.STATO != 'RIENTRO' || (user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE')" ng-disabled="viewDettaglioRecesso.$invalid"  type="submit" class="btn btn-orange ">Salva modifiche</button>
                 <button  ng-click="recessesGas.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
             </div>
           

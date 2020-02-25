@@ -268,9 +268,9 @@
                 <select ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'" id="agente"  name="venditoreSelect" class="form-control"    ng-model="recessesLuce.dettaglioRecesso.ID_VENDITORE">
                     <option ng-repeat="option1 in recessesLuce.agenti" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesLuce.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
                 </select>
-                <select ng-if="user.TYPE === 'RESPONSABILE_AGENTI'" id="agente" name="venditoreSelect" class="form-control"   ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
+                <select ng-if="user.TYPE === 'RESPONSABILE_AGENTI'" id="agente" name="venditoreSelect" class="form-control"   ng-model="recessesLuce.dettaglioRecesso.ID_VENDITORE">
                     <option ng-value="user.Id" value="{{user.Id}}" ng-selected="user.Id === recessesLuce.dettaglioRecesso.ID_VENDITORE"> {{user.SURNAME}} {{user.NAME}}</option>
-                    <option ng-repeat="option1 in recessesLuce.venditoriForResponsabili" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesGas.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                    <option ng-repeat="option1 in recessesLuce.venditoriForResponsabili" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesLuce.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
                 </select>
                 <!-- SE SONO AGENTE O AGENTE_JUNIOR VEDO SOLAMENTE LA MIA ASSEGNAZIONE -->
                 <p ng-if="user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE' && user.TYPE !== 'RESPONSABILE_AGENTI'" id="agente" class="input-group datepicker font-weight-bold">
@@ -285,18 +285,19 @@
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="stato">Stato: &nbsp;</label>
-                <select  ng-required="true" name="statoSelected" class="form-control" id="stato"   ng-model="recessesLuce.dettaglioRecesso.STATO">
+                <select ng-if="recessesLuce.dettaglioRecesso.STATO != 'RIENTRO' || user.TYPE == 'ADMIN' || user.TYPE == 'BACK_OFFICE' "  ng-required="true" name="statoSelected" class="form-control" id="stato"   ng-model="recessesLuce.dettaglioRecesso.STATO_DA_INVIARE">
                     <option ng-repeat="option1 in recessesLuce.Stati" ng-value="option1.Value" ng-selected="option1.Value === recessesLuce.dettaglioRecesso.STATO" value="{{option1.Value}}">{{option1.Name}} </option>
                     <!-- INSERITO SOLO PER AGENTE JUNIOR E AGENTE, PER NON DUPLICARE L'OGGETTO .Stati dato che gli agenti possono respingere ma
                     non ricercare i recessi respinti -->
                     <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"  ng-value="'RESPINTO'"  value="RESPINTO">RESPINTO </option>
+                    <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"  ng-value="'RIENTRO'"  value="RIENTRO">RIENTRO </option>
                 </select>
-                
+                <p ng-if="recessesLuce.dettaglioRecesso.STATO == 'RIENTRO' && user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE'">{{recessesLuce.dettaglioRecesso.STATO}}</p>
             </div>
 
-            <div ng-if="recessesLuce.dettaglioRecesso.STATO == 'RIENTRO'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <div ng-if="recessesLuce.dettaglioRecesso.STATO == 'RIENTRO' || recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                 <label for="stato">Codice Contratto: &nbsp;</label>
-                <input id="stato" maxlength="6" ng-pattern="/^[0-9]{6}$/" type="text" ng-required="recessesLuce.dettaglioRecesso.STATO == 'RIENTRO'" ng-model="recessesLuce.dettaglioRecesso.COD_CONTRATTO"   name="codContratto" class="form-control" placeholder="Inserisci Cod Contratto">
+                <input id="stato" maxlength="6" ng-pattern="/^[0-9]{6}$/" type="text" ng-required="recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'" ng-model="recessesLuce.dettaglioRecesso.COD_CONTRATTO"   name="codContratto" class="form-control" placeholder="Inserisci Cod Contratto">
             </div>
 
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
@@ -320,7 +321,7 @@
            
            
             <div class="col-md-12 col-xl-12 mt-3 ">
-                <button ng-disabled="viewDettaglioRecesso.$invalid "  type="submit" class="btn btn-orange ">Salva modifiche</button>
+                <button ng-show="recessesLuce.dettaglioRecesso.STATO != 'RIENTRO' || (user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE')" ng-disabled="viewDettaglioRecesso.$invalid "  type="submit" class="btn btn-orange ">Salva modifiche</button>
                 <button  ng-click="recessesLuce.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
             </div>
           

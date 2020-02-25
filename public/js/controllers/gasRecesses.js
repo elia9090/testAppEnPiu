@@ -111,10 +111,6 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             {
                 "Name":"PRESO IN CARICO",
                 "Value":"PRESO_IN_CARICO"
-            },
-            {
-                "Name":"RIENTRO",
-                "Value":"RIENTRO"
             }
         ];
     }else if($scope.user.TYPE === 'OPERATORE'){
@@ -150,7 +146,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
       
         
         //LISTA AGENTI SENZA RELAZIONI CON GLI OPERATORI E ELIMINATI LOGICAMENTE
-        $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS').then((result) => {
+        $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWSrecessi').then((result) => {
             $scope.recessesGas.agenti =  result.data.agenti;
            
             
@@ -349,6 +345,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
     $scope.recessesGas.dettaglioRecesso = {};
     $scope.recessesGas.modifyRecess = function(recesso){
         $scope.recessesGas.dettaglioRecesso = Object.assign({},recesso);
+        $scope.recessesGas.dettaglioRecesso.STATO_DA_INVIARE = $scope.recessesGas.dettaglioRecesso.STATO;
         $('#recessModal').modal('show');
     }
 
@@ -362,7 +359,7 @@ app.controller('gasRecessesCtrl',['$scope', '$http', '$location','alertify','mom
             'refRecesso':$scope.recessesGas.dettaglioRecesso.REFERENTE_RECESSO,
             'refRecapito':$scope.recessesGas.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO,
             'codContratto': $scope.recessesGas.dettaglioRecesso.COD_CONTRATTO,
-            'stato': $scope.recessesGas.dettaglioRecesso.STATO,
+            'stato': $scope.recessesGas.dettaglioRecesso.STATO_DA_INVIARE,
             'note': $scope.recessesGas.dettaglioRecesso.NOTE,
 
          }).then((result) => {

@@ -112,10 +112,6 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
             {
                 "Name":"PRESO IN CARICO",
                 "Value":"PRESO_IN_CARICO"
-            },
-            {
-                "Name":"RIENTRO",
-                "Value":"RIENTRO"
             }
         ];
     }else if($scope.user.TYPE === 'OPERATORE'){
@@ -151,7 +147,7 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
       
         
         //LISTA AGENTI SENZA RELAZIONI CON GLI OPERATORI E ELIMINATI LOGICAMENTE
-        $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS').then((result) => {
+        $http.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWSrecessi').then((result) => {
             $scope.recessesLuce.agenti =  result.data.agenti;
            
             
@@ -353,8 +349,10 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
     });
 
     $scope.recessesLuce.dettaglioRecesso = {};
+
     $scope.recessesLuce.modifyRecess = function(recesso){
         $scope.recessesLuce.dettaglioRecesso = Object.assign({},recesso);
+        $scope.recessesLuce.dettaglioRecesso.STATO_DA_INVIARE = $scope.recessesLuce.dettaglioRecesso.STATO;
         $('#recessModal').modal('show');
     }
 

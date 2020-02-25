@@ -28,31 +28,31 @@
         <legend>Tipo utente</legend>
         <div class="form-check ">
           <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" ng-model="userType" value="AGENTE_JUNIOR" >
+              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" ng-model="userType" value="AGENTE_JUNIOR" >
               Agente Junior
             </label>
           </div>
         <div ng-show="user.TYPE === 'ADMIN'" class="form-check">
           <label class="form-check-label ">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1"  ng-model="userType" value="AGENTE" checked="checked">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2"  ng-model="userType" value="AGENTE" checked="checked">
            Agente
           </label>
         </div>
         <div ng-show="user.TYPE === 'ADMIN'" class="form-check">
         <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" ng-model="userType" value="RESPONSABILE_AGENTI">
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" ng-model="userType" value="RESPONSABILE_AGENTI">
             Responsabile agenti
           </label>
         </div>
         <div ng-show="user.TYPE === 'ADMIN'" class="form-check ">
         <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" ng-model="userType" value="OPERATORE" >
+            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" ng-model="userType" value="OPERATORE" >
             Operatore
           </label>
         </div>
         <div ng-show="user.TYPE === 'ADMIN'" class="form-check ">
           <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" ng-model="userType" value="BACK_OFFICE" >
+              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios5" ng-model="userType" value="BACK_OFFICE" >
               Back office
             </label>
           </div>
