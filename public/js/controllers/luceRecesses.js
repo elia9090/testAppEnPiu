@@ -366,7 +366,7 @@ app.controller('luceRecessesCtrl',['$scope', '$http', '$location','alertify','mo
             'refRecesso':$scope.recessesLuce.dettaglioRecesso.REFERENTE_RECESSO,
             'refRecapito':$scope.recessesLuce.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO,
             'codContratto': $scope.recessesLuce.dettaglioRecesso.COD_CONTRATTO,
-            'stato': $scope.recessesLuce.dettaglioRecesso.STATO,
+            'stato': $scope.recessesLuce.dettaglioRecesso.STATO_DA_INVIARE,
             'note': $scope.recessesLuce.dettaglioRecesso.NOTE,
 
          }).then((result) => {
