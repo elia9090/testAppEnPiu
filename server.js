@@ -67,7 +67,7 @@ cron.schedule('0 5 * * *', () => {
 
 
 // This responds a POST request for the /LOGIN page.
-app.post('/login', function(req, res) {
+app.post('/login', function (req, res) {
     console.log("post :: /login");
     log.info('post Request :: /login');
 
@@ -76,8 +76,8 @@ app.post('/login', function(req, res) {
     var username = req.body.username;
     var password = sha1(req.body.password);
 
-    pool.getConnection(function(err, connection) {
-        connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = ? and UTENTE_ATTIVO = 1', [username, password], function(err, rows, fields) {
+    pool.getConnection(function (err, connection) {
+        connection.query('SELECT * from UTENTI where USERNAME = ? and PASSWORD = ? and UTENTE_ATTIVO = 1', [username, password], function (err, rows, fields) {
             connection.release();
             if (rows.length !== 0 && !err) {
                 data["utente"] = rows[0];
@@ -90,7 +90,7 @@ app.post('/login', function(req, res) {
                     }, config.secretKey, {
                         expiresIn: "8h"
                     });
-                } 
+                }
                 else if (rows[0].TIPO == 'BACK_OFFICE') {
                     token = jwt.sign({
                         user: rows[0].ID_UTENTE,
@@ -139,8 +139,8 @@ app.post('/login', function(req, res) {
     });
 });
 //UPDATE PASSWORD
-app.post('/editPassword', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/editPassword', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -152,17 +152,17 @@ app.post('/editPassword', ensureToken, function(req, res) {
             var id = parseInt(req.body.userId);
             var password = sha1(req.body.password);
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
                     } else {
-                        connection.query('UPDATE UTENTI SET PASSWORD=?, EDIT_PASSWORD=0 WHERE ID_UTENTE= ?', [password, id], function(err, rows, fields) {
+                        connection.query('UPDATE UTENTI SET PASSWORD=?, EDIT_PASSWORD=0 WHERE ID_UTENTE= ?', [password, id], function (err, rows, fields) {
                             if (err) {
-                                connection.rollback(function() {
+                                connection.rollback(function () {
                                     connection.release();
                                     //Failure
                                 });
@@ -172,9 +172,9 @@ app.post('/editPassword', ensureToken, function(req, res) {
                                 res.sendStatus(500);
 
                             } else {
-                                connection.commit(function(err) {
+                                connection.commit(function (err) {
                                     if (err) {
-                                        connection.rollback(function() {
+                                        connection.rollback(function () {
                                             connection.release();
                                             //Failure
                                         });
@@ -200,8 +200,8 @@ app.post('/editPassword', ensureToken, function(req, res) {
 
 
 // INSERT USER
-app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/addUser', ensureToken, requireAdminOrResponsabile, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -219,17 +219,17 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
             var responsabileAssociato = req.body.responsabileAssociato;
             var supervisoreAssociato = req.body.supervisoreAssociato;
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
                     } else {
-                        connection.query('INSERT INTO UTENTI (ID_UTENTE, NOME, COGNOME, TIPO, USERNAME, PASSWORD)VALUES (NULL, ?, ?, ?, ?, ?)', [nome, cognome, userType, username, password], function(err, rows, fields) {
+                        connection.query('INSERT INTO UTENTI (ID_UTENTE, NOME, COGNOME, TIPO, USERNAME, PASSWORD)VALUES (NULL, ?, ?, ?, ?, ?)', [nome, cognome, userType, username, password], function (err, rows, fields) {
                             if (err) {
-                                connection.rollback(function() {
+                                connection.rollback(function () {
                                     connection.release();
                                     //Failure
                                 });
@@ -245,9 +245,9 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
                             } else {
                                 // se l'usertype è l'operatore o BACK_OFFICE faccio il commit ed esco
                                 if (userType === 'OPERATORE' || userType === 'BACK_OFFICE') {
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -261,9 +261,9 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
                                     });
                                 } else if (userType === 'RESPONSABILE_AGENTI') {
                                     var insertedId = rows.insertId;
-                                    connection.query('INSERT INTO OPERATORI_VENDITORI (ID_ASSOCIAZIONE, ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [insertedId, operatoreAssociato], function(err, rows, fields) {
+                                    connection.query('INSERT INTO OPERATORI_VENDITORI (ID_ASSOCIAZIONE, ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [insertedId, operatoreAssociato], function (err, rows, fields) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -278,9 +278,9 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
 
                                         } else {
                                             if (supervisoreAssociato) {
-                                                connection.query('INSERT INTO SUPERVISORE_RESPONSABILI (ID_ASSOCIAZIONE, ID_SUPERVISORE, ID_RESPONSABILE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [supervisoreAssociato, insertedId], function(err, rows, fields) {
+                                                connection.query('INSERT INTO SUPERVISORE_RESPONSABILI (ID_ASSOCIAZIONE, ID_SUPERVISORE, ID_RESPONSABILE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [supervisoreAssociato, insertedId], function (err, rows, fields) {
                                                     if (err) {
-                                                        connection.rollback(function() {
+                                                        connection.rollback(function () {
                                                             connection.release();
                                                             //Failure
                                                         });
@@ -297,9 +297,9 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
                                             }
 
                                         }
-                                        connection.commit(function(err) {
+                                        connection.commit(function (err) {
                                             if (err) {
-                                                connection.rollback(function() {
+                                                connection.rollback(function () {
                                                     connection.release();
                                                     //Failure
                                                 });
@@ -315,10 +315,10 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
                                 } else if (userType === 'AGENTE' || userType === 'AGENTE_JUNIOR') {
                                     var insertedId = rows.insertId;
                                     if (operatoreAssociato) {
-                                        
-                                        connection.query('INSERT INTO OPERATORI_VENDITORI (ID_ASSOCIAZIONE, ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [insertedId, operatoreAssociato], function(err, rows, fields) {
+
+                                        connection.query('INSERT INTO OPERATORI_VENDITORI (ID_ASSOCIAZIONE, ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [insertedId, operatoreAssociato], function (err, rows, fields) {
                                             if (err) {
-                                                connection.rollback(function() {
+                                                connection.rollback(function () {
                                                     connection.release();
                                                     //Failure
                                                 });
@@ -335,9 +335,9 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
                                         });
                                     }
                                     if (responsabileAssociato) {
-                                        connection.query('INSERT INTO RESPONSABILI_AGENTI (ID_ASSOCIAZIONE, ID_RESPONSABILE, ID_AGENTE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [responsabileAssociato, insertedId], function(err, rows, fields) {
+                                        connection.query('INSERT INTO RESPONSABILI_AGENTI (ID_ASSOCIAZIONE, ID_RESPONSABILE, ID_AGENTE, DATA_INIZIO_ASS, DATA_FINE_ASS)VALUES (NULL, ?, ?, CURDATE(), NULL)', [responsabileAssociato, insertedId], function (err, rows, fields) {
                                             if (err) {
-                                                connection.rollback(function() {
+                                                connection.rollback(function () {
                                                     connection.release();
                                                     //Failure
                                                 });
@@ -353,9 +353,9 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
                                             }
                                         });
                                     }
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 res.sendStatus(500);
 
@@ -387,8 +387,8 @@ app.post('/addUser', ensureToken, requireAdminOrResponsabile, function(req, res)
 
 
 // UPDATE USER
-app.post('/updateUser', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/updateUser', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -406,10 +406,10 @@ app.post('/updateUser', ensureToken, requireAdmin, function(req, res) {
             var cognome = req.body.cognome;
             var userType = req.body.userType;
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
@@ -423,9 +423,9 @@ app.post('/updateUser', ensureToken, requireAdmin, function(req, res) {
                             queryString = 'UPDATE UTENTI SET  NOME=?, COGNOME=?, TIPO=?, USERNAME=?, PASSWORD=?, EDIT_PASSWORD=1 WHERE ID_UTENTE=?';
                             params = [nome, cognome, userType, username, password, userId]
                         }
-                        connection.query(queryString, params, function(err, rows, fields) {
+                        connection.query(queryString, params, function (err, rows, fields) {
                             if (err) {
-                                connection.rollback(function() {
+                                connection.rollback(function () {
                                     connection.release();
                                     //Failure
                                 });
@@ -440,9 +440,9 @@ app.post('/updateUser', ensureToken, requireAdmin, function(req, res) {
 
                             } else {
 
-                                connection.commit(function(err) {
+                                connection.commit(function (err) {
                                     if (err) {
-                                        connection.rollback(function() {
+                                        connection.rollback(function () {
                                             connection.release();
                                             //Failure
                                         });
@@ -471,8 +471,8 @@ app.post('/updateUser', ensureToken, requireAdmin, function(req, res) {
 
 
 // UPDATE OPERATORE ASSOCIATO ALL'UTENTE MODIFICATO
-app.post('/updateOperatore', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/updateOperatore', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -484,18 +484,18 @@ app.post('/updateOperatore', ensureToken, requireAdmin, function(req, res) {
             var oldOperatore = req.body.oldOperatore;
             var newOperatore = req.body.newOperatore;
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
                     } else {
                         if (oldOperatore != null) {
-                            connection.query('UPDATE OPERATORI_VENDITORI SET  DATA_FINE_ASS=sysdate()  WHERE ID_AGENTE=? and ID_OPERATORE=?  and  DATA_FINE_ASS is null ', [userId, oldOperatore], function(err, rows, fields) {
+                            connection.query('UPDATE OPERATORI_VENDITORI SET  DATA_FINE_ASS=sysdate()  WHERE ID_AGENTE=? and ID_OPERATORE=?  and  DATA_FINE_ASS is null ', [userId, oldOperatore], function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -510,9 +510,9 @@ app.post('/updateOperatore', ensureToken, requireAdmin, function(req, res) {
 
                                 } else {
 
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -526,9 +526,9 @@ app.post('/updateOperatore', ensureToken, requireAdmin, function(req, res) {
                             })
                         }
                         if (newOperatore != null) {
-                            connection.query('INSERT INTO OPERATORI_VENDITORI (ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newOperatore], function(err, rows, fields) {
+                            connection.query('INSERT INTO OPERATORI_VENDITORI (ID_AGENTE, ID_OPERATORE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newOperatore], function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -542,9 +542,9 @@ app.post('/updateOperatore', ensureToken, requireAdmin, function(req, res) {
                                     }
                                 } else {
 
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -572,8 +572,8 @@ app.post('/updateOperatore', ensureToken, requireAdmin, function(req, res) {
 
 
 // UPDATE RESPONSABILE ASSOCIATO ALL'UTENTE MODIFICATO
-app.post('/updateResponsabile', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/updateResponsabile', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -585,18 +585,18 @@ app.post('/updateResponsabile', ensureToken, requireAdmin, function(req, res) {
             var oldResponsabile = req.body.oldResponsabile;
             var newResponsabile = req.body.newResponsabile;
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
                     } else {
                         if (oldResponsabile != null) {
-                            connection.query('UPDATE RESPONSABILI_AGENTI SET  DATA_FINE_ASS=sysdate()  WHERE ID_AGENTE=? and ID_RESPONSABILE=? and  DATA_FINE_ASS is null', [userId, oldResponsabile], function(err, rows, fields) {
+                            connection.query('UPDATE RESPONSABILI_AGENTI SET  DATA_FINE_ASS=sysdate()  WHERE ID_AGENTE=? and ID_RESPONSABILE=? and  DATA_FINE_ASS is null', [userId, oldResponsabile], function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -611,9 +611,9 @@ app.post('/updateResponsabile', ensureToken, requireAdmin, function(req, res) {
 
                                 } else {
 
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -627,9 +627,9 @@ app.post('/updateResponsabile', ensureToken, requireAdmin, function(req, res) {
                             })
                         }
                         if (newResponsabile != null) {
-                            connection.query('INSERT INTO RESPONSABILI_AGENTI (ID_AGENTE, ID_RESPONSABILE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newResponsabile], function(err, rows, fields) {
+                            connection.query('INSERT INTO RESPONSABILI_AGENTI (ID_AGENTE, ID_RESPONSABILE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newResponsabile], function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -644,9 +644,9 @@ app.post('/updateResponsabile', ensureToken, requireAdmin, function(req, res) {
 
                                 } else {
 
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -671,8 +671,8 @@ app.post('/updateResponsabile', ensureToken, requireAdmin, function(req, res) {
     })
 });
 //UPDATE SUPERVISORE
-app.post('/updateSupervisore', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/updateSupervisore', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -684,18 +684,18 @@ app.post('/updateSupervisore', ensureToken, requireAdmin, function(req, res) {
             var oldSupervisore = req.body.oldSupervisore;
             var newSupervisore = req.body.newSupervisore;
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
                     } else {
                         if (oldSupervisore != null) {
-                            connection.query('UPDATE SUPERVISORE_RESPONSABILI SET  DATA_FINE_ASS=sysdate()  WHERE ID_RESPONSABILE=? and ID_SUPERVISORE=? and  DATA_FINE_ASS is null', [userId, oldSupervisore], function(err, rows, fields) {
+                            connection.query('UPDATE SUPERVISORE_RESPONSABILI SET  DATA_FINE_ASS=sysdate()  WHERE ID_RESPONSABILE=? and ID_SUPERVISORE=? and  DATA_FINE_ASS is null', [userId, oldSupervisore], function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -710,9 +710,9 @@ app.post('/updateSupervisore', ensureToken, requireAdmin, function(req, res) {
 
                                 } else {
 
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -726,9 +726,9 @@ app.post('/updateSupervisore', ensureToken, requireAdmin, function(req, res) {
                             })
                         }
                         if (newSupervisore != null) {
-                            connection.query('INSERT INTO SUPERVISORE_RESPONSABILI (ID_RESPONSABILE, ID_SUPERVISORE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newSupervisore], function(err, rows, fields) {
+                            connection.query('INSERT INTO SUPERVISORE_RESPONSABILI (ID_RESPONSABILE, ID_SUPERVISORE, DATA_INIZIO_ASS, DATA_FINE_ASS) VALUES(?,?,SYSDATE(), null) ', [userId, newSupervisore], function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -743,9 +743,9 @@ app.post('/updateSupervisore', ensureToken, requireAdmin, function(req, res) {
 
                                 } else {
 
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -772,8 +772,8 @@ app.post('/updateSupervisore', ensureToken, requireAdmin, function(req, res) {
 
 
 // DELETE USER
-app.post('/deleteUser', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/deleteUser', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -784,10 +784,10 @@ app.post('/deleteUser', ensureToken, requireAdmin, function(req, res) {
             var userId = req.body.userId;
 
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
@@ -798,9 +798,9 @@ app.post('/deleteUser', ensureToken, requireAdmin, function(req, res) {
                         params = [userId]
 
 
-                        connection.query(queryString, params, function(err, rows, fields) {
+                        connection.query(queryString, params, function (err, rows, fields) {
                             if (err) {
-                                connection.rollback(function() {
+                                connection.rollback(function () {
                                     connection.release();
                                     //Failure
                                 });
@@ -815,9 +815,9 @@ app.post('/deleteUser', ensureToken, requireAdmin, function(req, res) {
 
                             } else {
 
-                                connection.commit(function(err) {
+                                connection.commit(function (err) {
                                     if (err) {
-                                        connection.rollback(function() {
+                                        connection.rollback(function () {
                                             connection.release();
                                             //Failure
                                         });
@@ -847,15 +847,15 @@ app.post('/deleteUser', ensureToken, requireAdmin, function(req, res) {
 
 
 //lsita operatori
-app.get('/listaOperatoriWS', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaOperatoriWS', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
         } else {
             var data = {};
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT * from UTENTI where TIPO = "OPERATORE" AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT * from UTENTI where TIPO = "OPERATORE" AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function (err, rows, fields) {
                     connection.release();
                     if (rows.length !== 0 && !err) {
                         data["operatori"] = rows;
@@ -879,15 +879,15 @@ app.get('/listaOperatoriWS', ensureToken, function(req, res) {
     });
 });
 //lsita Agenti ATTIVI e non relazionati agli operatori 
-app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
         } else {
             var data = {};
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function (err, rows, fields) {
                     connection.release();
                     if (rows.length !== 0 && !err) {
                         data["agenti"] = rows;
@@ -912,15 +912,15 @@ app.get('/listaAgentiNoRelationWithOperatorWS', ensureToken, function(req, res) 
 });
 
 //lsita Agenti ATTIVI e non relazionati agli operatori RECESSI
-app.get('/listaAgentiNoRelationWithOperatorWSrecessi', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAgentiNoRelationWithOperatorWSrecessi', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
         } else {
             var data = {};
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI" OR TIPO="AGENTE_JUNIOR") AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI" OR TIPO="AGENTE_JUNIOR") AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function (err, rows, fields) {
                     connection.release();
                     if (rows.length !== 0 && !err) {
                         data["agenti"] = rows;
@@ -945,15 +945,15 @@ app.get('/listaAgentiNoRelationWithOperatorWSrecessi', ensureToken, function(req
 });
 
 //lsita Agenti non relazionati agli operatori E ELIMINATI LOGICAMENTE
-app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
         } else {
             var data = {};
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") ORDER BY COGNOME ASC', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI") ORDER BY COGNOME ASC', function (err, rows, fields) {
                     connection.release();
                     if (rows.length !== 0 && !err) {
                         data["agenti"] = rows;
@@ -978,15 +978,15 @@ app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWS', ensureToken, funct
 });
 
 //lsita Agenti non relazionati agli operatori E ELIMINATI LOGICAMENTE
-app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWSrecessi', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWSrecessi', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
         } else {
             var data = {};
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI" OR TIPO = "AGENTE_JUNIOR") ORDER BY COGNOME ASC', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT * from UTENTI where (TIPO = "AGENTE" OR TIPO = "RESPONSABILE_AGENTI" OR TIPO = "AGENTE_JUNIOR") ORDER BY COGNOME ASC', function (err, rows, fields) {
                     connection.release();
                     if (rows.length !== 0 && !err) {
                         data["agenti"] = rows;
@@ -1011,15 +1011,15 @@ app.get('/listaAgentiNoRelationWithOperatorAndUserDeletedWSrecessi', ensureToken
 });
 
 //lsita utenti
-app.get('/listaUtenti', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaUtenti', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
         } else {
             var data = {};
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT * from UTENTI WHERE UTENTE_ATTIVO=1 ORDER BY COGNOME ASC', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT * from UTENTI WHERE UTENTE_ATTIVO=1 ORDER BY COGNOME ASC', function (err, rows, fields) {
                     connection.release();
                     if (rows.length !== 0 && !err) {
                         data["utenti"] = rows;
@@ -1047,15 +1047,15 @@ app.get('/listaUtenti', ensureToken, requireAdmin, function(req, res) {
 
 
 //Modifica utente
-app.get('/edituser/:id', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/edituser/:id', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
         } else {
             var id = req.params.id;
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     `SELECT UTENTI.*,
 					 OV.ID_ASSOCIAZIONE as OV_ID_ASSOCIAZIONE,
@@ -1080,7 +1080,7 @@ app.get('/edituser/:id', ensureToken, requireAdmin, function(req, res) {
 					LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" OR TIPO="AGENTE_JUNIOR" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL 
 					LEFT JOIN SUPERVISORE_RESPONSABILI SR ON TIPO="RESPONSABILE_AGENTI" AND SR.ID_RESPONSABILE=UTENTI.ID_UTENTE AND SR.DATA_FINE_ASS IS NULL  
 					WHERE ID_UTENTE=?`, id,
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
 
                         connection.release();
                         if (err) {
@@ -1115,8 +1115,8 @@ app.get('/edituser/:id', ensureToken, requireAdmin, function(req, res) {
 
 
 // NUOVO APPUNTAMENTO
-app.post('/addNewDate', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/addNewDate', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -1136,10 +1136,10 @@ app.post('/addNewDate', ensureToken, function(req, res) {
             var recapiti = req.body.recapiti;
             var noteOperatore = req.body.noteOperatore;
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
@@ -1147,9 +1147,9 @@ app.post('/addNewDate', ensureToken, function(req, res) {
                         connection.query('INSERT INTO APPUNTAMENTI' +
                             '(ID_APPUNTAMENTO, ID_OPERATORE, ID_VENDITORE, DATA_CREAZIONE, DATA_APPUNTAMENTO, ORA_APPUNTAMENTO, PROVINCIA, COMUNE, INDIRIZZO, NOME_ATTIVITA, NOTE_OPERATORE, ATTUALE_GESTORE, RECAPITI)' +
                             'VALUES (NULL, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?  )', [idOperatore, idAgente, dataAppuntamento, oraAppuntamento, provincia, comune, indirizzo, nomeAttivita, noteOperatore, gestoreAttuale, recapiti],
-                            function(err, rows, fields) {
+                            function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -1157,9 +1157,9 @@ app.post('/addNewDate', ensureToken, function(req, res) {
                                     res.sendStatus(500);
 
                                 } else {
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -1184,8 +1184,8 @@ app.post('/addNewDate', ensureToken, function(req, res) {
 });
 
 
-app.post('/editDateAdmin', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/editDateAdmin', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -1228,10 +1228,10 @@ app.post('/editDateAdmin', ensureToken, requireAdmin, function(req, res) {
             }
 
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
@@ -1241,9 +1241,9 @@ app.post('/editDateAdmin', ensureToken, requireAdmin, function(req, res) {
                             ' ATTUALE_GESTORE = ?, RECAPITI = ?, ESITO = ?, NOTE_AGENTE = ?, ' +
                             ' NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, DATA_OK = ? ' +
                             '  WHERE ID_APPUNTAMENTO = ? ', [dataAppuntamento, oraAppuntamento, provincia, comune, indirizzo, idOperatore, idAgente, nomeAttivita, noteOperatore, gestoreAttuale, recapiti, esitoAppuntamento, noteAgente, numLuce, numGas, codici_contratto_luce, codici_contratto_gas, date_ok, idAppuntamento],
-                            function(err, rows, fields) {
+                            function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -1251,9 +1251,9 @@ app.post('/editDateAdmin', ensureToken, requireAdmin, function(req, res) {
                                     res.sendStatus(500);
 
                                 } else {
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -1278,8 +1278,8 @@ app.post('/editDateAdmin', ensureToken, requireAdmin, function(req, res) {
 });
 
 // NUOVO APPUNTAMENTO
-app.post('/editDateVenditore', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/editDateVenditore', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -1309,17 +1309,17 @@ app.post('/editDateVenditore', ensureToken, function(req, res) {
                 var date_ok = annoCorrente + "-" + meseCorrente + "-" + giornoCorrenteMenoUno;
             }
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
                     } else {
-                        connection.query('UPDATE APPUNTAMENTI SET ESITO = ?, NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, NOTE_AGENTE = ?, DATA_OK = ? WHERE ID_APPUNTAMENTO = ?', [esitoAppuntamento, numLuce, numGas, codici_contratto_luce, codici_contratto_gas, noteAgente, date_ok, idAppuntamento], function(err, rows, fields) {
+                        connection.query('UPDATE APPUNTAMENTI SET ESITO = ?, NUM_LUCE = ?, NUM_GAS = ?, CODICI_CONTRATTO_LUCE = ?, CODICI_CONTRATTO_GAS = ?, NOTE_AGENTE = ?, DATA_OK = ? WHERE ID_APPUNTAMENTO = ?', [esitoAppuntamento, numLuce, numGas, codici_contratto_luce, codici_contratto_gas, noteAgente, date_ok, idAppuntamento], function (err, rows, fields) {
                             if (err) {
-                                connection.rollback(function() {
+                                connection.rollback(function () {
                                     connection.release();
                                     //Failure
                                 });
@@ -1327,9 +1327,9 @@ app.post('/editDateVenditore', ensureToken, function(req, res) {
                                 res.sendStatus(500);
 
                             } else {
-                                connection.commit(function(err) {
+                                connection.commit(function (err) {
                                     if (err) {
-                                        connection.rollback(function() {
+                                        connection.rollback(function () {
                                             connection.release();
                                             //Failure
                                         });
@@ -1352,8 +1352,8 @@ app.post('/editDateVenditore', ensureToken, function(req, res) {
         }
     });
 });
-app.post('/editDateOperatore', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/editDateOperatore', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -1380,10 +1380,10 @@ app.post('/editDateOperatore', ensureToken, function(req, res) {
             }
             var noteAgente = req.body.noteAgente;
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         res.sendStatus(500);
@@ -1392,9 +1392,9 @@ app.post('/editDateOperatore', ensureToken, function(req, res) {
                             ' PROVINCIA = ?, COMUNE = ?, INDIRIZZO = ?, ID_OPERATORE = ?, ID_VENDITORE = ?, NOME_ATTIVITA = ?, NOTE_OPERATORE = ?, ' +
                             ' ATTUALE_GESTORE = ?, RECAPITI = ?, ESITO = ?, NOTE_AGENTE = ? ' +
                             '  WHERE ID_APPUNTAMENTO = ? ', [dataAppuntamento, oraAppuntamento, provincia, comune, indirizzo, idOperatore, idAgente, nomeAttivita, noteOperatore, gestoreAttuale, recapiti, esitoAppuntamento, noteAgente, idAppuntamento],
-                            function(err, rows, fields) {
+                            function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
@@ -1402,9 +1402,9 @@ app.post('/editDateOperatore', ensureToken, function(req, res) {
                                     res.sendStatus(500);
 
                                 } else {
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -1429,8 +1429,8 @@ app.post('/editDateOperatore', ensureToken, function(req, res) {
 });
 
 //lsita appuntamenti admin
-app.get('/listaAppuntamentiAdmin', ensureToken, requireAdminOrBackOffice, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAppuntamentiAdmin', ensureToken, requireAdminOrBackOffice, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
@@ -1459,7 +1459,7 @@ app.get('/listaAppuntamentiAdmin', ensureToken, requireAdminOrBackOffice, functi
             }
 
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
                     ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*' +
@@ -1468,7 +1468,7 @@ app.get('/listaAppuntamentiAdmin', ensureToken, requireAdminOrBackOffice, functi
                     ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
                     ' WHERE (DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)' +
                     ' OR ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?)', [from, to, to],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
@@ -1499,8 +1499,8 @@ app.get('/listaAppuntamentiAdmin', ensureToken, requireAdminOrBackOffice, functi
 });
 
 //lsita appuntamenti venditore
-app.get('/listaAppuntamentiVenditore/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAppuntamentiVenditore/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
@@ -1528,7 +1528,7 @@ app.get('/listaAppuntamentiVenditore/:id', ensureToken, function(req, res) {
             }
 
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
                     ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*' +
@@ -1537,7 +1537,7 @@ app.get('/listaAppuntamentiVenditore/:id', ensureToken, function(req, res) {
                     ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
                     ' WHERE ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)' +
                     ' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) AND APPUNTAMENTI.ID_VENDITORE=?', [from, to, to, id],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
 
                         connection.release();
                         if (err) {
@@ -1569,8 +1569,8 @@ app.get('/listaAppuntamentiVenditore/:id', ensureToken, function(req, res) {
 });
 
 //lsita appuntamenti operatore
-app.get('/listaAppuntamentiOperatore/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAppuntamentiOperatore/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
@@ -1598,7 +1598,7 @@ app.get('/listaAppuntamentiOperatore/:id', ensureToken, function(req, res) {
             }
 
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
                     ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*' +
@@ -1607,7 +1607,7 @@ app.get('/listaAppuntamentiOperatore/:id', ensureToken, function(req, res) {
                     ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
                     ' WHERE ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?)' +
                     ' OR (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO" OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) AND APPUNTAMENTI.ID_OPERATORE = ?', [from, to, to, id],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL LISTA APPUNTAMENTI ' + err);
@@ -1638,8 +1638,8 @@ app.get('/listaAppuntamentiOperatore/:id', ensureToken, function(req, res) {
 });
 
 //lsita appuntamenti responsabile
-app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
@@ -1667,7 +1667,7 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function(req, res) {
             }
 
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     ` SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,  
 					VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*  
@@ -1710,7 +1710,7 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function(req, res) {
 					 ((DATA_APPUNTAMENTO >= ? AND DATA_APPUNTAMENTO <= ?) OR  
 				   (ESITO = "VALUTA" OR ESITO = "ASSENTE" OR ESITO = "NON VISITATO"  
 				   OR (ESITO IS NULL AND DATA_APPUNTAMENTO <= ?))) `, [id, from, to, to, id, from, to, to, id, from, to, to],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
 
                         connection.release();
                         if (err) {
@@ -1745,8 +1745,8 @@ app.get('/listaAppuntamentiResponsabile/:id', ensureToken, function(req, res) {
 
 
 //Cancellazione appuntamento
-app.post('/deleteDate', ensureToken, requireAdmin, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/deleteDate', ensureToken, requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
@@ -1756,18 +1756,18 @@ app.post('/deleteDate', ensureToken, requireAdmin, function(req, res) {
 
 
 
-            pool.getConnection(function(err, connection) {
-                connection.beginTransaction(function(errTrans) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
                     if (errTrans) { //Transaction Error (Rollback and release connection)
-                        connection.rollback(function() {
+                        connection.rollback(function () {
                             connection.release();
                         });
                         log.error('ERRORE SQL TRANSACTION CANCELLAZIONE APPUNTAMENTO ' + errTrans);
                         res.sendStatus(500);
                     } else {
-                        connection.query('DELETE FROM APPUNTAMENTI WHERE ID_APPUNTAMENTO= ?', [id], function(err, rows, fields) {
+                        connection.query('DELETE FROM APPUNTAMENTI WHERE ID_APPUNTAMENTO= ?', [id], function (err, rows, fields) {
                             if (err) {
-                                connection.rollback(function() {
+                                connection.rollback(function () {
                                     connection.release();
                                     //Failure
                                 });
@@ -1775,9 +1775,9 @@ app.post('/deleteDate', ensureToken, requireAdmin, function(req, res) {
                                 res.sendStatus(500);
 
                             } else {
-                                connection.commit(function(err) {
+                                connection.commit(function (err) {
                                     if (err) {
-                                        connection.rollback(function() {
+                                        connection.rollback(function () {
                                             connection.release();
                                             //Failure
                                         });
@@ -1806,8 +1806,8 @@ app.post('/deleteDate', ensureToken, requireAdmin, function(req, res) {
 
 
 //Appuntamento
-app.get('/listaNomiAziendaAndIdAppunamentoForProvincia/:provincia', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaNomiAziendaAndIdAppunamentoForProvincia/:provincia', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
@@ -1817,10 +1817,10 @@ app.get('/listaNomiAziendaAndIdAppunamentoForProvincia/:provincia', ensureToken,
 
             var provincia = req.params.provincia;
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     `SELECT APPUNTAMENTI.ID_APPUNTAMENTO, APPUNTAMENTI.NOME_ATTIVITA FROM APPUNTAMENTI WHERE PROVINCIA = ? `, [provincia],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL GET LISTA NOME AZIENDA: ' + provincia + ' --> ' + err);
@@ -1852,8 +1852,8 @@ app.get('/listaNomiAziendaAndIdAppunamentoForProvincia/:provincia', ensureToken,
 
 
 //Appuntamento
-app.get('/appuntamento/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/appuntamento/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
 
@@ -1863,7 +1863,7 @@ app.get('/appuntamento/:id', ensureToken, function(req, res) {
 
             var idAppuntamento = req.params.id;
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
                     ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*' +
@@ -1871,7 +1871,7 @@ app.get('/appuntamento/:id', ensureToken, function(req, res) {
                     ' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE' +
                     ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
                     ' WHERE APPUNTAMENTI.ID_APPUNTAMENTO = ?', [idAppuntamento],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL GET APPUNTAMENTO: ' + idAppuntamento + ' --> ' + err);
@@ -1903,8 +1903,8 @@ app.get('/appuntamento/:id', ensureToken, function(req, res) {
 
 
 //RICERCA APPUNTAMENTI GENERICA
-app.post('/searchDate', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/searchDate', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -1982,8 +1982,8 @@ app.post('/searchDate', ensureToken, function(req, res) {
             }
 
 
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qoperatore + Qesito + ' ORDER BY DATA_APPUNTAMENTO', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qoperatore + Qesito + ' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
                     connection.release();
                     if (err) {
                         log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -1992,7 +1992,7 @@ app.post('/searchDate', ensureToken, function(req, res) {
 
                         data["totaleAppuntamenti"] = rows[0].TotalCount;
 
-                        pool.getConnection(function(err, connection) {
+                        pool.getConnection(function (err, connection) {
                             connection.query(
                                 'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
                                 ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*' +
@@ -2000,7 +2000,7 @@ app.post('/searchDate', ensureToken, function(req, res) {
                                 ' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE' +
                                 ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
                                 ' WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qoperatore + Qesito + ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?', [limit, offset],
-                                function(err, rows, fields) {
+                                function (err, rows, fields) {
                                     connection.release();
                                     if (err) {
                                         log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
@@ -2029,9 +2029,125 @@ app.post('/searchDate', ensureToken, function(req, res) {
     });
 });
 
+
+//DOWNLOAD APPUNTAMENTI
+app.post('/downloadAppuntamenti', ensureToken, requireAdminOrResponsabile, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var data = {};
+
+            var dateFrom = req.body.dateFROM;
+            var QdateFrom = " ";
+            if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
+                QdateFrom = ' AND DATA_APPUNTAMENTO >= "' + dateFrom + '" ';
+            }
+
+            var dateTo = req.body.dateTO;
+            var QdateTo = " ";
+            if (dateTo !== '' && dateTo !== undefined && dateTo != null) {
+                QdateTo = ' AND DATA_APPUNTAMENTO <= "' + dateTo + '" ';
+            }
+
+            var provincia = req.body.provincia;
+            var Qprovincia = " ";
+            if (provincia !== '' && provincia !== undefined && provincia != null) {
+                Qprovincia = ' AND PROVINCIA = "' + provincia + '" ';
+            }
+
+            var comune = req.body.comune;
+            var Qcomune = " ";
+            if (comune !== '' && comune !== undefined && comune != null) {
+                Qcomune = ' AND COMUNE = "' + comune + '" ';
+            }
+            var ragioneSociale = req.body.ragioneSociale;
+            var QragioneSociale = " ";
+            if (ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale != null) {
+                QragioneSociale = ' AND LOWER(NOME_ATTIVITA) LIKE LOWER("%' + ragioneSociale + '%") ';
+            }
+
+            var esito = req.body.esito;
+            var Qesito = " ";
+            if (esito !== '' && esito !== undefined && esito != null) {
+                if (esito == "NON ESITATO") {
+                    Qesito = ' AND ESITO IS NULL ';
+                } else {
+                    Qesito = ' AND ESITO = "' + esito + '" ';
+                }
+            }
+
+            var codiceLuce = req.body.codiceLuce;
+            var QcodiceLuce = " ";
+            if (codiceLuce !== '' && codiceLuce !== undefined && codiceLuce != null) {
+                QcodiceLuce = ' AND CODICI_CONTRATTO_LUCE LIKE "%' + codiceLuce + '%" ';
+            }
+
+            var codiceGas = req.body.codiceGas;
+            var QcodiceGas = " ";
+            if (codiceGas !== '' && codiceGas !== undefined && codiceGas != null) {
+                QcodiceGas = ' AND CODICI_CONTRATTO_GAS LIKE "%' + codiceGas + '%" ';
+            }
+
+            var agente = req.body.agente;
+            var Qagente = " ";
+            if (agente !== '' && agente !== undefined && agente != null) {
+                Qagente = ' AND ID_VENDITORE = "' + agente + '" ';
+            }
+
+            var operatore = req.body.operatore;
+            var Qoperatore = " ";
+            if (operatore !== '' && operatore !== undefined && operatore != null) {
+                Qoperatore = ' AND ID_OPERATORE = "' + operatore + '" ';
+            }
+
+
+
+            pool.getConnection(function (err, connection) {
+                connection.query(
+                    'SELECT CONCAT(VENDITORE.COGNOME, " ",  VENDITORE.NOME) AS "Agente", ' +
+                    ' CONCAT(OPERATORE.COGNOME, " ",  OPERATORE.NOME) AS "Operatore", ' +
+                    ' DATE_FORMAT(APPUNTAMENTI.DATA_APPUNTAMENTO,"%d-%m-%y") as "Data Appuntamento", ' +
+                    ' APPUNTAMENTI.NOME_ATTIVITA as "Ragione Sociale", ' +
+                    ' CONCAT(APPUNTAMENTI.INDIRIZZO, " ",  APPUNTAMENTI.COMUNE) as "Indirizzo", ' +
+                    ' APPUNTAMENTI.PROVINCIA as "Provincia", ' +
+                    ' APPUNTAMENTI.ESITO as "Esito", ' +
+                    ' APPUNTAMENTI.NOTE_OPERATORE as "Note Operatore", ' +
+                    ' APPUNTAMENTI.NOTE_AGENTE as "Note Agente", ' +
+                    ' APPUNTAMENTI.RECAPITI as "Recapiti", ' +
+                    ' APPUNTAMENTI.ATTUALE_GESTORE as "Gestore" ' +
+                    ' FROM APPUNTAMENTI' +
+                    ' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE' +
+                    ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
+                    ' WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qoperatore + Qesito + ' ORDER BY DATA_APPUNTAMENTO DESC ', [],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0) {
+                                data["appuntamenti"] = rows;
+                                res.json(data);
+                            } else {
+                                data["appuntamenti"] = [];
+                                res.json(data);
+                            }
+                        }
+
+                    });
+
+            });
+
+
+
+        }
+    });
+});
+
 //RICERCA APPUNTAMENTI RESPONSABILE AGENTI
-app.post('/searchDateResponsabile', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/searchDateResponsabile', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -2106,7 +2222,7 @@ app.post('/searchDateResponsabile', ensureToken, function(req, res) {
             var idResponsabile = req.body.idResponsabile;
 
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query('SELECT COUNT(*) AS TotalCount  FROM( SELECT  APPUNTAMENTI.ID_APPUNTAMENTO  ' +
                     ' FROM APPUNTAMENTI JOIN RESPONSABILI_AGENTI ON APPUNTAMENTI.ID_VENDITORE=RESPONSABILI_AGENTI.ID_AGENTE AND RESPONSABILI_AGENTI.ID_RESPONSABILE=? AND DATA_FINE_ASS IS NULL  LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE ' +
                     ' WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qesito +
@@ -2137,7 +2253,7 @@ app.post('/searchDateResponsabile', ensureToken, function(req, res) {
                     ' WHERE  1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qesito + ' ' +
 
                     ' ) SOMMA_APPUNTAMENTI', [idResponsabile, idResponsabile, idResponsabile, idResponsabile],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -2146,7 +2262,7 @@ app.post('/searchDateResponsabile', ensureToken, function(req, res) {
 
                             data["totaleAppuntamenti"] = rows[0].TotalCount;
 
-                            pool.getConnection(function(err, connection) {
+                            pool.getConnection(function (err, connection) {
                                 connection.query(
                                     'SELECT  OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
                                     ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.* ' +
@@ -2188,7 +2304,7 @@ app.post('/searchDateResponsabile', ensureToken, function(req, res) {
                                     ' WHERE  1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + QragioneSociale + QcodiceLuce + QcodiceGas + Qagente + Qesito + ' ' +
 
                                     ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?', [idResponsabile, idResponsabile, idResponsabile, idResponsabile, limit, offset],
-                                    function(err, rows, fields) {
+                                    function (err, rows, fields) {
                                         connection.release();
                                         if (err) {
                                             log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
@@ -2218,8 +2334,8 @@ app.post('/searchDateResponsabile', ensureToken, function(req, res) {
 });
 
 //VERIFICA APPUNTAMENTI GENERICA
-app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -2272,8 +2388,8 @@ app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function(req, res
 
 
 
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + Qagente + Qesito + ' ORDER BY DATA_APPUNTAMENTO', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT COUNT(*) AS TotalCount from APPUNTAMENTI WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + Qagente + Qesito + ' ORDER BY DATA_APPUNTAMENTO', function (err, rows, fields) {
                     connection.release();
                     if (err) {
                         log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI ' + err);
@@ -2282,7 +2398,7 @@ app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function(req, res
 
                         data["totaleAppuntamenti"] = rows[0].TotalCount;
 
-                        pool.getConnection(function(err, connection) {
+                        pool.getConnection(function (err, connection) {
                             connection.query(
                                 'SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE,' +
                                 ' VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, APPUNTAMENTI.*' +
@@ -2290,7 +2406,7 @@ app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function(req, res
                                 ' LEFT JOIN UTENTI OPERATORE ON APPUNTAMENTI.ID_OPERATORE=OPERATORE.ID_UTENTE' +
                                 ' LEFT JOIN UTENTI VENDITORE ON APPUNTAMENTI.ID_VENDITORE=VENDITORE.ID_UTENTE' +
                                 ' WHERE 1=1 ' + QdateFrom + QdateTo + Qprovincia + Qcomune + Qagente + Qesito + ' ORDER BY DATA_APPUNTAMENTO DESC LIMIT ? OFFSET ?', [limit, offset],
-                                function(err, rows, fields) {
+                                function (err, rows, fields) {
                                     connection.release();
                                     if (err) {
                                         log.error('ERRORE SQL RICERCA APPUNTAMENTI: --> ' + err);
@@ -2322,8 +2438,8 @@ app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function(req, res
 
 
 //STATISTICHE APPUNTAMENTI
-app.post('/dateStats', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/dateStats', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -2369,7 +2485,7 @@ app.post('/dateStats', ensureToken, function(req, res) {
             }
 
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     ` select * from 
 					(select
@@ -2444,7 +2560,7 @@ app.post('/dateStats', ensureToken, function(req, res) {
 							WHERE 1=1 ${Q_dateOK_From} ${Q_dateOK_To} ${Qagente} ${Qoperatore}
 							 group by APPUNTAMENTI.ID_OPERATORE
 					) as tab2 on tab1.ID_UTENTE = tab2.ID_UTENTE_2`,
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
 
@@ -2479,8 +2595,8 @@ app.post('/dateStats', ensureToken, function(req, res) {
     });
 });
 //VERIFICA STATISTICHE APPUNTAMENTI
-app.post('/verifyDateStats', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/verifyDateStats', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -2523,7 +2639,7 @@ app.post('/verifyDateStats', ensureToken, function(req, res) {
             }
 
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     `select
 					VENDITORE.ID_UTENTE AS ID_VENDITORE,
@@ -2575,7 +2691,7 @@ app.post('/verifyDateStats', ensureToken, function(req, res) {
 					WHERE 1=1 ${QdateFrom} ${QdateTo} ${Qagente} ${Qoperatore} AND OPERATORE.ID_UTENTE=${idUtente} 
 					
 					`,
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL STATS ADMIN: --> ' + err);
@@ -2609,8 +2725,8 @@ app.post('/verifyDateStats', ensureToken, function(req, res) {
 });
 
 //STATISTICHE APPUNTAMENTI DASHBOARD ADMIN
-app.get('/dateStatsAdminDashboard', ensureToken, requireAdminOrBackOffice, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/dateStatsAdminDashboard', ensureToken, requireAdminOrBackOffice, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -2621,7 +2737,7 @@ app.get('/dateStatsAdminDashboard', ensureToken, requireAdminOrBackOffice, funct
             var annoCorrente = today.getFullYear();
             var dateToTodayMenoUno = annoCorrente + "-" + meseCorrente + "-" + giornoCorrenteMenoUno;
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     `select
 					
@@ -2646,7 +2762,7 @@ app.get('/dateStatsAdminDashboard', ensureToken, requireAdminOrBackOffice, funct
 					WHERE APPUNTAMENTI.DATA_APPUNTAMENTO <= ?
 
 					`, [dateToTodayMenoUno],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL STATS DASHBOARD ADMIN: --> ' + err);
@@ -2681,8 +2797,8 @@ app.get('/dateStatsAdminDashboard', ensureToken, requireAdminOrBackOffice, funct
 
 
 //STATISTICHE APPUNTAMENTI DASHBOARD VENDITORI
-app.get('/dateStatsVenditoreDashboard/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/dateStatsVenditoreDashboard/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -2694,7 +2810,7 @@ app.get('/dateStatsVenditoreDashboard/:id', ensureToken, function(req, res) {
             var annoCorrente = today.getFullYear();
             var dateToTodayMenoUno = annoCorrente + "-" + meseCorrente + "-" + giornoCorrenteMenoUno;
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     `select
 					
@@ -2719,7 +2835,7 @@ app.get('/dateStatsVenditoreDashboard/:id', ensureToken, function(req, res) {
 					WHERE APPUNTAMENTI.DATA_APPUNTAMENTO <= ? AND APPUNTAMENTI.ID_VENDITORE = ?
 
 					`, [dateToTodayMenoUno, idVenditore],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL STATS DASHBOARD venditore: --> ' + err);
@@ -2752,8 +2868,8 @@ app.get('/dateStatsVenditoreDashboard/:id', ensureToken, function(req, res) {
     });
 });
 //STATISTICHE APPUNTAMENTI DASHBOARD Operatori
-app.get('/dateStatsOperatoreDashboard/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/dateStatsOperatoreDashboard/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -2765,7 +2881,7 @@ app.get('/dateStatsOperatoreDashboard/:id', ensureToken, function(req, res) {
             var annoCorrente = today.getFullYear();
             var dateToTodayMenoUno = annoCorrente + "-" + meseCorrente + "-" + giornoCorrenteMenoUno;
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     `select
 					
@@ -2790,7 +2906,7 @@ app.get('/dateStatsOperatoreDashboard/:id', ensureToken, function(req, res) {
 					WHERE APPUNTAMENTI.DATA_APPUNTAMENTO <= ? AND APPUNTAMENTI.ID_OPERATORE = ?
 
 					`, [dateToTodayMenoUno, idOperatore],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL STATS DASHBOARD venditore: --> ' + err);
@@ -2824,19 +2940,19 @@ app.get('/dateStatsOperatoreDashboard/:id', ensureToken, function(req, res) {
 });
 
 
-app.get('/listaUtentiForOperatore/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaUtentiForOperatore/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
             var idOperatore = req.params.id;
             var data = {};
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     'SELECT * FROM UTENTI AS UT ' +
                     ' JOIN ' +
                     ' (SELECT * FROM OPERATORI_VENDITORI AS OP WHERE OP.ID_OPERATORE = ? AND OP.DATA_FINE_ASS IS NULL ) AS T ON UT.ID_UTENTE=T.ID_AGENTE WHERE UT.UTENTE_ATTIVO = 1', [idOperatore],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (rows.length !== 0 && !err) {
                             data["utenti"] = rows;
@@ -2861,8 +2977,8 @@ app.get('/listaUtentiForOperatore/:id', ensureToken, function(req, res) {
 });
 
 //STATISTICHE APPUNTAMENTI GRUPPO VENDITA
-app.post("/dateStatsGruppoVendita", ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post("/dateStatsGruppoVendita", ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -2906,7 +3022,7 @@ app.post("/dateStatsGruppoVendita", ensureToken, function(req, res) {
                 Qagente = ' AND APPUNTAMENTI.ID_VENDITORE = "' + agente + '" ';
             }
 
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     `select * from 
 					  (select
@@ -3255,7 +3371,7 @@ app.post("/dateStatsGruppoVendita", ensureToken, function(req, res) {
                         idResponsabile,
                         idResponsabile
                     ],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error("ERRORE SQL STATS ADMIN: --> " + err);
@@ -3284,14 +3400,14 @@ app.post("/dateStatsGruppoVendita", ensureToken, function(req, res) {
 });
 
 
-app.get('/listaAgentiForResponsabile/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaAgentiForResponsabile/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
             var idResponsabile = req.params.id;
             var data = {};
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 connection.query(
                     `SELECT UT.* FROM UTENTI AS UT
 
@@ -3303,7 +3419,7 @@ app.get('/listaAgentiForResponsabile/:id', ensureToken, function(req, res) {
 					  SELECT UT.* FROM UTENTI AS UT
 					  JOIN  (SELECT RA.* FROM RESPONSABILI_AGENTI AS RA JOIN SUPERVISORE_RESPONSABILI AS SR ON RA.ID_RESPONSABILE=SR.ID_RESPONSABILE   WHERE SR.ID_SUPERVISORE = ? AND RA.DATA_FINE_ASS IS NULL ) AS T 
 					  ON UT.ID_UTENTE=T.ID_AGENTE WHERE UT.UTENTE_ATTIVO = 1`, [idResponsabile, idResponsabile, idResponsabile],
-                    function(err, rows, fields) {
+                    function (err, rows, fields) {
                         connection.release();
                         if (rows.length !== 0 && !err) {
                             data["utenti"] = rows;
@@ -3330,14 +3446,14 @@ app.get('/listaAgentiForResponsabile/:id', ensureToken, function(req, res) {
 
 
 
-app.get('/listaResponsabiliAgentiWS', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/listaResponsabiliAgentiWS', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
             var data = {};
-            pool.getConnection(function(err, connection) {
-                connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE_AGENTI" AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query('SELECT * from UTENTI where TIPO = "RESPONSABILE_AGENTI" AND UTENTE_ATTIVO = 1 ORDER BY COGNOME ASC', function (err, rows, fields) {
                     connection.release();
                     if (rows.length !== 0 && !err) {
                         data["responsabili"] = rows;
@@ -3363,8 +3479,8 @@ app.get('/listaResponsabiliAgentiWS', ensureToken, function(req, res) {
 
 
 //INSERIMENTO RECESSI LUCE
-app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -3376,10 +3492,10 @@ app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(
 
 
 
-                pool.getConnection(function(err, connection) {
-                    connection.beginTransaction(function(errTrans) {
+                pool.getConnection(function (err, connection) {
+                    connection.beginTransaction(function (errTrans) {
                         if (errTrans) { //Transaction Error (Rollback and release connection)
-                            connection.rollback(function() {
+                            connection.rollback(function () {
                                 connection.release();
                             });
                             res.sendStatus(500);
@@ -3461,21 +3577,21 @@ app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(
                                         recesso.AGENZIA,
                                         recesso.GRUPPO
                                     ],
-                                    function(err, rows, fields) {
+                                    function (err, rows, fields) {
                                         if (err) {
                                             // SE IL RECORD è DUPLICATO SKIPPO L'IESIMO ELEMENTO TRAMITE IL return 
-                                            if(err.errno == 1062){
+                                            if (err.errno == 1062) {
                                                 return;
-                                            }else{
-                                                connection.rollback(function() {
+                                            } else {
+                                                connection.rollback(function () {
                                                     connection.release();
                                                     //Failure
                                                 });
                                                 res.sendStatus(500);
                                             }
-                                    
 
-                                        }  
+
+                                        }
                                         else {
                                             var insertedId = rows.insertId;
                                             connection.query(`INSERT INTO
@@ -3507,9 +3623,9 @@ app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(
                                                     recesso.VENDITORE_ASSEGNATO,
                                                     recesso.stato
                                                 ],
-                                                function(err, rows, fields) {
+                                                function (err, rows, fields) {
                                                     if (err) {
-                                                        connection.rollback(function() {
+                                                        connection.rollback(function () {
                                                             connection.release();
                                                             //Failure
                                                         });
@@ -3524,9 +3640,9 @@ app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(
                             });
                         }
 
-                        connection.commit(function(err) {
+                        connection.commit(function (err) {
                             if (err) {
-                                connection.rollback(function() {
+                                connection.rollback(function () {
                                     connection.release();
                                     //Failure
                                 });
@@ -3552,8 +3668,8 @@ app.post('/insertRecessesLuce', ensureToken, requireAdminOrBackOffice, function(
 });
 
 //INSERIMENTO RECESSI GAS
-app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -3562,10 +3678,10 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
             var jsonGas = req.body.jsonGas;
             if (jsonGas && jsonGas.length > 0) {
 
-                pool.getConnection(function(err, connection) {
-                    connection.beginTransaction(function(errTrans) {
+                pool.getConnection(function (err, connection) {
+                    connection.beginTransaction(function (errTrans) {
                         if (errTrans) { //Transaction Error (Rollback and release connection)
-                            connection.rollback(function() {
+                            connection.rollback(function () {
                                 connection.release();
                             });
                             res.sendStatus(500);
@@ -3636,19 +3752,19 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
                                         recesso.DATA_OUT,
                                         recesso.OFFERTA
                                     ],
-                                    function(err, rows, fields) {
+                                    function (err, rows, fields) {
                                         if (err) {
                                             // SE IL RECORD è DUPLICATO SKIPPO L'IESIMO ELEMENTO TRAMITE IL return 
-                                            if(err.errno == 1062){
+                                            if (err.errno == 1062) {
                                                 return;
-                                            }else{
-                                                connection.rollback(function() {
+                                            } else {
+                                                connection.rollback(function () {
                                                     connection.release();
                                                     //Failure
                                                 });
                                                 res.sendStatus(500);
                                             }
-                                    
+
 
                                         } else {
                                             var insertedId = rows.insertId;
@@ -3681,9 +3797,9 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
                                                     recesso.VENDITORE_ASSEGNATO,
                                                     recesso.stato
                                                 ],
-                                                function(err, rows, fields) {
+                                                function (err, rows, fields) {
                                                     if (err) {
-                                                        connection.rollback(function() {
+                                                        connection.rollback(function () {
                                                             connection.release();
                                                             //Failure
                                                         });
@@ -3698,9 +3814,9 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
                             });
                         }
 
-                        connection.commit(function(err) {
+                        connection.commit(function (err) {
                             if (err) {
-                                connection.rollback(function() {
+                                connection.rollback(function () {
                                     connection.release();
                                     //Failure
                                 });
@@ -3726,8 +3842,8 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function(r
 });
 
 //LISTA RECESSI GAS
-app.post('/gasRecessesList', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/gasRecessesList', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -3759,7 +3875,7 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
                 QdateTo = ' AND DATA_OUT <= "' + dateTo + '" ';
             }
 
-        
+
             var ragioneSociale = req.body.ragioneSociale;
             var QragioneSociale = " ";
             if (ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale != null) {
@@ -3769,11 +3885,11 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
             var stato = req.body.stato;
             var Qstato = " ";
             if (stato !== '' && stato !== undefined && stato != null) {
-               
+
                 Qstato = ' AND STATO = "' + stato + '" ';
-                
-            }else{
-                if(req.body.userType && (req.body.userType == 'AGENTE' || req.body.userType == 'AGENTE_JUNIOR' || req.body.userType == 'RESPONSABILE_AGENTI')){
+
+            } else {
+                if (req.body.userType && (req.body.userType == 'AGENTE' || req.body.userType == 'AGENTE_JUNIOR' || req.body.userType == 'RESPONSABILE_AGENTI')) {
                     //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
                     Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO" AND STATO != "RIENTRO" ';
                 }
@@ -3787,25 +3903,25 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
             var mcAnnui = req.body.mcAnnui;
             var QmcAnnui = " ";
             if (mcAnnui !== '' && mcAnnui !== undefined && mcAnnui != null) {
-               
-                if(mcAnnui == '50000'){
-                    QmcAnnui = ' AND CONSUMO_CONTRATTUALE > 50000 ' ;
-                }else{
+
+                if (mcAnnui == '50000') {
+                    QmcAnnui = ' AND CONSUMO_CONTRATTUALE > 50000 ';
+                } else {
                     var from = mcAnnui.split("-")[0];
 
                     var to = mcAnnui.split("-")[1];
-    
-                    QmcAnnui = ' AND CONSUMO_CONTRATTUALE BETWEEN '+from+' AND '+to+' ' ;
+
+                    QmcAnnui = ' AND CONSUMO_CONTRATTUALE BETWEEN ' + from + ' AND ' + to + ' ';
                 }
-                
-                
+
+
             }
 
 
             var provincia = req.body.provincia;
             var Qprovincia = " ";
             if (provincia !== '' && provincia !== undefined && provincia != null) {
-                Qprovincia = ' AND LOWER(LOCALITA) LIKE LOWER("%('+ provincia +')%") ';
+                Qprovincia = ' AND LOWER(LOCALITA) LIKE LOWER("%(' + provincia + ')%") ';
             }
 
             var agente = req.body.agente;
@@ -3814,12 +3930,12 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
                 Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
             }
 
-          
 
-            pool.getConnection(function(err, connection) {
+
+            pool.getConnection(function (err, connection) {
                 connection.query(`SELECT COUNT(*) AS TotalCount from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
-                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QmcAnnui} `, 
-                    function(err, rows, fields) {
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QmcAnnui} `,
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL RICERCA COUNT RECESSI GAS ' + err);
@@ -3828,14 +3944,14 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
 
                             data["totaleRecessiGas"] = rows[0].TotalCount;
 
-                            pool.getConnection(function(err, connection) {
+                            pool.getConnection(function (err, connection) {
                                 connection.query(`select 
                                 rg.*, drg.*,VENDITORE.ID_UTENTE ID_VENDITORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
                                 from recessi_gas as rg 
                                 inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
                                 left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
                                 where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
-                                    function(err, rows, fields) {
+                                    function (err, rows, fields) {
                                         connection.release();
                                         if (err) {
                                             log.error('ERRORE SQL RICERCA recessiGas: --> ' + err);
@@ -3854,7 +3970,7 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
 
                             });
                         }
-                });
+                    });
             });
 
 
@@ -3865,8 +3981,8 @@ app.post('/gasRecessesList', ensureToken, function(req, res) {
 });
 
 //LISTA RECESSI LUCE
-app.post('/luceRecessesList', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.post('/luceRecessesList', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
@@ -3899,7 +4015,7 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
                 QdateTo = ' AND DATA_VALIDITA_RECESSO <= "' + dateTo + '" ';
             }
 
-        
+
             var ragioneSociale = req.body.ragioneSociale;
             var QragioneSociale = " ";
             if (ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale != null) {
@@ -3909,11 +4025,11 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
             var stato = req.body.stato;
             var Qstato = " ";
             if (stato !== '' && stato !== undefined && stato != null) {
-               
+
                 Qstato = ' AND STATO = "' + stato + '" ';
-                
-            }else{
-                if(req.body.userType && (req.body.userType == 'AGENTE' || req.body.userType == 'AGENTE_JUNIOR' || req.body.userType == 'RESPONSABILE_AGENTI')){
+
+            } else {
+                if (req.body.userType && (req.body.userType == 'AGENTE' || req.body.userType == 'AGENTE_JUNIOR' || req.body.userType == 'RESPONSABILE_AGENTI')) {
                     //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
                     Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO" AND STATO != "RIENTRO" ';
                 }
@@ -3922,32 +4038,32 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
                     Qstato = ' AND STATO != "NON_GESTIRE" ';
                 }
             }
-            
 
-          
+
+
 
             var kwhAnnui = req.body.kwhAnnui;
             var QkwhAnnui = " ";
             if (kwhAnnui !== '' && kwhAnnui !== undefined && kwhAnnui != null) {
-               
-                if(kwhAnnui == '50000'){
-                    QkwhAnnui = ' AND KWH_ANNUI > 50000 ' ;
-                }else{
+
+                if (kwhAnnui == '50000') {
+                    QkwhAnnui = ' AND KWH_ANNUI > 50000 ';
+                } else {
                     var from = kwhAnnui.split("-")[0];
 
                     var to = kwhAnnui.split("-")[1];
-    
-                    QkwhAnnui = ' AND KWH_ANNUI BETWEEN '+from+' AND '+to+' ' ;
+
+                    QkwhAnnui = ' AND KWH_ANNUI BETWEEN ' + from + ' AND ' + to + ' ';
                 }
-                
-                
+
+
             }
 
 
             var provincia = req.body.provincia;
             var Qprovincia = " ";
             if (provincia !== '' && provincia !== undefined && provincia != null) {
-                Qprovincia = ' AND LOWER(LOCALITA_FORN) LIKE LOWER("%('+ provincia +')%") ';
+                Qprovincia = ' AND LOWER(LOCALITA_FORN) LIKE LOWER("%(' + provincia + ')%") ';
             }
 
             var agente = req.body.agente;
@@ -3956,12 +4072,12 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
                 Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
             }
 
-          
 
-            pool.getConnection(function(err, connection) {
+
+            pool.getConnection(function (err, connection) {
                 connection.query(`SELECT COUNT(*) AS TotalCount from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
-                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui}  `, 
-                    function(err, rows, fields) {
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui}  `,
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL RICERCA COUNT RECESSI luce ' + err);
@@ -3970,14 +4086,14 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
 
                             data["totaleRecessiLuce"] = rows[0].TotalCount;
 
-                            pool.getConnection(function(err, connection) {
+                            pool.getConnection(function (err, connection) {
                                 connection.query(`select 
                                 rl.*, drl.*, VENDITORE.ID_UTENTE ID_VENDITORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
                                 from recessi_luce as rl 
                                 inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
                                 left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
                                 where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
-                                    function(err, rows, fields) {
+                                    function (err, rows, fields) {
                                         connection.release();
                                         if (err) {
                                             log.error('ERRORE SQL RICERCA recessiLuce: --> ' + err);
@@ -3996,7 +4112,251 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
 
                             });
                         }
-                });
+                    });
+            });
+
+
+
+
+        }
+    });
+});
+
+//DOWNLOAAD RECESSI GAS
+app.post('/downloadRecessiGas', ensureToken, requireAdminOrBackOffice, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var data = {};
+
+
+            var order = req.body.order;
+            var Qorder = " ";
+            if (order !== '' && order !== undefined && order != null) {
+                Qorder = ' CAST(CONSUMO_CONTRATTUALE AS UNSIGNED) ' + order + ', ';
+            }
+
+
+            var dateFrom = req.body.dataRecessoDAL;
+            var QdateFrom = " ";
+            if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
+                QdateFrom = ' AND DATA_OUT >= "' + dateFrom + '" ';
+            }
+
+            var dateTo = req.body.dataRecessoAL;
+            var QdateTo = " ";
+            if (dateTo !== '' && dateTo !== undefined && dateTo != null) {
+                QdateTo = ' AND DATA_OUT <= "' + dateTo + '" ';
+            }
+
+
+            var ragioneSociale = req.body.ragioneSociale;
+            var QragioneSociale = " ";
+            if (ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale != null) {
+                QragioneSociale = ' AND LOWER(DENOMINAZIONE) LIKE LOWER("%' + ragioneSociale + '%") ';
+            }
+
+            var stato = req.body.stato;
+            var Qstato = " ";
+            if (stato !== '' && stato !== undefined && stato != null) {
+
+                Qstato = ' AND STATO = "' + stato + '" ';
+
+            } else {
+                if (req.body.userType && (req.body.userType == 'AGENTE' || req.body.userType == 'AGENTE_JUNIOR' || req.body.userType == 'RESPONSABILE_AGENTI')) {
+                    //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
+                    Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO" AND STATO != "RIENTRO" ';
+                }
+                else {
+                    //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
+                    Qstato = ' AND STATO != "NON_GESTIRE" ';
+                }
+            }
+
+
+            var mcAnnui = req.body.mcAnnui;
+            var QmcAnnui = " ";
+            if (mcAnnui !== '' && mcAnnui !== undefined && mcAnnui != null) {
+
+                if (mcAnnui == '50000') {
+                    QmcAnnui = ' AND CONSUMO_CONTRATTUALE > 50000 ';
+                } else {
+                    var from = mcAnnui.split("-")[0];
+
+                    var to = mcAnnui.split("-")[1];
+
+                    QmcAnnui = ' AND CONSUMO_CONTRATTUALE BETWEEN ' + from + ' AND ' + to + ' ';
+                }
+
+
+            }
+
+
+            var provincia = req.body.provincia;
+            var Qprovincia = " ";
+            if (provincia !== '' && provincia !== undefined && provincia != null) {
+                Qprovincia = ' AND LOWER(LOCALITA) LIKE LOWER("%(' + provincia + ')%") ';
+            }
+
+            var agente = req.body.agente;
+            var Qagente = " ";
+            if (agente !== '' && agente !== undefined && agente != null) {
+                Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
+            }
+
+            //TODO
+            pool.getConnection(function (err, connection) {
+                connection.query(`select 
+                CONCAT(VENDITORE.COGNOME, " ",  VENDITORE.NOME) AS "Agente", 
+                CONCAT(rg.VIA, " ",  rg.LOCALITA, " ", rg.PROVINCIA) AS "Agente", 
+                rg.DENOMINAZIONE AS "Rag. Sociale", 
+                rg.DENOMINAZIONE, 
+                drg.,
+                VENDITORE.NOME NOME_VENDITORE, 
+                VENDITORE.COGNOME COGNOME_VENDITORE 
+                from recessi_gas as rg 
+                inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
+                left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
+                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC `, [],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL DOWNLOAD recessiGas: --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0) {
+                                data["recessiGas"] = rows;
+                                res.json(data);
+                            } else {
+                                data["recessiGas"] = [];
+                                res.json(data);
+                            }
+                        }
+
+                    });
+
+            });
+
+
+
+
+        }
+    });
+});
+
+//DOWNLOAAD RECESSI LUCE
+app.post('/downloadRecessiLuce', ensureToken, requireAdminOrBackOffice, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var data = {};
+
+
+
+            var order = req.body.order;
+            var Qorder = " ";
+            if (order !== '' && order !== undefined && order != null) {
+                Qorder = ' CAST(KWH_ANNUI AS UNSIGNED) ' + order + ', ';
+            }
+
+
+            var dateFrom = req.body.dataRecessoDAL;
+            var QdateFrom = " ";
+            if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
+                QdateFrom = ' AND DATA_VALIDITA_RECESSO >= "' + dateFrom + '" ';
+            }
+
+            var dateTo = req.body.dataRecessoAL;
+            var QdateTo = " ";
+            if (dateTo !== '' && dateTo !== undefined && dateTo != null) {
+                QdateTo = ' AND DATA_VALIDITA_RECESSO <= "' + dateTo + '" ';
+            }
+
+
+            var ragioneSociale = req.body.ragioneSociale;
+            var QragioneSociale = " ";
+            if (ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale != null) {
+                QragioneSociale = ' AND LOWER(RAGIONE_SOCIALE) LIKE LOWER("%' + ragioneSociale + '%") ';
+            }
+
+            var stato = req.body.stato;
+            var Qstato = " ";
+            if (stato !== '' && stato !== undefined && stato != null) {
+
+                Qstato = ' AND STATO = "' + stato + '" ';
+
+            } else {
+                if (req.body.userType && (req.body.userType == 'AGENTE' || req.body.userType == 'AGENTE_JUNIOR' || req.body.userType == 'RESPONSABILE_AGENTI')) {
+                    //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
+                    Qstato = ' AND STATO != "NON_GESTIRE" AND STATO != "RESPINTO" AND STATO != "RIENTRO" ';
+                }
+                else {
+                    //DI DEFAULT NON MOSTRO I NON GESTIRE  I RESPINTI e I RIENTRI 
+                    Qstato = ' AND STATO != "NON_GESTIRE" ';
+                }
+            }
+
+
+
+
+            var kwhAnnui = req.body.kwhAnnui;
+            var QkwhAnnui = " ";
+            if (kwhAnnui !== '' && kwhAnnui !== undefined && kwhAnnui != null) {
+
+                if (kwhAnnui == '50000') {
+                    QkwhAnnui = ' AND KWH_ANNUI > 50000 ';
+                } else {
+                    var from = kwhAnnui.split("-")[0];
+
+                    var to = kwhAnnui.split("-")[1];
+
+                    QkwhAnnui = ' AND KWH_ANNUI BETWEEN ' + from + ' AND ' + to + ' ';
+                }
+
+
+            }
+
+
+            var provincia = req.body.provincia;
+            var Qprovincia = " ";
+            if (provincia !== '' && provincia !== undefined && provincia != null) {
+                Qprovincia = ' AND LOWER(LOCALITA_FORN) LIKE LOWER("%(' + provincia + ')%") ';
+            }
+
+            var agente = req.body.agente;
+            var Qagente = " ";
+            if (agente !== '' && agente !== undefined && agente != null) {
+                Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
+            }
+
+
+
+            pool.getConnection(function (err, connection) {
+                connection.query(`select 
+                rl.*, drl.*, VENDITORE.ID_UTENTE ID_VENDITORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
+                from recessi_luce as rl 
+                inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
+                left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
+                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC `, [],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL DOWNLOAD recessiLuce: --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0) {
+                                data["recessiLuce"] = rows;
+                                res.json(data);
+                            } else {
+                                data["recessiLuce"] = [];
+                                res.json(data);
+                            }
+                        }
+
+                    });
+
             });
 
 
@@ -4008,55 +4368,55 @@ app.post('/luceRecessesList', ensureToken, function(req, res) {
 
 
 //VEFICA PRESENZA RECESSI
-app.get('/checkRecessiAgente/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.get('/checkRecessiAgente/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
             var agente = req.params.id;
 
-            pool.getConnection(function(err, connection) {
-                connection.query(`SELECT COUNT(*) AS countRecessiLuce from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE where drl.VENDITORE_ASSEGNATO=? `,[agente],
-                    function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.query(`SELECT COUNT(*) AS countRecessiLuce from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE where drl.VENDITORE_ASSEGNATO=? `, [agente],
+                    function (err, rows, fields) {
                         connection.release();
                         if (err) {
                             log.error('ERRORE SQL RICERCA COUNT RECESSI luce ' + err);
                             res.sendStatus(500);
                         } else {
 
-                        data["countRecessiLuce"] = rows[0].countRecessiLuce;
-                        pool.getConnection(function(err, connection) {
-                            connection.query(`SELECT COUNT(*) AS countRecessiGas from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS where drg.VENDITORE_ASSEGNATO=?`,[agente],
-                                function(err, rows, fields) {
-                                    connection.release();
-                                    if (err) {
-                                        log.error('ERRORE SQL COUNT RECESSI gas: --> ' + err);
-                                    res.sendStatus(500);
-                                } else {
-                                        data["countRecessiGas"] = rows[0].countRecessiGas;
-                                        res.json(data);
-                                    }
-                                });
-                            
-                                });
-                           
-                                    }
+                            data["countRecessiLuce"] = rows[0].countRecessiLuce;
+                            pool.getConnection(function (err, connection) {
+                                connection.query(`SELECT COUNT(*) AS countRecessiGas from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS where drg.VENDITORE_ASSEGNATO=?`, [agente],
+                                    function (err, rows, fields) {
+                                        connection.release();
+                                        if (err) {
+                                            log.error('ERRORE SQL COUNT RECESSI gas: --> ' + err);
+                                            res.sendStatus(500);
+                                        } else {
+                                            data["countRecessiGas"] = rows[0].countRecessiGas;
+                                            res.json(data);
+                                        }
                                     });
+
+                            });
+
+                        }
                     });
-                    }
-                    });
+            });
+        }
+    });
 });
 
 //UPDATE RECESSO LUCE
-app.patch('/luceRecess/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.patch('/luceRecess/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
             var idRecessoLuce = req.params.id;
 
             var stato = req.body.stato;
-            
+
             if (stato == '' || stato == undefined || stato == null) {
                 stato = null;
             }
@@ -4066,7 +4426,7 @@ app.patch('/luceRecess/:id', ensureToken, function(req, res) {
             if (agente == '' || agente == undefined || agente == null) {
                 agente = null;
             }
-            
+
             var refRecesso = req.body.refRecesso;
 
             if (refRecesso == '' || refRecesso == undefined || refRecesso == null) {
@@ -4089,36 +4449,36 @@ app.patch('/luceRecess/:id', ensureToken, function(req, res) {
                 note = null;
             }
 
-            if(stato != 'RIENTRO'){
+            if (stato != 'RIENTRO') {
                 codContratto = null
             }
-            if(stato == 'NON_ASSOCIATO'){
-                agente=null;
+            if (stato == 'NON_ASSOCIATO') {
+                agente = null;
             }
 
-            pool.getConnection(function(err, connection) {
-      
-            connection.beginTransaction(function(errTrans) {
-                if (errTrans) { //Transaction Error (Rollback and release connection)
-                    connection.rollback(function() {
-                        connection.release();
-                    });
-                    res.sendStatus(500);
-                } else {
-                    
-                        connection.query(`UPDATE dettaglio_recesso_luce SET VENDITORE_ASSEGNATO = ?, REFERENTE_RECESSO=?, REFERENTE_RECESSO_RECAPITO=?, STATO=?, COD_CONTRATTO=?, ULTIMA_MODIFICA=NOW(), NOTE=? WHERE ID_DETTAGLIO_LUCE=?`,[agente, refRecesso, refRecapito, stato, codContratto,note, idRecessoLuce], 
-                            function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+
+                connection.beginTransaction(function (errTrans) {
+                    if (errTrans) { //Transaction Error (Rollback and release connection)
+                        connection.rollback(function () {
+                            connection.release();
+                        });
+                        res.sendStatus(500);
+                    } else {
+
+                        connection.query(`UPDATE dettaglio_recesso_luce SET VENDITORE_ASSEGNATO = ?, REFERENTE_RECESSO=?, REFERENTE_RECESSO_RECAPITO=?, STATO=?, COD_CONTRATTO=?, ULTIMA_MODIFICA=NOW(), NOTE=? WHERE ID_DETTAGLIO_LUCE=?`, [agente, refRecesso, refRecapito, stato, codContratto, note, idRecessoLuce],
+                            function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
                                     res.sendStatus(500);
                                     log.error('ERRORE SQL PATCH recessiLuce: --> ' + err);
                                 } else {
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -4129,33 +4489,33 @@ app.patch('/luceRecess/:id', ensureToken, function(req, res) {
                                             //Success
                                         }
                                     });
-                                    
+
                                 }
-    
+
                             });
-    
-                    
-                }
+
+
+                    }
+                });
             });
-        });     
-              
-            }
+
+        }
     });
-    });
+});
 
 
 //UPDATE RECESSO GAS
-app.patch('/gasRecess/:id', ensureToken, function(req, res) {
-    jwt.verify(req.token, config.secretKey, function(err, data) {
+app.patch('/gasRecess/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
         } else {
             var idRecessoGas = req.params.id;
 
-           
+
 
             var stato = req.body.stato;
-            
+
             if (stato == '' || stato == undefined || stato == null) {
                 stato = null;
             }
@@ -4165,7 +4525,7 @@ app.patch('/gasRecess/:id', ensureToken, function(req, res) {
             if (agente == '' || agente == undefined || agente == null) {
                 agente = null;
             }
-            
+
             var refRecesso = req.body.refRecesso;
 
             if (refRecesso == '' || refRecesso == undefined || refRecesso == null) {
@@ -4182,41 +4542,41 @@ app.patch('/gasRecess/:id', ensureToken, function(req, res) {
             if (codContratto == '' || codContratto == undefined || codContratto == null) {
                 codContratto = null;
             }
-            
+
             var note = req.body.note;
 
             if (note == '' || note == undefined || note == null) {
                 note = null;
             }
-          
-            if(stato != 'RIENTRO'){
+
+            if (stato != 'RIENTRO') {
                 codContratto = null;
             }
-            if(stato == 'NON_ASSOCIATO'){
-                agente=null;
+            if (stato == 'NON_ASSOCIATO') {
+                agente = null;
             }
-            pool.getConnection(function(err, connection) { 
-            connection.beginTransaction(function(errTrans) {
-                if (errTrans) { //Transaction Error (Rollback and release connection)
-                    connection.rollback(function() {
-                        connection.release();
-                    });
-                    res.sendStatus(500);
-                } else {
-                    
-                        connection.query(`UPDATE dettaglio_recesso_gas  SET VENDITORE_ASSEGNATO = ?, REFERENTE_RECESSO=?, REFERENTE_RECESSO_RECAPITO=?, STATO=?, COD_CONTRATTO=?, ULTIMA_MODIFICA=NOW(), NOTE=? WHERE ID_DETTAGLIO_GAS=?`,[agente, refRecesso, refRecapito, stato, codContratto,note, idRecessoGas], 
-                            function(err, rows, fields) {
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
+                    if (errTrans) { //Transaction Error (Rollback and release connection)
+                        connection.rollback(function () {
+                            connection.release();
+                        });
+                        res.sendStatus(500);
+                    } else {
+
+                        connection.query(`UPDATE dettaglio_recesso_gas  SET VENDITORE_ASSEGNATO = ?, REFERENTE_RECESSO=?, REFERENTE_RECESSO_RECAPITO=?, STATO=?, COD_CONTRATTO=?, ULTIMA_MODIFICA=NOW(), NOTE=? WHERE ID_DETTAGLIO_GAS=?`, [agente, refRecesso, refRecapito, stato, codContratto, note, idRecessoGas],
+                            function (err, rows, fields) {
                                 if (err) {
-                                    connection.rollback(function() {
+                                    connection.rollback(function () {
                                         connection.release();
                                         //Failure
                                     });
                                     res.sendStatus(500);
                                     log.error('ERRORE SQL PATCH gasRecess: --> ' + err);
                                 } else {
-                                    connection.commit(function(err) {
+                                    connection.commit(function (err) {
                                         if (err) {
-                                            connection.rollback(function() {
+                                            connection.rollback(function () {
                                                 connection.release();
                                                 //Failure
                                             });
@@ -4227,25 +4587,25 @@ app.patch('/gasRecess/:id', ensureToken, function(req, res) {
                                             //Success
                                         }
                                     });
-                                    
+
                                 }
-    
+
                             });
-    
-                    
-                }
+
+
+                    }
+                });
             });
-               });      
-              
-            }
+
+        }
     });
-    });
+});
 
 
 
 
 
-app.all("/*", function(req, res, next) {
+app.all("/*", function (req, res, next) {
     res.sendfile("index.html", {
         root: __dirname + "/public"
     });
@@ -4294,7 +4654,7 @@ function ensureToken(req, res, next) {
 }
 
 
-var server = app.listen(config.ServerPort, function() {
+var server = app.listen(config.ServerPort, function () {
 
     var host = server.address().address;
     var port = server.address().port;

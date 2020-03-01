@@ -1,7 +1,8 @@
-<div class="container" >
-     
-    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" name="searchDateForm" ng-submit="searchDate.submitSearchDate('submit')">
-        
+<div class="container">
+
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST"
+        name="searchDateForm" ng-submit="searchDate.submitSearchDate('submit')">
+
         <div class="row col-12">
             <div class="col-md-12">
                 <h2>Ricerca appuntamenti</h2>
@@ -9,173 +10,214 @@
             </div>
         </div>
 
-        <div class="row col-12" >
+        <div class="row col-12">
             <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoDAL">Data appuntamento DAL</label>
                 <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="searchDate.searchParam.dataAppuntamentoDAL" value=""  is-open="popupDAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-orange" ng-click="openDAL()"><i class="far fa-calendar-alt"></i></button>
-                        </span>
-                    </p>
+                    <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()"
+                        class="form-control " readonly uib-datepicker-popup="{{format}}"
+                        ng-model="searchDate.searchParam.dataAppuntamentoDAL" value="" is-open="popupDAL.opened"
+                        datepicker-options="dateOptions" clear-text="Rimuovi" close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="openDAL()"><i
+                                class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
             </div>
             <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
                 <label for="dataAppuntamentoAL">Data appuntamento AL</label>
                 <p class="input-group datepicker">
-                        <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()" class="form-control " readonly  uib-datepicker-popup="{{format}}" ng-model="searchDate.searchParam.dataAppuntamentoAL" value=""  is-open="popupAL.opened" datepicker-options="dateOptions"   clear-text="Rimuovi" close-text="Chiudi" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-orange" ng-click="openAL()"><i class="far fa-calendar-alt"></i></button>
-                        </span>
-                    </p>
+                    <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()"
+                        class="form-control " readonly uib-datepicker-popup="{{format}}"
+                        ng-model="searchDate.searchParam.dataAppuntamentoAL" value="" is-open="popupAL.opened"
+                        datepicker-options="dateOptions" clear-text="Rimuovi" close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="openAL()"><i
+                                class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
             </div>
-           
-        
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
-            <label for="provinceSelect">Provincia</label>
-            <select  name="provinceSelect" class="form-control" id="provinceSelect" ng-change="searchDate.showComuni()" ng-model="searchDate.searchParam.provinciaSelected">
-                
-                <option ng-repeat="option in searchDate.province" value="{{option.nome}}">{{option.nome}}</option>
-            </select>
+
+
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="provinceSelect">Provincia</label>
+                <select name="provinceSelect" class="form-control" id="provinceSelect"
+                    ng-change="searchDate.showComuni()" ng-model="searchDate.searchParam.provinciaSelected">
+
+                    <option ng-repeat="option in searchDate.province" value="{{option.nome}}">{{option.nome}}</option>
+                </select>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="comuniSelect">Comune</label>
+                <select name="comuniSelect" class="form-control" id="comuniSelect"
+                    ng-disabled="searchDate.disabledComuni" ng-model="searchDate.searchParam.comuneSelected">
+                    <option ng-repeat="option in searchDate.comuniPerProvincia" value="{{option.nome}}">{{option.nome}}
+                    </option>
+                </select>
+            </div>
+
         </div>
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
-            <label for="comuniSelect">Comune</label>
-            <select  name="comuniSelect" class="form-control" id="comuniSelect" ng-disabled="searchDate.disabledComuni" ng-model="searchDate.searchParam.comuneSelected">
-                    <option ng-repeat="option in searchDate.comuniPerProvincia"  value="{{option.nome}}">{{option.nome}}</option>
-            </select>
-        </div>
-       
-    </div>
-    <div class="row col-12" >
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+        <div class="row col-12">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                 <label for="ragioneSociale">Rag.Sociale/Nome cliente</label>
-                <input type="text" id="ragioneSociale"   class="form-control w-100"    ng-model="searchDate.searchParam.ragioneSociale">
-        </div>
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
-            <label for="esitoAppuntamento">Esito appuntamento</label>
-            <select   ng-model="searchDate.searchParam.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in searchDate.Esiti"></select>      
-        </div>
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
-            <label for="codiceContrattoLuce">Codice contratto luce</label>
-            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100"    ng-model="searchDate.searchParam.codLuce">
-        </div>
-        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
-            <label for="codiceContrattoGas">Codice contratto gas</label>
-            <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/"   class="form-control w-100"    ng-model="searchDate.searchParam.codGas">
-        </div>
-    </div>
-
-    <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
-        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-            <label for="operatoriSelect">Operatore</label>
-            <select  name="operatoriSelect" class="form-control"  id="operatoriSelect"   ng-model="searchDate.searchParam.operatoriSelected">
-                <option value="" ></option>
-                <option ng-repeat="option in searchDate.operatori" ng-value="option.ID_UTENTE"  value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}} {{option.COGNOME}} {{option.NOME}}</option>
-            </select> 
-        </div>   
-        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-            <label for="venditoreSelect">Agente</label>
-            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.searchParam.venditoreSelected">
-                <option value="" ></option>
-                <option ng-repeat="option1 in searchDate.agenti" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="row col-12" ng-if="user.TYPE === 'OPERATORE'">
-        <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-            <label for="venditoreSelect">Agente</label>
-            <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.searchParam.venditoreSelected">
-                <option value="" ></option>
-                <option ng-repeat="option1 in searchDate.venditoriForOperatore" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">
-            <div  class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
-                    <label for="venditoreSelect">Agente</label>
-                    <select  name="venditoreSelect" class="form-control" id="venditoreSelect"  ng-model="searchDate.searchParam.venditoreSelected">
-                        <option value="" ></option>
-                        <option ng-value="user.Id" value="{{user.Id}}" >{{user.Id}} - {{user.SURNAME}} {{user.NAME}}</option>
-                        <option ng-repeat="option1 in searchDate.venditoriForResponsabili" ng-value="option1.ID_UTENTE"  value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}</option>
-                    </select>
+                <input type="text" id="ragioneSociale" class="form-control w-100"
+                    ng-model="searchDate.searchParam.ragioneSociale">
             </div>
-    </div>
-
-
-    <div class="row col-12" >
-        <div class="col-md-12 col-xl-12 mt-3 ">
-            <button ng-disabled="searchDateForm.$invalid "  type="submit" class="btn btn-orange ">Ricerca appuntamenti</button> 
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
+                <label for="esitoAppuntamento">Esito appuntamento</label>
+                <select ng-model="searchDate.searchParam.esito.value" id="esitoAppuntamento" name="esitoAppuntamento"
+                    class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in searchDate.Esiti"></select>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
+                <label for="codiceContrattoLuce">Codice contratto luce</label>
+                <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/" class="form-control w-100"
+                    ng-model="searchDate.searchParam.codLuce">
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3">
+                <label for="codiceContrattoGas">Codice contratto gas</label>
+                <input type="text" maxlength="6" ng-pattern="/^[0-9]{6}$/" class="form-control w-100"
+                    ng-model="searchDate.searchParam.codGas">
+            </div>
         </div>
-    </div>
+
+        <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="operatoriSelect">Operatore</label>
+                <select name="operatoriSelect" class="form-control" id="operatoriSelect"
+                    ng-model="searchDate.searchParam.operatoriSelected">
+                    <option value=""></option>
+                    <option ng-repeat="option in searchDate.operatori" ng-value="option.ID_UTENTE"
+                        value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}} {{option.COGNOME}} {{option.NOME}}</option>
+                </select>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="venditoreSelect">Agente</label>
+                <select name="venditoreSelect" class="form-control" id="venditoreSelect"
+                    ng-model="searchDate.searchParam.venditoreSelected">
+                    <option value=""></option>
+                    <option ng-repeat="option1 in searchDate.agenti" ng-value="option1.ID_UTENTE"
+                        value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row col-12" ng-if="user.TYPE === 'OPERATORE'">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="venditoreSelect">Agente</label>
+                <select name="venditoreSelect" class="form-control" id="venditoreSelect"
+                    ng-model="searchDate.searchParam.venditoreSelected">
+                    <option value=""></option>
+                    <option ng-repeat="option1 in searchDate.venditoriForOperatore" ng-value="option1.ID_UTENTE"
+                        value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="venditoreSelect">Agente</label>
+                <select name="venditoreSelect" class="form-control" id="venditoreSelect"
+                    ng-model="searchDate.searchParam.venditoreSelected">
+                    <option value=""></option>
+                    <option ng-value="user.Id" value="{{user.Id}}">{{user.Id}} - {{user.SURNAME}} {{user.NAME}}</option>
+                    <option ng-repeat="option1 in searchDate.venditoriForResponsabili" ng-value="option1.ID_UTENTE"
+                        value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}}-{{option1.COGNOME}} {{option1.NOME}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="row col-12">
+            <div class="col-md-12 col-xl-12 mt-3 ">
+                <button ng-disabled="searchDateForm.$invalid " type="submit" class="btn btn-orange ">Ricerca
+                    appuntamenti</button>
+            </div>
+        </div>
     </form>
-    
-    <div ng-if= "searchDate.showRisultati" class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
-            <div class="col-md-12">
-                <h2>Risultato ricerca appuntamenti</h2>
-                <hr>
-            </div>
-            <div ng-if= "searchDate.totalItems == 0"><h3>Nessun appuntamento trovato, modificare i parametri di ricerca</h3></div>
-            
-              <div ng-if= "searchDate.totalItems > 0" class="table-responsive">
-            <table class="table  table-bordered">
-              <thead>
-                <tr>
-                    <th scope="col">Data</th>
-                    <th scope="col">Azienda/cliente</th>
-                    <th scope="col">Luogo</th>
 
-                  <th scope="col">Agente</th>
-                  <th scope="col">Operatore</th>
-                  
-                  <th scope="col">Esito</th>
-                  <th scope="col">Visualizza</th>
-                  <th ng-if="user.TYPE === 'ADMIN' " scope="col">Modifica</th>
-                </tr>
-              </thead>
-              <tbody>
-                  <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)"  ng-repeat="x in searchDate.dateList   " >
-                    <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
-                        {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
-                    </td>
-                    <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
-                        {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA DEFINIRE</span>
-                    </td>
-                    <td>
-                        {{x.NOME_ATTIVITA}}
-                    </td> 
-                    <td>
-                        {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
-                    </td> 
-                    
-                    <td>
-                         {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
-                      </td> 
-                      
-                    <td>
-                        {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}} 
-                    </td>
-                    
-                    <td ng-class="tdEsitoClass(x.ESITO)">
-                        {{x.ESITO}}
-                    </td>
-                    <td>
-                        <button  class="btn btn-orange btn-modifyUtente" ng-click="searchDate.viewDate(x.ID_APPUNTAMENTO)">
-                            <i class="fas fa-glasses"></i>
-                        </button>
-                      
-                    </td>
-                    <td ng-if="user.TYPE === 'ADMIN' ">
-                        <button ng-if="user.TYPE === 'ADMIN' "  class="btn btn-orange btn-modifyUtente" ng-click="searchDate.modifyDate(x.ID_APPUNTAMENTO)">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                      
-                    </td>
-                  </tr>
-              </tbody>
+    <div ng-if="searchDate.showRisultati"
+        class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+        <div class="col-md-12">
+            <h2>Risultato ricerca appuntamenti</h2>
+            <hr>
+        </div>
+        <div ng-if="searchDate.totalItems == 0">
+            <h3>Nessun appuntamento trovato, modificare i parametri di ricerca</h3>
+        </div>
+
+        <div ng-if="searchDate.totalItems > 0" class="table-responsive">
+            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                <button class="btn btn-orange float-right mb-3" ng-click="searchDate.downloadAppuntamenti()">
+                    <i style="font-size: 18px;" class="far fa-file-excel"></i>
+                </button>
+            </div>
+            <table class="table  table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Data</th>
+                        <th scope="col">Azienda/cliente</th>
+                        <th scope="col">Luogo</th>
+
+                        <th scope="col">Agente</th>
+                        <th scope="col">Operatore</th>
+
+                        <th scope="col">Esito</th>
+                        <th scope="col">Visualizza</th>
+                        <th ng-if="user.TYPE === 'ADMIN' " scope="col">Modifica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-class="tdDataClass(x.DATA_APPUNTAMENTO, x.ESITO)" ng-repeat="x in searchDate.dateList   ">
+                        <td ng-if="x.ORA_APPUNTAMENTO != '00:01'">
+                            {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - {{x.ORA_APPUNTAMENTO}}
+                        </td>
+                        <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
+                            {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA
+                                DEFINIRE</span>
+                        </td>
+                        <td>
+                            {{x.NOME_ATTIVITA}}
+                        </td>
+                        <td>
+                            {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                        </td>
+
+                        <td>
+                            {{x.COGNOME_VENDITORE}} {{x.NOME_VENDITORE}}
+                        </td>
+
+                        <td>
+                            {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}}
+                        </td>
+
+                        <td ng-class="tdEsitoClass(x.ESITO)">
+                            {{x.ESITO}}
+                        </td>
+                        <td>
+                            <button class="btn btn-orange btn-modifyUtente"
+                                ng-click="searchDate.viewDate(x.ID_APPUNTAMENTO)">
+                                <i class="fas fa-glasses"></i>
+                            </button>
+
+                        </td>
+                        <td ng-if="user.TYPE === 'ADMIN' ">
+                            <button ng-if="user.TYPE === 'ADMIN' " class="btn btn-orange btn-modifyUtente"
+                                ng-click="searchDate.modifyDate(x.ID_APPUNTAMENTO)">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                </tbody>
             </table>
-          </div>
-          <ul ng-if="searchDate.totalItems > searchDate.searchParam.itemsPerPage" uib-pagination items-per-page="searchDate.searchParam.itemsPerPage" total-items="searchDate.totalItems" ng-model="searchDate.searchParam.currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="true" max-size="5"></ul>
-       
-      </div>
+        </div>
+        <ul ng-if="searchDate.totalItems > searchDate.searchParam.itemsPerPage" uib-pagination
+            items-per-page="searchDate.searchParam.itemsPerPage" total-items="searchDate.totalItems"
+            ng-model="searchDate.searchParam.currentPage" ng-change="pageChanged()" boundary-link-numbers="true"
+            rotate="true" max-size="5"></ul>
+
+    </div>
 </div>

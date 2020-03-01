@@ -63,14 +63,13 @@
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                 <label for="mcAnnui">Metri cubi annui</label>
-                <select ng-model="recessesGas.searchParam.mcAnnui" id="MCAnnui" name="MCAnnui"
-                    class="form-control">
-                    <option  value=""></option>
-                    <option  value="0-1000">da 0 a 1.000 m³</option>
-                    <option  value="1000-5000">da 1.000 a 5000 m³</option>
-                    <option  value="5000-10000">da 5.000 a 10.000 m³</option>
-                    <option  value="10000-50000">da 10.000 a 50.000 m³</option>
-                    <option  value="50000">+ di 50.000 m³</option>
+                <select ng-model="recessesGas.searchParam.mcAnnui" id="MCAnnui" name="MCAnnui" class="form-control">
+                    <option value=""></option>
+                    <option value="0-1000">da 0 a 1.000 m³</option>
+                    <option value="1000-5000">da 1.000 a 5000 m³</option>
+                    <option value="5000-10000">da 5.000 a 10.000 m³</option>
+                    <option value="10000-50000">da 10.000 a 50.000 m³</option>
+                    <option value="50000">+ di 50.000 m³</option>
                 </select>
             </div>
 
@@ -82,7 +81,7 @@
                 <label for="venditoreSelect">Agente</label>
                 <select name="venditoreSelect" class="form-control" id="venditoreSelect"
                     ng-model="recessesGas.searchParam.venditoreSelected">
-                    
+
                     <option ng-repeat="option1 in recessesGas.agenti" ng-value="option1.ID_UTENTE"
                         value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}
                     </option>
@@ -124,16 +123,23 @@
         </div>
 
         <div ng-if="recessesGas.totalItems > 0" class="table-responsive">
+            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                <button class="btn btn-orange float-right mb-3" ng-click="recessesGas.downloadRecessiGas()">
+                    <i style="font-size: 18px;" class="far fa-file-excel"></i>
+                </button>
+            </div>
             <table class="table  table-bordered">
                 <thead>
                     <tr>
                         <th scope="col">Cliente</th>
                         <th scope="col">Indirizzo</th>
-                        <th scope="col" class="cursor-pointer" ng-click="recessesGas.searchParam.orderByConsumo()">Consumo m³ 
+                        <th scope="col" class="cursor-pointer" ng-click="recessesGas.searchParam.orderByConsumo()">
+                            Consumo m³
                             <i ng-show="recessesGas.searchParam.order == '' " class="fas fa-sort"></i>
-                            <i ng-show="recessesGas.searchParam.order == 'DESC' " class="orangeText fas fa-sort-down"></i>
+                            <i ng-show="recessesGas.searchParam.order == 'DESC' "
+                                class="orangeText fas fa-sort-down"></i>
                             <i ng-show="recessesGas.searchParam.order == 'ASC' " class="orangeText fas fa-sort-up"></i>
-                         </th>
+                        </th>
                         <th scope="col">Data recesso</th>
                         <th scope="col">Permanenza</th>
                         <th scope="col">Agente assegnato</th>
@@ -143,34 +149,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="x in recessesGas.recessiGasResult" >
+                    <tr ng-repeat="x in recessesGas.recessiGasResult">
                         <td>
                             {{x.DENOMINAZIONE}}
-                        </td> 
+                        </td>
                         <td>
-                            {{x.VIA}} {{x.LOCALITA}} {{x.PROVINCIA}} 
-                        </td> 
+                            {{x.VIA}} {{x.LOCALITA}} {{x.PROVINCIA}}
+                        </td>
                         <td>
                             {{x.CONSUMO_CONTRATTUALE  | number}}
-                        </td> 
+                        </td>
                         <td>
                             {{x.DATA_OUT | date:'dd/MM/yyyy'}}
-                        </td> 
+                        </td>
                         <td>
                             {{recessesGas.permanenza(x.DATA_INIZIO_FORNITURA, x.DATA_OUT)}}
-                        </td> 
+                        </td>
                         <td>
-                            {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
-                         </td> 
+                            {{x.COGNOME_VENDITORE}} {{x.NOME_VENDITORE}}
+                        </td>
                         <td>
                             {{x.STATO}}
-                        </td> 
+                        </td>
                         <td>
-                            {{x.REFERENTE_RECESSO}}  {{x.REFERENTE_RECESSO_RECAPITO}}
-                        </td> 
+                            {{x.REFERENTE_RECESSO}} {{x.REFERENTE_RECESSO_RECAPITO}}
+                        </td>
                         <td>
-                            <button class="btn btn-orange btn-modifyUtente"
-                                ng-click="recessesGas.modifyRecess(x)">
+                            <button class="btn btn-orange btn-modifyUtente" ng-click="recessesGas.modifyRecess(x)">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
 
@@ -189,145 +194,185 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="recessModal" tabindex="-1" role="dialog" aria-labelledby="recessModalLabel" aria-hidden="true">
+<div class="modal fade" id="recessModal" tabindex="-1" role="dialog" aria-labelledby="recessModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="recessModalLabel">Recesso: <b>{{recessesGas.dettaglioRecesso.ID_RECESSO_GAS}}</b></h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="container" >
-              <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12 d-flex flex-row justify-content-between align-items-baseline" method="POST" name="viewDettaglioRecesso" ng-submit="recessesGas.updateRecesso()">
-        
-                  <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-4">
-                      <label for="dataValiditaRecessoDettaglioRecesso">Data Recesso: &nbsp;  </label>
-                      <p id="dataValiditaRecessoDettaglioRecesso" class="input-group datepicker font-weight-bold">
-                          {{recessesGas.dettaglioRecesso.DATA_OUT | date:'dd/MM/yyyy'}}
-                      </p>
-                  </div>
-                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
-                      <label for="dataAttivazioneDettaglioRecesso">Data attivazione: &nbsp;</label>
-                      <p  id="dataAttivazioneDettaglioRecesso" class="input-group datepicker font-weight-bold">
-                        {{recessesGas.dettaglioRecesso.DATA_INIZIO_FORNITURA | date:'dd/MM/yyyy'}}
-                      </p>
-                  </div>
-                  <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                    <label for="ragSociale">Rag.Sociale: &nbsp;</label>
-                    <p id="ragSociale" class="input-group datepicker font-weight-bold">
-                        {{recessesGas.dettaglioRecesso.DENOMINAZIONE}} 
-                    </p>
-                </div>
-                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
-                    <label for="pdr">PDR: &nbsp;</label>
-                    <p  id="pdr" class="input-group datepicker font-weight-bold">
-                      {{recessesGas.dettaglioRecesso.PDR }}
-                    </p>
-                </div>
-              
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                  <label for="indirizzoForn">Indirizzo Fornitura: &nbsp;</label>
-                  <p id="indirizzoForn" class="input-group datepicker font-weight-bold">
-                      {{recessesGas.dettaglioRecesso.VIA}} {{recessesGas.dettaglioRecesso.LOCALITA}}
-                  </p>
-              </div>
-           
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="recapiti">Recapiti: &nbsp;</label>
-                <p id="recapiti" class="input-group datepicker font-weight-bold">
-                    {{recessesGas.dettaglioRecesso.RIF_TELEFONICI}} 
-                </p>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="recessModalLabel">Recesso:
+                    <b>{{recessesGas.dettaglioRecesso.ID_RECESSO_GAS}}</b></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                  <label for="consumi">Consumo contrattuale: &nbsp;</label>
-                  <p id="consumi" class="input-group datepicker font-weight-bold">
-                      {{recessesGas.dettaglioRecesso.CONSUMO_CONTRATTUALE}}
-                  </p>
-              </div>
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="agente">Contratto stipulato da: &nbsp;</label>
-                <p id="agente" class="input-group datepicker font-weight-bold">
-                    {{recessesGas.dettaglioRecesso.AGENTE}}
-                </p>
-            </div>
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="agente">Agente assegnato: &nbsp;</label>
-                <select ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE' " id="agente"  name="venditoreSelect" class="form-control"   ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
-                    <option ng-repeat="option1 in recessesGas.agenti" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesGas.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
-                </select>
+            <div class="modal-body">
+                <div class="container">
+                    <form role="form"
+                        class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12 d-flex flex-row justify-content-between align-items-baseline"
+                        method="POST" name="viewDettaglioRecesso" ng-submit="recessesGas.updateRecesso()">
 
-                <select ng-if="user.TYPE === 'RESPONSABILE_AGENTI'" id="agente"  name="venditoreSelect" class="form-control"   ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
-                    <option ng-value="user.Id" value="{{user.Id}}" ng-selected="user.Id === recessesGas.dettaglioRecesso.ID_VENDITORE"> - {{user.SURNAME}} {{user.NAME}}</option>
-                    <option ng-repeat="option1 in recessesGas.venditoriForResponsabili" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesGas.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
-                </select>
-                <!-- SE SONO AGENTE O AGENTE_JUNIOR VEDO SOLAMENTE LA MIA ASSEGNAZIONE -->
-                <p ng-if="user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE' && user.TYPE !== 'RESPONSABILE_AGENTI'" id="agente" class="input-group datepicker font-weight-bold">
-                    {{recessesGas.dettaglioRecesso.COGNOME_VENDITORE}} {{recessesGas.dettaglioRecesso.NOME_VENDITORE}} 
-                </p>
-            </div>
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="agente">Nome e recapito del cliente: &nbsp;</label>
-                <input type="text" ng-model="recessesGas.dettaglioRecesso.REFERENTE_RECESSO" ng-required="recessesGas.dettaglioRecesso.STATO == 'RESPINTO'"  name="referentoRecesso" class="form-control" placeholder="Nome Referente">
-                <small id="recapitoHelp" class="form-text text-muted">Solo caratteri numerici</small>
-                <input type="text" maxlength="15" ng-pattern="/^[0-9]*$/" ng-required="recessesGas.dettaglioRecesso.STATO == 'RESPINTO'" ng-model="recessesGas.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO"  name="referentoRecessoRecapito" class="form-control" placeholder="Recapito Referente">
-              
-            </div>
+                        <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-4">
+                            <label for="dataValiditaRecessoDettaglioRecesso">Data Recesso: &nbsp; </label>
+                            <p id="dataValiditaRecessoDettaglioRecesso" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.DATA_OUT | date:'dd/MM/yyyy'}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
+                            <label for="dataAttivazioneDettaglioRecesso">Data attivazione: &nbsp;</label>
+                            <p id="dataAttivazioneDettaglioRecesso" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.DATA_INIZIO_FORNITURA | date:'dd/MM/yyyy'}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="ragSociale">Rag.Sociale: &nbsp;</label>
+                            <p id="ragSociale" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.DENOMINAZIONE}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
+                            <label for="pdr">PDR: &nbsp;</label>
+                            <p id="pdr" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.PDR }}
+                            </p>
+                        </div>
 
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="stato">Stato: &nbsp;</label>
-                <select ng-if="recessesGas.dettaglioRecesso.STATO != 'RIENTRO' || user.TYPE == 'ADMIN' || user.TYPE == 'BACK_OFFICE' " ng-required="true" name="statoSelected" class="form-control" id="stato"   ng-model="recessesGas.dettaglioRecesso.STATO_DA_INVIARE">
-                    <option ng-repeat="option1 in recessesGas.Stati" ng-value="option1.Value" ng-selected="option1.Value === recessesGas.dettaglioRecesso.STATO" value="{{option1.Value}}">{{option1.Name}} </option>
-                    <!-- INSERITO SOLO PER AGENTE JUNIOR E AGENTE, PER NON DUPLICARE L'OGGETTO .Stati dato che gli agenti possono respingere ma
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="indirizzoForn">Indirizzo Fornitura: &nbsp;</label>
+                            <p id="indirizzoForn" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.VIA}} {{recessesGas.dettaglioRecesso.LOCALITA}}
+                            </p>
+                        </div>
+
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="recapiti">Recapiti: &nbsp;</label>
+                            <p id="recapiti" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.RIF_TELEFONICI}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="consumi">Consumo contrattuale: &nbsp;</label>
+                            <p id="consumi" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.CONSUMO_CONTRATTUALE}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="agente">Contratto stipulato da: &nbsp;</label>
+                            <p id="agente" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.AGENTE}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="agente">Agente assegnato: &nbsp;</label>
+                            <select ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE' " id="agente"
+                                name="venditoreSelect" class="form-control"
+                                ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
+                                <option ng-repeat="option1 in recessesGas.agenti" ng-value="option1.ID_UTENTE"
+                                    ng-selected="option1.ID_UTENTE === recessesGas.dettaglioRecesso.ID_VENDITORE"
+                                    value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                            </select>
+
+                            <select ng-if="user.TYPE === 'RESPONSABILE_AGENTI'" id="agente" name="venditoreSelect"
+                                class="form-control" ng-model="recessesGas.dettaglioRecesso.ID_VENDITORE">
+                                <option ng-value="user.Id" value="{{user.Id}}"
+                                    ng-selected="user.Id === recessesGas.dettaglioRecesso.ID_VENDITORE"> -
+                                    {{user.SURNAME}} {{user.NAME}}</option>
+                                <option ng-repeat="option1 in recessesGas.venditoriForResponsabili"
+                                    ng-value="option1.ID_UTENTE"
+                                    ng-selected="option1.ID_UTENTE === recessesGas.dettaglioRecesso.ID_VENDITORE"
+                                    value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                            </select>
+                            <!-- SE SONO AGENTE O AGENTE_JUNIOR VEDO SOLAMENTE LA MIA ASSEGNAZIONE -->
+                            <p ng-if="user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE' && user.TYPE !== 'RESPONSABILE_AGENTI'"
+                                id="agente" class="input-group datepicker font-weight-bold">
+                                {{recessesGas.dettaglioRecesso.COGNOME_VENDITORE}}
+                                {{recessesGas.dettaglioRecesso.NOME_VENDITORE}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="agente">Nome e recapito del cliente: &nbsp;</label>
+                            <input type="text" ng-model="recessesGas.dettaglioRecesso.REFERENTE_RECESSO"
+                                ng-required="recessesGas.dettaglioRecesso.STATO == 'RESPINTO'" name="referentoRecesso"
+                                class="form-control" placeholder="Nome Referente">
+                            <small id="recapitoHelp" class="form-text text-muted">Solo caratteri numerici</small>
+                            <input type="text" maxlength="15" ng-pattern="/^[0-9]*$/"
+                                ng-required="recessesGas.dettaglioRecesso.STATO == 'RESPINTO'"
+                                ng-model="recessesGas.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO"
+                                name="referentoRecessoRecapito" class="form-control" placeholder="Recapito Referente">
+
+                        </div>
+
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="stato">Stato: &nbsp;</label>
+                            <select
+                                ng-if="recessesGas.dettaglioRecesso.STATO != 'RIENTRO' || user.TYPE == 'ADMIN' || user.TYPE == 'BACK_OFFICE' "
+                                ng-required="true" name="statoSelected" class="form-control" id="stato"
+                                ng-model="recessesGas.dettaglioRecesso.STATO_DA_INVIARE">
+                                <option ng-repeat="option1 in recessesGas.Stati" ng-value="option1.Value"
+                                    ng-selected="option1.Value === recessesGas.dettaglioRecesso.STATO"
+                                    value="{{option1.Value}}">{{option1.Name}} </option>
+                                <!-- INSERITO SOLO PER AGENTE JUNIOR E AGENTE, PER NON DUPLICARE L'OGGETTO .Stati dato che gli agenti possono respingere ma
                     non ricercare i recessi respinti -->
-                    <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"  ng-value="'RESPINTO'"  value="RESPINTO">RESPINTO </option>
-                    <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"  ng-value="'RIENTRO'"  value="RIENTRO">RIENTRO </option>
-                </select>
-                <p ng-if="recessesGas.dettaglioRecesso.STATO == 'RIENTRO' && user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE'">{{recessesGas.dettaglioRecesso.STATO}}</p>
-                
-            </div>
-            <div ng-if="recessesGas.dettaglioRecesso.STATO == 'RIENTRO' || recessesGas.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="stato">Codice Contratto: &nbsp;</label>
-                <input id="stato" maxlength="6" ng-pattern="/^[0-9]{6}$/" type="text" ng-required="recessesGas.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'" ng-model="recessesGas.dettaglioRecesso.COD_CONTRATTO"   name="codContratto" class="form-control" placeholder="Inserisci Cod Contratto">
-            </div>
+                                <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"
+                                    ng-value="'RESPINTO'" value="RESPINTO">RESPINTO </option>
+                                <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"
+                                    ng-value="'RIENTRO'" value="RIENTRO">RIENTRO </option>
+                            </select>
+                            <p
+                                ng-if="recessesGas.dettaglioRecesso.STATO == 'RIENTRO' && user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE'">
+                                {{recessesGas.dettaglioRecesso.STATO}}</p>
+
+                        </div>
+                        <div ng-if="recessesGas.dettaglioRecesso.STATO == 'RIENTRO' || recessesGas.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'"
+                            class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="stato">Codice Contratto: &nbsp;</label>
+                            <input id="stato" maxlength="6" ng-pattern="/^[0-9]{6}$/" type="text"
+                                ng-required="recessesGas.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'"
+                                ng-model="recessesGas.dettaglioRecesso.COD_CONTRATTO" name="codContratto"
+                                class="form-control" placeholder="Inserisci Cod Contratto">
+                        </div>
 
 
-            
-           
 
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
-                <label for="noteRecesso">Note recesso:</label>
-                <textarea  rows="4" cols="50"  maxlength="480"  type="text" name="note" class="form-control w-100" id="note"  ng-model="recessesGas.dettaglioRecesso.NOTE" ></textarea>         
-            </div>
 
-            <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
-                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
-                    <label for="dataInserimentoSistema">Data inserimento a sistema: &nbsp;</label>
-                    <p id="dataInserimentoSistema" class="input-group datepicker font-weight-bold">
-                        {{recessesGas.dettaglioRecesso.DATA_INSERIMENTO | date:'dd/MM/yyyy'}}
-                    </p>
+
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+                            <label for="noteRecesso">Note recesso:</label>
+                            <textarea rows="4" cols="50" maxlength="480" type="text" name="note"
+                                class="form-control w-100" id="note"
+                                ng-model="recessesGas.dettaglioRecesso.NOTE"></textarea>
+                        </div>
+
+                        <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
+                                <label for="dataInserimentoSistema">Data inserimento a sistema: &nbsp;</label>
+                                <p id="dataInserimentoSistema" class="input-group datepicker font-weight-bold">
+                                    {{recessesGas.dettaglioRecesso.DATA_INSERIMENTO | date:'dd/MM/yyyy'}}
+                                </p>
+                            </div>
+                            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
+                                <label for="dataUltimaModifica">Data ultima modifica: &nbsp;</label>
+                                <p id="dataUltimaModifica" class="input-group datepicker font-weight-bold">
+                                    {{recessesGas.dettaglioRecesso.ULTIMA_MODIFICA | date:'dd/MM/yyyy'}}
+                                </p>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="col-md-12 col-xl-12 mt-3 ">
+                            <button
+                                ng-show="recessesGas.dettaglioRecesso.STATO != 'RIENTRO' || (user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE')"
+                                ng-disabled="viewDettaglioRecesso.$invalid" type="submit" class="btn btn-orange ">Salva
+                                modifiche</button>
+                            <button ng-click="recessesGas.cancel()" type="button"
+                                class="btn btn-orange  float-right">Annulla</button>
+                        </div>
+
+                    </form>
                 </div>
-                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
-                    <label for="dataUltimaModifica">Data ultima modifica: &nbsp;</label>
-                    <p id="dataUltimaModifica" class="input-group datepicker font-weight-bold">
-                        {{recessesGas.dettaglioRecesso.ULTIMA_MODIFICA | date:'dd/MM/yyyy'}}
-                    </p>
-                </div>
             </div>
-      
 
-
-           
-            <div class="col-md-12 col-xl-12 mt-3 ">
-                <button ng-show="recessesGas.dettaglioRecesso.STATO != 'RIENTRO' || (user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE')" ng-disabled="viewDettaglioRecesso.$invalid"  type="submit" class="btn btn-orange ">Salva modifiche</button>
-                <button  ng-click="recessesGas.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
-            </div>
-          
-         </form>
-      </div>
         </div>
-      
-      </div>
     </div>
-  </div>
+</div>

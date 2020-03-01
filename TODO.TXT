@@ -1,4 +1,9 @@
+SOLO AGENTI E BACK OFFICE / ADMIN RECESSI - APPUNTAMENTI
 
-per riprendere il nome provincia by code dell'excel
+blocco gestione appuntamenti dopo 5gg con messaggio esplicativo di blocco
 
-$scope.searchDate.province.filter(p => p.code == 'AG')[0].nome
+RICERCA PER COMUNE RECESSI CAMPO LOCALITA'
+
+
+
+STATISTICHE ---> QUANTI ASSEGNATI, QUANTI RIENTRI per agenti verificare come gestire il respinto

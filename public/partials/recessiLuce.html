@@ -43,7 +43,7 @@
                 <label for="provinceSelect">Provincia</label>
                 <select name="provinceSelect" class="form-control" id="provinceSelect"
                     ng-model="recessesLuce.searchParam.provinciaSelected">
-                   
+
                     <option ng-repeat="option in recessesLuce.province" value="{{option.code}}">{{option.nome}}</option>
                 </select>
             </div>
@@ -63,14 +63,13 @@
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                 <label for="kwhAnnui">KWh annui</label>
-                <select ng-model="recessesLuce.searchParam.kwhAnnui" id="kwhAnnui" name="kwhAnnui"
-                    class="form-control">
-                    <option  value=""></option>
-                    <option  value="0-1000">da 0 a 1.000 kWh</option>
-                    <option  value="1000-5000">da 1.000 a 5.000 kWh</option>
-                    <option  value="5000-10000">da 5.000 a 10.000 kWh</option>
-                    <option  value="10000-50000">da 10.000 a 50.000 kWh</option>
-                    <option  value="50000">+ di 50.000 kWh</option>
+                <select ng-model="recessesLuce.searchParam.kwhAnnui" id="kwhAnnui" name="kwhAnnui" class="form-control">
+                    <option value=""></option>
+                    <option value="0-1000">da 0 a 1.000 kWh</option>
+                    <option value="1000-5000">da 1.000 a 5.000 kWh</option>
+                    <option value="5000-10000">da 5.000 a 10.000 kWh</option>
+                    <option value="10000-50000">da 10.000 a 50.000 kWh</option>
+                    <option value="50000">+ di 50.000 kWh</option>
                 </select>
             </div>
 
@@ -124,16 +123,23 @@
         </div>
 
         <div ng-if="recessesLuce.totalItems > 0" class="table-responsive">
+            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                <button class="btn btn-orange float-right mb-3" ng-click="recessesLuce.downloadRecessiLuce()">
+                    <i style="font-size: 18px;" class="far fa-file-excel"></i>
+                </button>
+            </div>
             <table class="table  table-bordered">
                 <thead>
                     <tr>
                         <th scope="col">Cliente</th>
                         <th scope="col">Indirizzo</th>
-                        <th scope="col" class="cursor-pointer" ng-click="recessesLuce.searchParam.orderByConsumo()">KWH_ANNUI 
+                        <th scope="col" class="cursor-pointer" ng-click="recessesLuce.searchParam.orderByConsumo()">
+                            KWH_ANNUI
                             <i ng-show="recessesLuce.searchParam.order == '' " class="fas fa-sort"></i>
-                            <i ng-show="recessesLuce.searchParam.order == 'DESC' " class="orangeText fas fa-sort-down"></i>
+                            <i ng-show="recessesLuce.searchParam.order == 'DESC' "
+                                class="orangeText fas fa-sort-down"></i>
                             <i ng-show="recessesLuce.searchParam.order == 'ASC' " class="orangeText fas fa-sort-up"></i>
-                         </th>
+                        </th>
                         <th scope="col">Data recesso</th>
                         <th scope="col">Permanenza</th>
                         <th scope="col">Agente assegnato</th>
@@ -143,34 +149,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="x in recessesLuce.recessiLuceResult" >
+                    <tr ng-repeat="x in recessesLuce.recessiLuceResult">
                         <td>
                             {{x.RAGIONE_SOCIALE}}
-                        </td> 
+                        </td>
                         <td>
-                            {{x.INDIRIZZO_FORN}} {{x.LOCALITA_FORN}} 
-                        </td> 
+                            {{x.INDIRIZZO_FORN}} {{x.LOCALITA_FORN}}
+                        </td>
                         <td>
                             {{x.KWH_ANNUI | number}}
-                        </td> 
+                        </td>
                         <td>
                             {{x.DATA_VALIDITA_RECESSO | date:'dd/MM/yyyy'}}
-                        </td> 
+                        </td>
                         <td>
                             {{recessesLuce.permanenza(x.DATA_ATTIVAZIONE, x.DATA_VALIDITA_RECESSO)}}
-                        </td> 
+                        </td>
                         <td>
-                            {{x.COGNOME_VENDITORE}}  {{x.NOME_VENDITORE}}
-                         </td> 
+                            {{x.COGNOME_VENDITORE}} {{x.NOME_VENDITORE}}
+                        </td>
                         <td>
                             {{x.STATO}}
-                        </td> 
+                        </td>
                         <td>
                             {{x.REFERENTE_RECESSO}} {{x.REFERENTE_RECESSO_RECAPITO}}
-                        </td> 
+                        </td>
                         <td>
-                            <button class="btn btn-orange btn-modifyUtente"
-                                ng-click="recessesLuce.modifyRecess(x)">
+                            <button class="btn btn-orange btn-modifyUtente" ng-click="recessesLuce.modifyRecess(x)">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
 
@@ -189,146 +194,188 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="recessModal" tabindex="-1" role="dialog" aria-labelledby="recessModalLabel" aria-hidden="true">
+<div class="modal fade" id="recessModal" tabindex="-1" role="dialog" aria-labelledby="recessModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="recessModalLabel">Recesso: <b>{{recessesLuce.dettaglioRecesso.ID_RECESSO_LUCE}}</b></h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="container" >
-              <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12 d-flex flex-row justify-content-between align-items-baseline" method="POST" name="viewDettaglioRecesso" ng-submit="recessesLuce.updateRecesso()" >
-        
-                  <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-4">
-                      <label for="dataValiditaRecessoDettaglioRecesso">Data Recesso: &nbsp;  </label>
-                      <p id="dataValiditaRecessoDettaglioRecesso" class="input-group datepicker font-weight-bold">
-                          {{recessesLuce.dettaglioRecesso.DATA_VALIDITA_RECESSO | date:'dd/MM/yyyy'}}
-                      </p>
-                  </div>
-                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
-                      <label for="dataAttivazioneDettaglioRecesso">Data attivazione: &nbsp;</label>
-                      <p  id="dataAttivazioneDettaglioRecesso" class="input-group datepicker font-weight-bold">
-                        {{recessesLuce.dettaglioRecesso.DATA_ATTIVAZIONE | date:'dd/MM/yyyy'}}
-                      </p>
-                  </div>
-                  <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                    <label for="ragSociale">Rag.Sociale: &nbsp;</label>
-                    <p id="ragSociale" class="input-group datepicker font-weight-bold">
-                        {{recessesLuce.dettaglioRecesso.RAGIONE_SOCIALE}} 
-                    </p>
-                </div>
-                  <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
-                    <label for="pod">POD: &nbsp;</label>
-                    <p  id="pod" class="input-group datepicker font-weight-bold">
-                      {{recessesLuce.dettaglioRecesso.POD }}
-                    </p>
-                </div>
-            
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                  <label for="indirizzoForn">Indirizzo Fornitura: &nbsp;</label>
-                  <p id="indirizzoForn" class="input-group datepicker font-weight-bold">
-                      {{recessesLuce.dettaglioRecesso.INDIRIZZO_FORN}} {{recessesLuce.dettaglioRecesso.LOCALITA_FORN}}
-                  </p>
-              </div>
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="indirizzoLegale">Indirizzo Sede legale: &nbsp;</label>
-                <p id="indirizzoLegale" class="input-group datepicker font-weight-bold">
-                    {{recessesLuce.dettaglioRecesso.INDIRIZZO_SEDE_LEGALE}} {{recessesLuce.dettaglioRecesso.LOCALITA_SEDE_LEGALE}}
-                </p>
-              </div>
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="recapiti">Recapiti: &nbsp;</label>
-                <p id="recapiti" class="input-group datepicker font-weight-bold">
-                    {{recessesLuce.dettaglioRecesso.TELEFONO}} {{recessesLuce.dettaglioRecesso.CELLULARE}} 
-                </p>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="recessModalLabel">Recesso:
+                    <b>{{recessesLuce.dettaglioRecesso.ID_RECESSO_LUCE}}</b></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                  <label for="consumi">Consumi KWH Annui: &nbsp;</label>
-                  <p id="consumi" class="input-group datepicker font-weight-bold">
-                      {{recessesLuce.dettaglioRecesso.KWH_ANNUI}}
-                  </p>
-              </div>
-              <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="insoluto">Insoluto: &nbsp;</label>
-                <p id="insoluto" class="input-group datepicker font-weight-bold">
-                    {{recessesLuce.dettaglioRecesso.INSOLUTO}}
-                </p>
-            </div>
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="agente">Contratto stipulato da: &nbsp;</label>
-                <p id="agente" class="input-group datepicker font-weight-bold">
-                    {{recessesLuce.dettaglioRecesso.AGENZIA}}
-                </p>
-            </div>
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="agente">Agente assegnato: &nbsp;</label>
-                <select ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'" id="agente"  name="venditoreSelect" class="form-control"    ng-model="recessesLuce.dettaglioRecesso.ID_VENDITORE">
-                    <option ng-repeat="option1 in recessesLuce.agenti" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesLuce.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
-                </select>
-                <select ng-if="user.TYPE === 'RESPONSABILE_AGENTI'" id="agente" name="venditoreSelect" class="form-control"   ng-model="recessesLuce.dettaglioRecesso.ID_VENDITORE">
-                    <option ng-value="user.Id" value="{{user.Id}}" ng-selected="user.Id === recessesLuce.dettaglioRecesso.ID_VENDITORE"> {{user.SURNAME}} {{user.NAME}}</option>
-                    <option ng-repeat="option1 in recessesLuce.venditoriForResponsabili" ng-value="option1.ID_UTENTE" ng-selected="option1.ID_UTENTE === recessesLuce.dettaglioRecesso.ID_VENDITORE" value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
-                </select>
-                <!-- SE SONO AGENTE O AGENTE_JUNIOR VEDO SOLAMENTE LA MIA ASSEGNAZIONE -->
-                <p ng-if="user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE' && user.TYPE !== 'RESPONSABILE_AGENTI'" id="agente" class="input-group datepicker font-weight-bold">
-                    {{recessesLuce.dettaglioRecesso.COGNOME_VENDITORE}} {{recessesLuce.dettaglioRecesso.NOME_VENDITORE}} 
-                </p>
-            </div>
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="agente">Nome e recapito del cliente: &nbsp;</label>
-                <input type="text" ng-model="recessesLuce.dettaglioRecesso.REFERENTE_RECESSO" ng-required="recessesLuce.dettaglioRecesso.STATO == 'RESPINTO'"  name="referentoRecesso" class="form-control" placeholder="Nome Referente">
-                <small id="recapitoHelp" class="form-text text-muted">Solo caratteri numerici</small>
-                <input type="text" maxlength="15" ng-pattern="/^[0-9]*$/" ng-required="recessesLuce.dettaglioRecesso.STATO == 'RESPINTO'" ng-model="recessesLuce.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO"   name="referentoRecessoRecapito" class="form-control" placeholder="Recapito Referente">
-            </div>
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="stato">Stato: &nbsp;</label>
-                <select ng-if="recessesLuce.dettaglioRecesso.STATO != 'RIENTRO' || user.TYPE == 'ADMIN' || user.TYPE == 'BACK_OFFICE' "  ng-required="true" name="statoSelected" class="form-control" id="stato"   ng-model="recessesLuce.dettaglioRecesso.STATO_DA_INVIARE">
-                    <option ng-repeat="option1 in recessesLuce.Stati" ng-value="option1.Value" ng-selected="option1.Value === recessesLuce.dettaglioRecesso.STATO" value="{{option1.Value}}">{{option1.Name}} </option>
-                    <!-- INSERITO SOLO PER AGENTE JUNIOR E AGENTE, PER NON DUPLICARE L'OGGETTO .Stati dato che gli agenti possono respingere ma
+            <div class="modal-body">
+                <div class="container">
+                    <form role="form"
+                        class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-0 col-md-12 d-flex flex-row justify-content-between align-items-baseline"
+                        method="POST" name="viewDettaglioRecesso" ng-submit="recessesLuce.updateRecesso()">
+
+                        <div class="form-group pb-3   col-xs-12 col-sm-3 col-md-4">
+                            <label for="dataValiditaRecessoDettaglioRecesso">Data Recesso: &nbsp; </label>
+                            <p id="dataValiditaRecessoDettaglioRecesso" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.DATA_VALIDITA_RECESSO | date:'dd/MM/yyyy'}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
+                            <label for="dataAttivazioneDettaglioRecesso">Data attivazione: &nbsp;</label>
+                            <p id="dataAttivazioneDettaglioRecesso" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.DATA_ATTIVAZIONE | date:'dd/MM/yyyy'}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="ragSociale">Rag.Sociale: &nbsp;</label>
+                            <p id="ragSociale" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.RAGIONE_SOCIALE}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3  col-xs-12 col-sm-3 col-md-4">
+                            <label for="pod">POD: &nbsp;</label>
+                            <p id="pod" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.POD }}
+                            </p>
+                        </div>
+
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="indirizzoForn">Indirizzo Fornitura: &nbsp;</label>
+                            <p id="indirizzoForn" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.INDIRIZZO_FORN}}
+                                {{recessesLuce.dettaglioRecesso.LOCALITA_FORN}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="indirizzoLegale">Indirizzo Sede legale: &nbsp;</label>
+                            <p id="indirizzoLegale" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.INDIRIZZO_SEDE_LEGALE}}
+                                {{recessesLuce.dettaglioRecesso.LOCALITA_SEDE_LEGALE}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="recapiti">Recapiti: &nbsp;</label>
+                            <p id="recapiti" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.TELEFONO}} {{recessesLuce.dettaglioRecesso.CELLULARE}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="consumi">Consumi KWH Annui: &nbsp;</label>
+                            <p id="consumi" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.KWH_ANNUI}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="insoluto">Insoluto: &nbsp;</label>
+                            <p id="insoluto" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.INSOLUTO}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="agente">Contratto stipulato da: &nbsp;</label>
+                            <p id="agente" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.AGENZIA}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="agente">Agente assegnato: &nbsp;</label>
+                            <select ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'" id="agente"
+                                name="venditoreSelect" class="form-control"
+                                ng-model="recessesLuce.dettaglioRecesso.ID_VENDITORE">
+                                <option ng-repeat="option1 in recessesLuce.agenti" ng-value="option1.ID_UTENTE"
+                                    ng-selected="option1.ID_UTENTE === recessesLuce.dettaglioRecesso.ID_VENDITORE"
+                                    value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                            </select>
+                            <select ng-if="user.TYPE === 'RESPONSABILE_AGENTI'" id="agente" name="venditoreSelect"
+                                class="form-control" ng-model="recessesLuce.dettaglioRecesso.ID_VENDITORE">
+                                <option ng-value="user.Id" value="{{user.Id}}"
+                                    ng-selected="user.Id === recessesLuce.dettaglioRecesso.ID_VENDITORE">
+                                    {{user.SURNAME}} {{user.NAME}}</option>
+                                <option ng-repeat="option1 in recessesLuce.venditoriForResponsabili"
+                                    ng-value="option1.ID_UTENTE"
+                                    ng-selected="option1.ID_UTENTE === recessesLuce.dettaglioRecesso.ID_VENDITORE"
+                                    value="{{option1.ID_UTENTE}}">{{option1.COGNOME}} {{option1.NOME}}</option>
+                            </select>
+                            <!-- SE SONO AGENTE O AGENTE_JUNIOR VEDO SOLAMENTE LA MIA ASSEGNAZIONE -->
+                            <p ng-if="user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE' && user.TYPE !== 'RESPONSABILE_AGENTI'"
+                                id="agente" class="input-group datepicker font-weight-bold">
+                                {{recessesLuce.dettaglioRecesso.COGNOME_VENDITORE}}
+                                {{recessesLuce.dettaglioRecesso.NOME_VENDITORE}}
+                            </p>
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="agente">Nome e recapito del cliente: &nbsp;</label>
+                            <input type="text" ng-model="recessesLuce.dettaglioRecesso.REFERENTE_RECESSO"
+                                ng-required="recessesLuce.dettaglioRecesso.STATO == 'RESPINTO'" name="referentoRecesso"
+                                class="form-control" placeholder="Nome Referente">
+                            <small id="recapitoHelp" class="form-text text-muted">Solo caratteri numerici</small>
+                            <input type="text" maxlength="15" ng-pattern="/^[0-9]*$/"
+                                ng-required="recessesLuce.dettaglioRecesso.STATO == 'RESPINTO'"
+                                ng-model="recessesLuce.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO"
+                                name="referentoRecessoRecapito" class="form-control" placeholder="Recapito Referente">
+                        </div>
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="stato">Stato: &nbsp;</label>
+                            <select
+                                ng-if="recessesLuce.dettaglioRecesso.STATO != 'RIENTRO' || user.TYPE == 'ADMIN' || user.TYPE == 'BACK_OFFICE' "
+                                ng-required="true" name="statoSelected" class="form-control" id="stato"
+                                ng-model="recessesLuce.dettaglioRecesso.STATO_DA_INVIARE">
+                                <option ng-repeat="option1 in recessesLuce.Stati" ng-value="option1.Value"
+                                    ng-selected="option1.Value === recessesLuce.dettaglioRecesso.STATO"
+                                    value="{{option1.Value}}">{{option1.Name}} </option>
+                                <!-- INSERITO SOLO PER AGENTE JUNIOR E AGENTE, PER NON DUPLICARE L'OGGETTO .Stati dato che gli agenti possono respingere ma
                     non ricercare i recessi respinti -->
-                    <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"  ng-value="'RESPINTO'"  value="RESPINTO">RESPINTO </option>
-                    <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"  ng-value="'RIENTRO'"  value="RIENTRO">RIENTRO </option>
-                </select>
-                <p ng-if="recessesLuce.dettaglioRecesso.STATO == 'RIENTRO' && user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE'">{{recessesLuce.dettaglioRecesso.STATO}}</p>
+                                <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"
+                                    ng-value="'RESPINTO'" value="RESPINTO">RESPINTO </option>
+                                <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"
+                                    ng-value="'RIENTRO'" value="RIENTRO">RIENTRO </option>
+                            </select>
+                            <p
+                                ng-if="recessesLuce.dettaglioRecesso.STATO == 'RIENTRO' && user.TYPE !== 'ADMIN' && user.TYPE !== 'BACK_OFFICE'">
+                                {{recessesLuce.dettaglioRecesso.STATO}}</p>
+                        </div>
+
+                        <div ng-if="recessesLuce.dettaglioRecesso.STATO == 'RIENTRO' || recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'"
+                            class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                            <label for="stato">Codice Contratto: &nbsp;</label>
+                            <input id="stato" maxlength="6" ng-pattern="/^[0-9]{6}$/" type="text"
+                                ng-required="recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'"
+                                ng-model="recessesLuce.dettaglioRecesso.COD_CONTRATTO" name="codContratto"
+                                class="form-control" placeholder="Inserisci Cod Contratto">
+                        </div>
+
+                        <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+                            <label for="noteRecesso">Note recesso:</label>
+                            <textarea rows="4" cols="50" maxlength="480" type="text" name="note"
+                                class="form-control w-100" id="note"
+                                ng-model="recessesLuce.dettaglioRecesso.NOTE"></textarea>
+                        </div>
+                        <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
+                                <label for="dataInserimentoSistema">Data inserimento a sistema: &nbsp;</label>
+                                <p id="dataInserimentoSistema" class="input-group datepicker font-weight-bold">
+                                    {{recessesLuce.dettaglioRecesso.DATA_INSERIMENTO | date:'dd/MM/yyyy'}}
+                                </p>
+                            </div>
+                            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
+                                <label for="dataUltimaModifica">Data ultima modifica: &nbsp;</label>
+                                <p id="dataUltimaModifica" class="input-group datepicker font-weight-bold">
+                                    {{recessesLuce.dettaglioRecesso.ULTIMA_MODIFICA | date:'dd/MM/yyyy'}}
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12 col-xl-12 mt-3 ">
+                            <button
+                                ng-show="recessesLuce.dettaglioRecesso.STATO != 'RIENTRO' || (user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE')"
+                                ng-disabled="viewDettaglioRecesso.$invalid " type="submit" class="btn btn-orange ">Salva
+                                modifiche</button>
+                            <button ng-click="recessesLuce.cancel()" type="button"
+                                class="btn btn-orange  float-right">Annulla</button>
+                        </div>
+
+                    </form>
+                </div>
             </div>
 
-            <div ng-if="recessesLuce.dettaglioRecesso.STATO == 'RIENTRO' || recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
-                <label for="stato">Codice Contratto: &nbsp;</label>
-                <input id="stato" maxlength="6" ng-pattern="/^[0-9]{6}$/" type="text" ng-required="recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RIENTRO'" ng-model="recessesLuce.dettaglioRecesso.COD_CONTRATTO"   name="codContratto" class="form-control" placeholder="Inserisci Cod Contratto">
-            </div>
-
-            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
-                <label for="noteRecesso">Note recesso:</label>
-                <textarea  rows="4" cols="50"  maxlength="480"  type="text" name="note" class="form-control w-100" id="note"  ng-model="recessesLuce.dettaglioRecesso.NOTE" ></textarea>         
-            </div>
-            <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
-                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
-                    <label for="dataInserimentoSistema">Data inserimento a sistema: &nbsp;</label>
-                    <p id="dataInserimentoSistema" class="input-group datepicker font-weight-bold">
-                        {{recessesLuce.dettaglioRecesso.DATA_INSERIMENTO | date:'dd/MM/yyyy'}}
-                    </p>
-                </div>
-                <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-6 ">
-                    <label for="dataUltimaModifica">Data ultima modifica: &nbsp;</label>
-                    <p id="dataUltimaModifica" class="input-group datepicker font-weight-bold">
-                        {{recessesLuce.dettaglioRecesso.ULTIMA_MODIFICA | date:'dd/MM/yyyy'}}
-                    </p>
-                </div>
-            </div>
-           
-           
-            <div class="col-md-12 col-xl-12 mt-3 ">
-                <button ng-show="recessesLuce.dettaglioRecesso.STATO != 'RIENTRO' || (user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE')" ng-disabled="viewDettaglioRecesso.$invalid "  type="submit" class="btn btn-orange ">Salva modifiche</button>
-                <button  ng-click="recessesLuce.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
-            </div>
-          
-         </form>
-      </div>
         </div>
-      
-      </div>
     </div>
-  </div>
+</div>
