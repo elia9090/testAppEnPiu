@@ -123,7 +123,7 @@
         </div>
 
         <div ng-if="recessesLuce.totalItems > 0" class="table-responsive">
-            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+            <div ng-if="user.TYPE !== 'RESPONSABILE_AGENTI'">
                 <button class="btn btn-orange float-right mb-3" ng-click="recessesLuce.downloadRecessiLuce()">
                     <i style="font-size: 18px;" class="far fa-file-excel"></i>
                 </button>

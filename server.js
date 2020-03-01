@@ -4123,7 +4123,7 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
 });
 
 //DOWNLOAAD RECESSI GAS
-app.post('/downloadRecessiGas', ensureToken, requireAdminOrBackOffice, function (req, res) {
+app.post('/downloadRecessiGas', ensureToken, function (req, res) {
     jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
@@ -4205,18 +4205,22 @@ app.post('/downloadRecessiGas', ensureToken, requireAdminOrBackOffice, function 
                 Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
             }
 
-            //TODO
+            
             pool.getConnection(function (err, connection) {
                 connection.query(`select 
                 CONCAT(VENDITORE.COGNOME, " ",  VENDITORE.NOME) AS "Agente", 
-                CONCAT(rg.VIA, " ",  rg.LOCALITA, " ", rg.PROVINCIA) AS "Agente", 
+                rg.PDR AS "Pdr", 
+                CONCAT(rg.VIA, " ",  rg.LOCALITA, " ", rg.PROVINCIA) AS "Indirizzo", 
                 rg.DENOMINAZIONE AS "Rag. Sociale", 
-                rg.DENOMINAZIONE, 
-                drg.,
-                VENDITORE.NOME NOME_VENDITORE, 
-                VENDITORE.COGNOME COGNOME_VENDITORE 
+                rg.CONSUMO_CONTRATTUALE AS "Metri Cubi Annui", 
+                DATE_FORMAT(rg.DATA_OUT,"%d-%m-%y") AS "Data Recesso",
+                rg.RIF_TELEFONICI AS "Recapiti", 
+                drg.STATO AS "Stato", 
+                drg.NOTE AS "Note",  
+                CONCAT(drg.REFERENTE_RECESSO, " ",  drg.REFERENTE_RECESSO_RECAPITO) AS "Referente Recesso", 
+                drg.COD_CONTRATTO AS "Cod. Contratto" 
                 from recessi_gas as rg 
-                inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
+                inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS 
                 left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
                 where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC `, [],
                     function (err, rows, fields) {
@@ -4246,7 +4250,7 @@ app.post('/downloadRecessiGas', ensureToken, requireAdminOrBackOffice, function 
 });
 
 //DOWNLOAAD RECESSI LUCE
-app.post('/downloadRecessiLuce', ensureToken, requireAdminOrBackOffice, function (req, res) {
+app.post('/downloadRecessiLuce', ensureToken, function (req, res) {
     jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
             res.sendStatus(403);
@@ -4335,9 +4339,23 @@ app.post('/downloadRecessiLuce', ensureToken, requireAdminOrBackOffice, function
 
             pool.getConnection(function (err, connection) {
                 connection.query(`select 
-                rl.*, drl.*, VENDITORE.ID_UTENTE ID_VENDITORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
+
+                CONCAT(VENDITORE.COGNOME, " ",  VENDITORE.NOME) AS "Agente", 
+                rl.POD AS "Pod", 
+                CONCAT(rl.INDIRIZZO_FORN, " ",  rl.LOCALITA_FORN) AS "Indirizzo", 
+                rl.RAGIONE_SOCIALE AS "Rag. Sociale", 
+                rl.KWH_ANNUI AS "KWH Annui", 
+                rl.INSOLUTO AS "Insoluto", 
+                DATE_FORMAT(rl.DATA_VALIDITA_RECESSO, "%d-%m-%y") AS "Data Recesso", 
+                CONCAT(rl.TELEFONO, " ",  rl.CELLULARE) AS "Recapiti", 
+
+                drl.STATO AS "Stato", 
+                drl.NOTE AS "Note",  
+                CONCAT(drl.REFERENTE_RECESSO, " ",  drl.REFERENTE_RECESSO_RECAPITO) AS "Referente Recesso", 
+                drl.COD_CONTRATTO AS "Cod. Contratto" 
+
                 from recessi_luce as rl 
-                inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
+                inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE 
                 left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
                 where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC `, [],
                     function (err, rows, fields) {
