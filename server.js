@@ -392,7 +392,7 @@ app.post('/updateUser', ensureToken, requireAdmin, function (req, res) {
         if (err) {
             res.sendStatus(403);
         } else {
-            console.log("post :: /updateUser");
+            console.log("post  :: /updateUser");
             log.info('post Request :: /updateUser');
 
             var data = {};
