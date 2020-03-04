@@ -2,7 +2,7 @@
 app.controller('loginCtrl',['$scope', '$http', '$location', 'alertify', function ($scope, $http, $location, alertify) {
 
     $scope.submitLogin = function () {
-        $http.post('/login', {
+        $http.post('/api/v1/users/user', {
             'username' : $scope.username,
             'password' : $scope.password
         }).then((result) => {

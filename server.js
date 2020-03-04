@@ -10,6 +10,9 @@ var log4js = require('log4js');
 log4js.configure('./config/log4js.json');
 var log = log4js.getLogger("server");
 var sha1 = require('sha1');
+
+const router= require('./routes/index');
+
 /*
 app.listen(3000,'192.168.1.187' || 'localhost',function() {
     console.log('Application worker  started...');
@@ -32,6 +35,10 @@ app.use(bodyParser.json({
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+// init refactoring
+
+app.use('/api/v1', router);
 
 /*MY SQL Connection Info*/
 var pool = mysql.createPool({
@@ -392,7 +399,7 @@ app.post('/updateUser', ensureToken, requireAdmin, function (req, res) {
         if (err) {
             res.sendStatus(403);
         } else {
-            console.log("post  :: /updateUser");
+            console.log("post :: /updateUser");
             log.info('post Request :: /updateUser');
 
             var data = {};
