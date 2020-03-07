@@ -26,6 +26,10 @@ app.use(express.static(__dirname + '/public', {
     maxAge: fiveHour
 }));
 
+//The 404 Route (ALWAYS Keep this as the last route)
+app.get('*', function(req, res){
+    res.redirect('/')
+  });
 
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({
