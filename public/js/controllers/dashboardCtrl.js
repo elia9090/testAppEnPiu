@@ -89,9 +89,7 @@ app.controller('dashboardCtrl',['$scope', '$http','$location','alertify', functi
     
     if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
 
-        if(sessionStorage.getItem('checkRecessi')){
-
-        }else{
+        if(!sessionStorage.getItem('checkRecessi')){
             $http.get('/checkRecessiAgente/'+$scope.user.Id).then((result) => {
                 var check = result.data;
                 if(check.countRecessiLuce > 0 && check.countRecessiGas > 0){

@@ -4394,7 +4394,7 @@ app.get('/checkRecessiAgente/:id', ensureToken, function (req, res) {
             var agente = req.params.id;
 
             pool.getConnection(function (err, connection) {
-                connection.query(`SELECT COUNT(*) AS countRecessiLuce from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE where drl.VENDITORE_ASSEGNATO=? `, [agente],
+                connection.query(`SELECT rl.ID_RECESSO_LUCE  from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE where drl.VENDITORE_ASSEGNATO=? and drl.STATO = 'ASSEGNATO' `, [agente],
                     function (err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -4402,16 +4402,18 @@ app.get('/checkRecessiAgente/:id', ensureToken, function (req, res) {
                             res.sendStatus(500);
                         } else {
 
-                            data["countRecessiLuce"] = rows[0].countRecessiLuce;
+                            data["countRecessiLuce"] = rows.length;
+                            data["IdRecessiLuce"] = rows;
                             pool.getConnection(function (err, connection) {
-                                connection.query(`SELECT COUNT(*) AS countRecessiGas from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS where drg.VENDITORE_ASSEGNATO=?`, [agente],
+                                connection.query(`SELECT rg.ID_RECESSO_GAS from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS where drg.VENDITORE_ASSEGNATO=? and drg.STATO = 'ASSEGNATO'`, [agente],
                                     function (err, rows, fields) {
                                         connection.release();
                                         if (err) {
                                             log.error('ERRORE SQL COUNT RECESSI gas: --> ' + err);
                                             res.sendStatus(500);
                                         } else {
-                                            data["countRecessiGas"] = rows[0].countRecessiGas;
+                                            data["countRecessiGas"] = rows.length;
+                                            data["IdRecessiGas"] = rows;
                                             res.json(data);
                                         }
                                     });
