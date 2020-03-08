@@ -10,7 +10,7 @@ var log4js = require('log4js');
 log4js.configure('./config/log4js.json');
 var log = log4js.getLogger("server");
 var sha1 = require('sha1');
-
+const helmet = require('helmet')
 const router= require('./routes/index');
 
 /*
@@ -20,16 +20,15 @@ app.listen(3000,'192.168.1.187' || 'localhost',function() {
   );*/
 
 
+//sicurezza web
+app.use(helmet());
+
 const fiveHour = 18000000;
 //STATIC FILES
 app.use(express.static(__dirname + '/public', {
     maxAge: fiveHour
 }));
 
-//The 404 Route (ALWAYS Keep this as the last route)
-app.get('*', function(req, res){
-    res.redirect('/')
-  });
 
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({
