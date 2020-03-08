@@ -3924,6 +3924,12 @@ app.post('/gasRecessesList', ensureToken, function (req, res) {
                 Qprovincia = ' AND LOWER(LOCALITA) LIKE LOWER("%(' + provincia + ')%") ';
             }
 
+            var comune = req.body.comune;
+            var Qcomune = " ";
+            if (comune !== '' && comune !== undefined && comune != null) {
+                Qcomune = ' AND LOWER(LOCALITA) LIKE LOWER("%' + comune + '%") ';
+            }
+
             var agente = req.body.agente;
             var Qagente = " ";
             if (agente !== '' && agente !== undefined && agente != null) {
@@ -3934,7 +3940,7 @@ app.post('/gasRecessesList', ensureToken, function (req, res) {
 
             pool.getConnection(function (err, connection) {
                 connection.query(`SELECT COUNT(*) AS TotalCount from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
-                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QmcAnnui} `,
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QmcAnnui} `,
                     function (err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -3950,7 +3956,7 @@ app.post('/gasRecessesList', ensureToken, function (req, res) {
                                 from recessi_gas as rg 
                                 inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
                                 left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
-                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
+                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
                                     function (err, rows, fields) {
                                         connection.release();
                                         if (err) {
@@ -4066,6 +4072,12 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
                 Qprovincia = ' AND LOWER(LOCALITA_FORN) LIKE LOWER("%(' + provincia + ')%") ';
             }
 
+            var comune = req.body.comune;
+            var Qcomune = " ";
+            if (comune !== '' && comune !== undefined && comune != null) {
+                Qcomune = ' AND LOWER(LOCALITA_FORN) LIKE LOWER("%' + comune + '%") ';
+            }
+
             var agente = req.body.agente;
             var Qagente = " ";
             if (agente !== '' && agente !== undefined && agente != null) {
@@ -4076,7 +4088,7 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
 
             pool.getConnection(function (err, connection) {
                 connection.query(`SELECT COUNT(*) AS TotalCount from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
-                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui}  `,
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui}  `,
                     function (err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -4092,7 +4104,7 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
                                 from recessi_luce as rl 
                                 inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
                                 left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
-                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
+                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
                                     function (err, rows, fields) {
                                         connection.release();
                                         if (err) {
@@ -4199,13 +4211,19 @@ app.post('/downloadRecessiGas', ensureToken, function (req, res) {
                 Qprovincia = ' AND LOWER(LOCALITA) LIKE LOWER("%(' + provincia + ')%") ';
             }
 
+            var comune = req.body.comune;
+            var Qcomune = " ";
+            if (comune !== '' && comune !== undefined && comune != null) {
+                Qcomune = ' AND LOWER(LOCALITA) LIKE LOWER("%' + comune + '%") ';
+            }
+
             var agente = req.body.agente;
             var Qagente = " ";
             if (agente !== '' && agente !== undefined && agente != null) {
                 Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
             }
 
-            
+
             pool.getConnection(function (err, connection) {
                 connection.query(`select 
                 CONCAT(VENDITORE.COGNOME, " ",  VENDITORE.NOME) AS "Agente", 
@@ -4222,7 +4240,7 @@ app.post('/downloadRecessiGas', ensureToken, function (req, res) {
                 from recessi_gas as rg 
                 inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS 
                 left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
-                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC `, [],
+                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune}   ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC `, [],
                     function (err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -4329,6 +4347,12 @@ app.post('/downloadRecessiLuce', ensureToken, function (req, res) {
                 Qprovincia = ' AND LOWER(LOCALITA_FORN) LIKE LOWER("%(' + provincia + ')%") ';
             }
 
+            var comune = req.body.comune;
+            var Qcomune = " ";
+            if (comune !== '' && comune !== undefined && comune != null) {
+                Qcomune = ' AND LOWER(LOCALITA_FORN) LIKE LOWER("%' + comune + '%") ';
+            }
+
             var agente = req.body.agente;
             var Qagente = " ";
             if (agente !== '' && agente !== undefined && agente != null) {
@@ -4357,7 +4381,7 @@ app.post('/downloadRecessiLuce', ensureToken, function (req, res) {
                 from recessi_luce as rl 
                 inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE 
                 left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
-                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC `, [],
+                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC `, [],
                     function (err, rows, fields) {
                         connection.release();
                         if (err) {

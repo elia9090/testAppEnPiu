@@ -30,14 +30,27 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
         opened: false
     };
 
+
     $http.get('../../utility/province_comuni.json').then((result) => {
-        // $scope.recessesLuce.searchParam.provinciaSelected = "";
+        // $scope.searchDate.searchParam.provinciaSelected = "";
         $scope.recessesLuce.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
         $scope.recessesLuce.province.splice(0, 0, ({ code: "", comuni: "", nome: "" }));
     }).catch((err) => {
         alertify.alert("Impossibile reperire la lista dei comuni");
     });
+    $scope.recessesLuce.comuniPerProvincia = "";
+
+    $scope.recessesLuce.disabledComuni = true;
+
+    $scope.recessesLuce.showComuni = function () {
+        var newArray = $scope.recessesLuce.province.filter(function (el) {
+            return el.code === $scope.recessesLuce.searchParam.provinciaSelected;
+        });
+        $scope.recessesLuce.comuniPerProvincia = newArray[0].comuni;
+        $scope.recessesLuce.comuniPerProvincia.splice(0, 0, ({ code: "", comuni: "", nome: "" }));
+        $scope.recessesLuce.disabledComuni = false;
+    }
 
 
     if ($scope.user.TYPE === 'ADMIN' || $scope.user.TYPE === 'BACK_OFFICE') {
@@ -276,6 +289,7 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
             'dataRecessoDAL': $scope.recessesLuce.searchParam.dataRecessoDAL,
             'dataRecessoAL': $scope.recessesLuce.searchParam.dataRecessoAL,
             'provincia': $scope.recessesLuce.searchParam.provinciaSelected,
+            'comune': $scope.recessesLuce.searchParam.comuneSelected,
             'ragioneSociale': $scope.recessesLuce.searchParam.ragioneSociale,
             'kwhAnnui': $scope.recessesLuce.searchParam.kwhAnnui,
             'stato': $scope.recessesLuce.searchParam.stato.value,
@@ -369,6 +383,7 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
             'dataRecessoDAL': $scope.recessesLuce.searchParam.dataRecessoDAL,
             'dataRecessoAL': $scope.recessesLuce.searchParam.dataRecessoAL,
             'provincia': $scope.recessesLuce.searchParam.provinciaSelected,
+            'comune': $scope.recessesLuce.searchParam.comuneSelected,
             'ragioneSociale': $scope.recessesLuce.searchParam.ragioneSociale,
             'kwhAnnui': $scope.recessesLuce.searchParam.kwhAnnui,
             'stato': $scope.recessesLuce.searchParam.stato.value,

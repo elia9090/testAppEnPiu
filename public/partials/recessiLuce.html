@@ -42,9 +42,18 @@
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                 <label for="provinceSelect">Provincia</label>
                 <select name="provinceSelect" class="form-control" id="provinceSelect"
-                    ng-model="recessesLuce.searchParam.provinciaSelected">
+                    ng-change="recessesLuce.showComuni()" ng-model="recessesLuce.searchParam.provinciaSelected">
 
                     <option ng-repeat="option in recessesLuce.province" value="{{option.code}}">{{option.nome}}</option>
+                </select>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="comuniSelect">Comune</label>
+                <select name="comuniSelect" class="form-control" id="comuniSelect"
+                    ng-disabled="recessesLuce.disabledComuni" ng-model="recessesLuce.searchParam.comuneSelected">
+                    <option ng-repeat="option in recessesLuce.comuniPerProvincia" value="{{option.nome}}">
+                        {{option.nome}}
+                    </option>
                 </select>
             </div>
 
