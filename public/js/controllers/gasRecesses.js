@@ -31,13 +31,26 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
     };
 
     $http.get('../../utility/province_comuni.json').then((result) => {
-        // $scope.recessesGas.searchParam.provinciaSelected = "";
+        // $scope.searchDate.searchParam.provinciaSelected = "";
         $scope.recessesGas.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
         $scope.recessesGas.province.splice(0, 0, ({ code: "", comuni: "", nome: "" }));
     }).catch((err) => {
         alertify.alert("Impossibile reperire la lista dei comuni");
     });
+    $scope.recessesGas.comuniPerProvincia = "";
+
+    $scope.recessesGas.disabledComuni = true;
+
+    $scope.recessesGas.showComuni = function () {
+        var newArray = $scope.recessesGas.province.filter(function (el) {
+            return el.code === $scope.recessesGas.searchParam.provinciaSelected;
+        });
+        $scope.recessesGas.comuniPerProvincia = newArray[0].comuni;
+        $scope.recessesGas.comuniPerProvincia.splice(0, 0, ({ code: "", comuni: "", nome: "" }));
+        $scope.recessesGas.disabledComuni = false;
+    }
+
 
     if ($scope.user.TYPE === 'ADMIN' || $scope.user.TYPE === 'BACK_OFFICE') {
         $scope.recessesGas.Stati = [
@@ -269,6 +282,7 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
             'dataRecessoDAL': $scope.recessesGas.searchParam.dataRecessoDAL,
             'dataRecessoAL': $scope.recessesGas.searchParam.dataRecessoAL,
             'provincia': $scope.recessesGas.searchParam.provinciaSelected,
+            'comune': $scope.recessesGas.searchParam.comuneSelected,
             'ragioneSociale': $scope.recessesGas.searchParam.ragioneSociale,
             'mcAnnui': $scope.recessesGas.searchParam.mcAnnui,
             'stato': $scope.recessesGas.searchParam.stato.value,
@@ -364,6 +378,7 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
             'dataRecessoDAL': $scope.recessesGas.searchParam.dataRecessoDAL,
             'dataRecessoAL': $scope.recessesGas.searchParam.dataRecessoAL,
             'provincia': $scope.recessesGas.searchParam.provinciaSelected,
+            'comune': $scope.recessesGas.searchParam.comuneSelected,
             'ragioneSociale': $scope.recessesGas.searchParam.ragioneSociale,
             'mcAnnui': $scope.recessesGas.searchParam.mcAnnui,
             'stato': $scope.recessesGas.searchParam.stato.value,
