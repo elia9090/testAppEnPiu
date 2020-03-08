@@ -2724,6 +2724,235 @@ app.post('/verifyDateStats', ensureToken, function (req, res) {
     });
 });
 
+//STATISTICHE RECESSI DASHBOARD ADMIN & BACK_OFFICE
+app.get('/recessesStatsAdminDashboard', ensureToken, requireAdminOrBackOffice, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var data = {};
+            var today = new Date();
+            var meseCorrente = today.getMonth() + 1;
+            var giornoCorrenteMenoUno = today.getDate() - 1;
+            var annoCorrente = today.getFullYear();
+            var dateToTodayMenoUno = annoCorrente + "-" + meseCorrente + "-" + giornoCorrenteMenoUno;
+
+            pool.getConnection(function (err, connection) {
+                connection.query(
+                    `select
+                    COUNT(IF(dettaglio_recesso_luce.STATO != 'NON_GESTIRE', 1, null)) AS totRecessi,
+                    'luce' as TIPO,
+                   
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'RIENTRO', 1, null)) AS RIENTRO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'RIENTRO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS RIENTRO_PERC,
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'RESPINTO', 1, null)) AS RESPINTO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'RESPINTO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS RESPINTO_PERC,
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'ASSEGNATO', 1, null)) AS ASSEGNATO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'ASSEGNATO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS ASSEGNATO_PERC,
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'PRESO_IN_CARICO', 1, null)) AS PRESO_IN_CARICO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'PRESO_IN_CARICO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS PRESO_IN_CARICO_PERC,
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'NON_ASSOCIATO', 1, null)) AS NON_ASSOCIATO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'NON_ASSOCIATO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS NON_ASSOCIATO_PERC
+                  
+                  from
+                    dettaglio_recesso_luce
+                  WHERE
+                    dettaglio_recesso_luce.DATA_INSERIMENTO <= ?
+                    
+                  UNION
+                  
+                  select
+                    COUNT(IF(dettaglio_recesso_gas.STATO != 'NON_GESTIRE', 1, null)) AS totRecessi,
+                   'gas' as TIPO,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'RIENTRO', 1, null)) AS RIENTRO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'RIENTRO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS RIENTRO_PERC,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'RESPINTO', 1, null)) AS RESPINTO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'RESPINTO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS RESPINTO_PERC,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'ASSEGNATO', 1, null)) AS ASSEGNATO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'ASSEGNATO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS ASSEGNATO_PERC,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'PRESO_IN_CARICO', 1, null)) AS PRESO_IN_CARICO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'PRESO_IN_CARICO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS PRESO_IN_CARICO_PERC,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'NON_ASSOCIATO', 1, null)) AS NON_ASSOCIATO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'NON_ASSOCIATO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS NON_ASSOCIATO_PERC
+                  
+                  from
+                    dettaglio_recesso_gas
+                  WHERE
+                    dettaglio_recesso_gas.DATA_INSERIMENTO <= ? `, [dateToTodayMenoUno,dateToTodayMenoUno],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL STATS DASHBOARD ADMIN: --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0 && !err) {
+                                data["statsLuce"] = rows[0];
+                                data["statsGas"] = rows[1];
+                                res.json(data);
+                            } else if (rows.length === 0) {
+                                //Error code 2 = no rows in db.
+                                data["error"] = 2;
+                                data["stats"] = 'Nessuna statistica trovata';
+                                res.status(404).json(data);
+                            } else {
+                                data["stats"] = 'Errore in fase di reperimento statistiche dashboard';
+                                res.status(500).json(data);
+                                console.log('Errore in fase di reperimento statistiche dashboard: ' + err);
+                                log.error('Errore in fase di reperimento statistiche dashboard: ' + err);
+                            }
+                        }
+
+                    });
+
+            });
+
+
+
+
+        }
+    });
+});
+
+//STATISTICHE RECESSI DASHBOARD VENDITORE
+app.get('/recessesStatsVenditoreDashboard/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var idVenditore = req.params.id;
+            var data = {};
+            var today = new Date();
+            var meseCorrente = today.getMonth() + 1;
+            var giornoCorrenteMenoUno = today.getDate() - 1;
+            var annoCorrente = today.getFullYear();
+            var dateToTodayMenoUno = annoCorrente + "-" + meseCorrente + "-" + giornoCorrenteMenoUno;
+
+            pool.getConnection(function (err, connection) {
+                connection.query(
+                    `select
+                    COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) AS totRecessi,
+                    'luce' as TIPO,
+                   
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'RIENTRO', 1, null)) AS RIENTRO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'RIENTRO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS RIENTRO_PERC,
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'RESPINTO', 1, null)) AS RESPINTO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'RESPINTO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS RESPINTO_PERC,
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'ASSEGNATO', 1, null)) AS ASSEGNATO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'ASSEGNATO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS ASSEGNATO_PERC,
+                    COUNT(IF(dettaglio_recesso_luce.STATO = 'PRESO_IN_CARICO', 1, null)) AS PRESO_IN_CARICO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_luce.STATO = 'PRESO_IN_CARICO', 1, null)) / COUNT(dettaglio_recesso_luce.ID_DETTAGLIO_LUCE) * 100,
+                      0
+                    ) AS PRESO_IN_CARICO_PERC
+                  
+                  from
+                    dettaglio_recesso_luce
+                  WHERE
+                    dettaglio_recesso_luce.DATA_INSERIMENTO <= ? AND dettaglio_recesso_luce.VENDITORE_ASSEGNATO = ?
+                    
+                  UNION
+                  
+                  select
+                    COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) AS totRecessi,
+                   'gas' as TIPO,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'RIENTRO', 1, null)) AS RIENTRO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'RIENTRO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS RIENTRO_PERC,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'RESPINTO', 1, null)) AS RESPINTO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'RESPINTO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS RESPINTO_PERC,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'ASSEGNATO', 1, null)) AS ASSEGNATO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'ASSEGNATO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS ASSEGNATO_PERC,
+                    COUNT(IF(dettaglio_recesso_gas.STATO = 'PRESO_IN_CARICO', 1, null)) AS PRESO_IN_CARICO,
+                    ROUND(
+                      COUNT(IF(dettaglio_recesso_gas.STATO = 'PRESO_IN_CARICO', 1, null)) / COUNT(dettaglio_recesso_gas.ID_DETTAGLIO_GAS) * 100,
+                      0
+                    ) AS PRESO_IN_CARICO_PERC
+                  
+                  from
+                    dettaglio_recesso_gas
+                  WHERE
+                    dettaglio_recesso_gas.DATA_INSERIMENTO <= ? AND dettaglio_recesso_gas.VENDITORE_ASSEGNATO = ?`, [dateToTodayMenoUno,idVenditore, dateToTodayMenoUno, idVenditore],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL STATS DASHBOARD ADMIN: --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0 && !err) {
+                                data["statsLuce"] = rows[0];
+                                data["statsGas"] = rows[1];
+                                res.json(data);
+                            } else if (rows.length === 0) {
+                                //Error code 2 = no rows in db.
+                                data["error"] = 2;
+                                data["stats"] = 'Nessuna statistica trovata';
+                                res.status(404).json(data);
+                            } else {
+                                data["stats"] = 'Errore in fase di reperimento statistiche dashboard';
+                                res.status(500).json(data);
+                                console.log('Errore in fase di reperimento statistiche dashboard: ' + err);
+                                log.error('Errore in fase di reperimento statistiche dashboard: ' + err);
+                            }
+                        }
+
+                    });
+
+            });
+
+
+
+
+        }
+    });
+});
+
 //STATISTICHE APPUNTAMENTI DASHBOARD ADMIN
 app.get('/dateStatsAdminDashboard', ensureToken, requireAdminOrBackOffice, function (req, res) {
     jwt.verify(req.token, config.secretKey, function (err, data) {

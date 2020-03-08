@@ -25,6 +25,23 @@
           chart-data="data1" chart-labels="labels1" chart-options="options1" chart-colors="colors1">
       </canvas>  
       </div>
+      <div class="clearfix" style="margin-bottom: 100px;"></div>
+      <div class="col-md-6 float-left">
+        <h3 class="text-center">% Stato recessi Luce </h3>
+        <p class="text-center"> Recessi Luce:<b>{{dashBoard.statsLuce.totRecessi}}</b></p>
+        <p class="text-center"><span>RIENTRO:<b>{{dashBoard.statsLuce.RIENTRO}}</b></span> | <span>PRESO IN CARICO:<b>{{dashBoard.statsLuce.PRESO_IN_CARICO}}</b></span> | <span>ASSEGNATO:<b>{{dashBoard.statsLuce.ASSEGNATO}}</b></span> | <span>RESPINTO:<b>{{dashBoard.statsLuce.RESPINTO}}</b></span> | <span>NON ASSOCIATO:<b>{{dashBoard.statsLuce.NON_ASSOCIATO}}</b></span></p>
+        <canvas  height="{{dashBoard.height_chart}}"  id="pie" class="chart chart-pie"
+         chart-data="data2" chart-labels="labels2" chart-options="options2" chart-colors="colors2">
+        </canvas>  
+    </div>
+      <div class="col-md-6 float-left">
+        <h3 class="text-center">% Stato recessi Gas </h3>
+        <p class="text-center"> Recessi Gas:<b>{{dashBoard.statsGas.totRecessi}}</b></p>
+        <p class="text-center"><span>RIENTRO:<b>{{dashBoard.statsGas.RIENTRO}}</b></span> | <span>PRESO IN CARICO:<b>{{dashBoard.statsGas.PRESO_IN_CARICO}}</b></span> | <span>ASSEGNATO:<b>{{dashBoard.statsGas.ASSEGNATO}}</b></span> | <span>RESPINTO:<b>{{dashBoard.statsGas.RESPINTO}}</b></span> | <span>NON ASSOCIATO:<b>{{dashBoard.statsGas.NON_ASSOCIATO}}</b></span></p>
+        <canvas  height="{{dashBoard.height_chart}}"  id="pie" class="chart chart-pie"
+          chart-data="data3" chart-labels="labels3" chart-options="options3" chart-colors="colors3">
+      </canvas>  
+      </div>
       <div class="clearfix"></div>
    </div>
    <div ng-if="user.TYPE == 'AGENTE' || user.TYPE == 'RESPONSABILE_AGENTI'">
@@ -44,7 +61,28 @@
           chart-data="data1" chart-labels="labels1" chart-options="options1" chart-colors="colors1">
       </canvas>  
       </div>
-      <div class="clearfix"></div>
+      <div class="clearfix" style="margin-bottom: 100px;"></div>
+   </div>
+   <div ng-if="user.TYPE == 'AGENTE' || user.TYPE == 'RESPONSABILE_AGENTI' || user.TYPE == 'AGENTE_JUNIOR'">
+    
+        <div class="col-md-6 float-left">
+            <h3 class="text-center">% Stato recessi Luce </h3>
+            <p class="text-center"> Recessi Luce:<b>{{dashBoard.statsLuce.totRecessi}}</b></p>
+            <p class="text-center"><span>RIENTRO:<b>{{dashBoard.statsLuce.RIENTRO}}</b></span> | <span>PRESO IN CARICO:<b>{{dashBoard.statsLuce.PRESO_IN_CARICO}}</b></span> | <span>ASSEGNATO:<b>{{dashBoard.statsLuce.ASSEGNATO}}</b></span> | <span>RESPINTO:<b>{{dashBoard.statsLuce.RESPINTO}}</b></span>
+            <canvas  height="{{dashBoard.height_chart}}"  id="pie" class="chart chart-pie"
+             chart-data="data2" chart-labels="labels2" chart-options="options2" chart-colors="colors2">
+            </canvas>  
+        </div>
+          <div class="col-md-6 float-left">
+            <h3 class="text-center">% Stato recessi Gas </h3>
+            <p class="text-center"> Recessi Gas:<b>{{dashBoard.statsGas.totRecessi}}</b></p>
+            <p class="text-center"><span>RIENTRO:<b>{{dashBoard.statsGas.RIENTRO}}</b></span> | <span>PRESO IN CARICO:<b>{{dashBoard.statsGas.PRESO_IN_CARICO}}</b></span> | <span>ASSEGNATO:<b>{{dashBoard.statsGas.ASSEGNATO}}</b></span> | <span>RESPINTO:<b>{{dashBoard.statsGas.RESPINTO}}</b></span>
+            <canvas  height="{{dashBoard.height_chart}}"  id="pie" class="chart chart-pie"
+              chart-data="data3" chart-labels="labels3" chart-options="options3" chart-colors="colors3">
+          </canvas>  
+          </div>
+   
+   <div class="clearfix"></div>
    </div>
    <div ng-if="user.TYPE == 'OPERATORE'">
       <div class="col-md-6 m-auto ">

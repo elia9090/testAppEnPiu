@@ -398,7 +398,10 @@ textarea{
 .tdRedBorder{
   border: 1px solid red !important;
 }
-
+.required-red{
+  font-weight: bold !important;
+  color: red !important;
+}
 .width80{
   width: 80%;
 }

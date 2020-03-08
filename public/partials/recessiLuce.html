@@ -310,15 +310,16 @@
                             </p>
                         </div>
                         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                          
                             <label for="agente">Nome e recapito del cliente: &nbsp;</label>
-                            <input type="text" ng-model="recessesLuce.dettaglioRecesso.REFERENTE_RECESSO"
-                                ng-required="recessesLuce.dettaglioRecesso.STATO == 'RESPINTO'" name="referentoRecesso"
+                            
+                            <input type="text" ng-class="{'error-rosso': recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RESPINTO' && !recessesLuce.dettaglioRecesso.REFERENTE_RECESSO}"  ng-model="recessesLuce.dettaglioRecesso.REFERENTE_RECESSO"
+                                ng-required="recessesLuce.dettaglioRecesso.STATO == 'RESPINTO' || recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RESPINTO'" name="referentoRecesso"
                                 class="form-control" placeholder="Nome Referente">
-                            <small id="recapitoHelp" class="form-text text-muted">Solo caratteri numerici</small>
-                            <input type="text" maxlength="15" ng-pattern="/^[0-9]*$/"
-                                ng-required="recessesLuce.dettaglioRecesso.STATO == 'RESPINTO'"
+                            <input type="text" ng-class="{'error-rosso': recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RESPINTO' && !recessesLuce.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO}" maxlength="15" ng-pattern="/^[0-9]*$/"
+                                ng-required="recessesLuce.dettaglioRecesso.STATO == 'RESPINTO' || recessesLuce.dettaglioRecesso.STATO_DA_INVIARE == 'RESPINTO'"
                                 ng-model="recessesLuce.dettaglioRecesso.REFERENTE_RECESSO_RECAPITO"
-                                name="referentoRecessoRecapito" class="form-control" placeholder="Recapito Referente">
+                                name="referentoRecessoRecapito" class="form-control" placeholder="Recapito (solo numeri)">
                         </div>
                         <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
                             <label for="stato">Stato: &nbsp;</label>
@@ -331,9 +332,9 @@
                                     value="{{option1.Value}}">{{option1.Name}} </option>
                                 <!-- INSERITO SOLO PER AGENTE JUNIOR E AGENTE, PER NON DUPLICARE L'OGGETTO .Stati dato che gli agenti possono respingere ma
                     non ricercare i recessi respinti -->
-                                <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"
+                                <option ng-if="user.TYPE == 'AGENTE' || user.TYPE == 'AGENTE_JUNIOR'"
                                     ng-value="'RESPINTO'" value="RESPINTO">RESPINTO </option>
-                                <option ng-show="user.TYPE === 'AGENTE' || user.TYPE === 'AGENTE_JUNIOR'"
+                                <option ng-if="user.TYPE == 'AGENTE' || user.TYPE == 'AGENTE_JUNIOR'"
                                     ng-value="'RIENTRO'" value="RIENTRO">RIENTRO </option>
                             </select>
                             <p

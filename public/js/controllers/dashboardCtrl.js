@@ -55,6 +55,48 @@ app.controller('dashboardCtrl',['$scope', '$http','$location','alertify', functi
             alertify.alert("Impossibile reperire le statistiche appuntamenti");
         });
 
+    
+
+        $http.get('/recessesStatsAdminDashboard').then((result) => {
+        
+            $scope.dashBoard.statsLuce = result.data.statsLuce;
+            $scope.dashBoard.statsGas = result.data.statsGas;
+    
+    
+            $scope.labels2 = ["RIENTRO", "RESPINTO","PRESO IN CARICO", "ASSEGNATO","NON ASSOCIATO"];
+            $scope.data2 = [$scope.dashBoard.statsLuce.RIENTRO_PERC, $scope.dashBoard.statsLuce.RESPINTO_PERC, $scope.dashBoard.statsLuce.PRESO_IN_CARICO_PERC, $scope.dashBoard.statsLuce.ASSEGNATO_PERC,$scope.dashBoard.statsLuce.NON_ASSOCIATO_PERC];
+            $scope.colors2 = ["rgb(45,204,112)","rgb(232,76,61)","rgb(255,207,21)","rgb(189,195,199)","rgb(142,68,173)"];
+            $scope.options2 = {
+                segmentShowStroke : true,
+                animationSteps : 1,
+                animationEasing : "linear",
+                legend: {display: true},
+              
+            };
+    
+            $scope.labels3 = ["RIENTRO", "RESPINTO","PRESO IN CARICO", "ASSEGNATO","NON ASSOCIATO"];
+            $scope.data3 = [$scope.dashBoard.statsGas.RIENTRO_PERC, $scope.dashBoard.statsGas.RESPINTO_PERC, $scope.dashBoard.statsGas.PRESO_IN_CARICO_PERC, $scope.dashBoard.statsGas.ASSEGNATO_PERC,$scope.dashBoard.statsGas.NON_ASSOCIATO_PERC];
+            $scope.colors3 = ["rgb(45,204,112)","rgb(232,76,61)","rgb(255,207,21)","rgb(189,195,199)","rgb(142,68,173)"];
+            $scope.options3 = {
+                segmentShowStroke : true,
+                animationSteps : 1,
+                animationEasing : "linear",
+                legend: {display: true},
+              
+            };
+               
+                
+            }).catch((err) => {
+                if(err.status === 403){
+                    alertify.alert("Utente non autorizzato");
+                    $location.path('/logout');
+                    return;
+                }
+                alertify.alert("Impossibile reperire le statistiche recessi");
+            });
+    
+
+
     }
     if($scope.user.TYPE == "OPERATORE"){
         
@@ -87,7 +129,7 @@ app.controller('dashboardCtrl',['$scope', '$http','$location','alertify', functi
 
     }
     
-    if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
+    if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI" || $scope.user.TYPE == "AGENTE_JUNIOR"){
 
         if(!sessionStorage.getItem('checkRecessi')){
             $http.get('/checkRecessiAgente/'+$scope.user.Id).then((result) => {
@@ -147,6 +189,46 @@ app.controller('dashboardCtrl',['$scope', '$http','$location','alertify', functi
             }
             alertify.alert("Impossibile reperire le statistiche appuntamenti");
         });
+
+
+
+        $http.get('/recessesStatsVenditoreDashboard/'+$scope.user.Id).then((result) => {
+        
+            $scope.dashBoard.statsLuce = result.data.statsLuce;
+            $scope.dashBoard.statsGas = result.data.statsGas;
+    
+    
+            $scope.labels2 = ["RIENTRO", "RESPINTO","PRESO IN CARICO", "ASSEGNATO"];
+            $scope.data2 = [$scope.dashBoard.statsLuce.RIENTRO_PERC, $scope.dashBoard.statsLuce.RESPINTO_PERC, $scope.dashBoard.statsLuce.PRESO_IN_CARICO_PERC, $scope.dashBoard.statsLuce.ASSEGNATO_PERC];
+            $scope.colors2 = ["rgb(45,204,112)","rgb(232,76,61)","rgb(255,207,21)","rgb(189,195,199)"];
+            $scope.options2 = {
+                segmentShowStroke : true,
+                animationSteps : 1,
+                animationEasing : "linear",
+                legend: {display: true},
+              
+            };
+    
+            $scope.labels3 = ["RIENTRO", "RESPINTO","PRESO IN CARICO", "ASSEGNATO"];
+            $scope.data3 = [$scope.dashBoard.statsGas.RIENTRO_PERC, $scope.dashBoard.statsGas.RESPINTO_PERC, $scope.dashBoard.statsGas.PRESO_IN_CARICO_PERC, $scope.dashBoard.statsGas.ASSEGNATO_PERC];
+            $scope.colors3 = ["rgb(45,204,112)","rgb(232,76,61)","rgb(255,207,21)","rgb(189,195,199)"];
+            $scope.options3 = {
+                segmentShowStroke : true,
+                animationSteps : 1,
+                animationEasing : "linear",
+                legend: {display: true},
+              
+            };
+               
+                
+            }).catch((err) => {
+                if(err.status === 403){
+                    alertify.alert("Utente non autorizzato");
+                    $location.path('/logout');
+                    return;
+                }
+                alertify.alert("Impossibile reperire le statistiche recessi");
+            });
 
     }
 
