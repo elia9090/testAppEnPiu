@@ -4168,7 +4168,7 @@ app.post('/gasRecessesList', ensureToken, function (req, res) {
 
 
             pool.getConnection(function (err, connection) {
-                connection.query(`SELECT COUNT(*) AS TotalCount from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
+                connection.query(`SELECT COUNT(*) AS TotalCount from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS
                                     where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QmcAnnui} `,
                     function (err, rows, fields) {
                         connection.release();
@@ -4183,7 +4183,7 @@ app.post('/gasRecessesList', ensureToken, function (req, res) {
                                 connection.query(`select 
                                 rg.*, drg.*,VENDITORE.ID_UTENTE ID_VENDITORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
                                 from recessi_gas as rg 
-                                inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS
+                                inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS
                                 left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
                                 where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
                                     function (err, rows, fields) {
@@ -4316,7 +4316,7 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
 
 
             pool.getConnection(function (err, connection) {
-                connection.query(`SELECT COUNT(*) AS TotalCount from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
+                connection.query(`SELECT COUNT(*) AS TotalCount from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE
                                     where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui}  `,
                     function (err, rows, fields) {
                         connection.release();
@@ -4331,7 +4331,7 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
                                 connection.query(`select 
                                 rl.*, drl.*, VENDITORE.ID_UTENTE ID_VENDITORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE 
                                 from recessi_luce as rl 
-                                inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE
+                                inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE
                                 left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
                                 where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
                                     function (err, rows, fields) {
@@ -4467,7 +4467,7 @@ app.post('/downloadRecessiGas', ensureToken, function (req, res) {
                 CONCAT(drg.REFERENTE_RECESSO, " ",  drg.REFERENTE_RECESSO_RECAPITO) AS "Referente Recesso", 
                 drg.COD_CONTRATTO AS "Cod. Contratto" 
                 from recessi_gas as rg 
-                inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS 
+                inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS
                 left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
                 where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune}   ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC `, [],
                     function (err, rows, fields) {
@@ -4608,7 +4608,7 @@ app.post('/downloadRecessiLuce', ensureToken, function (req, res) {
                 drl.COD_CONTRATTO AS "Cod. Contratto" 
 
                 from recessi_luce as rl 
-                inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE 
+                inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE 
                 left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
                 where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune}  ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC `, [],
                     function (err, rows, fields) {
@@ -4647,7 +4647,7 @@ app.get('/checkRecessiAgente/:id', ensureToken, function (req, res) {
             var agente = req.params.id;
 
             pool.getConnection(function (err, connection) {
-                connection.query(`SELECT rl.ID_RECESSO_LUCE  from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_DETTAGLIO_LUCE where drl.VENDITORE_ASSEGNATO=? and drl.STATO = 'ASSEGNATO' `, [agente],
+                connection.query(`SELECT rl.ID_RECESSO_LUCE  from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE where drl.VENDITORE_ASSEGNATO=? and drl.STATO = 'ASSEGNATO' `, [agente],
                     function (err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -4658,7 +4658,7 @@ app.get('/checkRecessiAgente/:id', ensureToken, function (req, res) {
                             data["countRecessiLuce"] = rows.length;
                             data["IdRecessiLuce"] = rows;
                             pool.getConnection(function (err, connection) {
-                                connection.query(`SELECT rg.ID_RECESSO_GAS from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_DETTAGLIO_GAS where drg.VENDITORE_ASSEGNATO=? and drg.STATO = 'ASSEGNATO'`, [agente],
+                                connection.query(`SELECT rg.ID_RECESSO_GAS from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS where drg.VENDITORE_ASSEGNATO=? and drg.STATO = 'ASSEGNATO'`, [agente],
                                     function (err, rows, fields) {
                                         connection.release();
                                         if (err) {
