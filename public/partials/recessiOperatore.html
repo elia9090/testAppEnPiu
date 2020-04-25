@@ -1,0 +1,129 @@
+<div class="container">
+
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST"
+        name="recessesForm" ng-submit="operatorRecesses.submitRecesses('submit')">
+
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Recessi da gestire</h2>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row col-12">
+            
+
+
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="provinceSelect">Provincia</label>
+                <select name="provinceSelect" class="form-control" id="provinceSelect"
+                    ng-change="operatorRecesses.showComuni()" ng-model="operatorRecesses.searchParam.provinciaSelected">
+
+                    <option ng-repeat="option in operatorRecesses.province" value="{{option.code}}">{{option.nome}}</option>
+                </select>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="comuniSelect">Comune</label>
+                <select name="comuniSelect" class="form-control" id="comuniSelect"
+                    ng-disabled="operatorRecesses.disabledComuni" ng-model="operatorRecesses.searchParam.comuneSelected">
+                    <option ng-repeat="option in operatorRecesses.comuniPerProvincia" value="{{option.nome}}">{{option.nome}}
+                    </option>
+                </select>
+            </div>
+
+        </div>
+        <div class="row col-12">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+                <label for="ragioneSociale">Rag.Sociale</label>
+                <input type="text" id="ragioneSociale" class="form-control w-100"
+                    ng-model="operatorRecesses.searchParam.ragioneSociale">
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="statoRecesso">Stato</label>
+                <select ng-model="operatorRecesses.searchParam.stato.value" id="statoRecesso" name="statoRecesso"
+                    class="form-control"
+                    ng-options="Stato.Value as Stato.Name  for Stato in operatorRecesses.Stati"></select>
+            </div>
+       
+
+        </div>
+
+
+
+
+        <div class="row col-12">
+            <div class="col-md-12 col-xl-12 mt-3 ">
+                <button ng-disabled="recessesForm.$invalid " type="submit" class="btn btn-orange ">Ricerca recessi</button>
+            </div>
+        </div>
+    </form>
+
+    <div ng-if="operatorRecesses.showRisultati"
+        class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+        <div class="col-md-12">
+            <h2>Risultato ricerca recessi</h2>
+            <hr>
+        </div>
+        <div ng-if="operatorRecesses.totalItems == 0">
+            <h3>Nessun recesso trovato, modificare i parametri di ricerca</h3>
+        </div>
+
+        <div ng-if="operatorRecesses.totalItems > 0" class="table-responsive">
+          
+            <table class="table  table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Cliente</th>
+                        <th scope="col">Tipologia recesso</th>
+                        <th scope="col">Indirizzo</th>
+                        <th scope="col">Stato</th>
+                        <th scope="col">Modifica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="x in operatorRecesses.recessiResult">
+                        <td>
+                            {{x.cliente}}
+                        </td>
+                        <td>
+                            {{x.tipo}} 
+                        </td>
+                        <td>
+                            {{x.indirizzo}}
+                        </td>
+                        <td>
+                            {{x.statoOperatore}}
+                        </td>
+                     
+                        <td>
+                            <button class="btn btn-orange btn-modifyUtente" ng-click="operatorRecesses.modifyRecess(x)">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ul ng-if="operatorRecesses.totalItems > operatorRecesses.searchParam.itemsPerPage" uib-pagination
+            items-per-page="operatorRecesses.searchParam.itemsPerPage" total-items="operatorRecesses.totalItems"
+            ng-model="operatorRecesses.searchParam.currentPage" ng-change="pageChanged()" boundary-link-numbers="true"
+            rotate="true" max-size="5"></ul>
+
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="recessModal" tabindex="-1" role="dialog" aria-labelledby="recessModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+           
+            <div class="modal-body">
+                
+            </div>
+
+        </div>
+    </div>
+</div>

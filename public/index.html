@@ -98,6 +98,9 @@
                                 <li class="nav-item" ng-show="userType !== 'OPERATORE'">
                                   <a class="nav-link" href="#recessiGas">Recessi Gas</a>
                                 </li>
+                                <li class="nav-item" ng-show="userType == 'OPERATORE' || userType === 'ADMIN' || userType === 'BACK_OFFICE'">
+                                  <a class="nav-link" href="#recessiOperatore">Recessi per operatore</a>
+                                </li>
                                 <hr class="divider">
                                 <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'RESPONSABILE_AGENTI' ">
                                     <a class="nav-link" href="#aggiuntiUtente">Aggiungi utente</a>

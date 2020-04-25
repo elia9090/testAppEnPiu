@@ -4363,6 +4363,179 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
     });
 });
 
+//LISTA RECESSI GAS
+app.post('/oparatorRecesses', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var data = {};
+
+            var limit = req.body.limit;
+            //piccolo ANTI HACK
+            if (limit > 200) {
+                limit = 100;
+            }
+
+            var offset = req.body.offset;
+
+
+            var provincia = req.body.provincia;
+            var Qprovincia = " ";
+            if (provincia !== '' && provincia !== undefined && provincia != null) {
+                Qprovincia = ' AND LOWER(comuneProvincia) LIKE LOWER("%(' + provincia + ')%") ';
+            }
+
+            var comune = req.body.comune;
+            var Qcomune = " ";
+            if (comune !== '' && comune !== undefined && comune != null) {
+                Qcomune = ' AND LOWER(comuneProvincia) LIKE LOWER("%' + comune + '%") ';
+            }
+
+            var statoOperatore = req.body.statoOperatore;
+            var QstatoOperatore = " ";
+            if (statoOperatore !== '' && statoOperatore !== undefined && statoOperatore != null) {
+                QstatoOperatore = ' AND statoOperatore' + statoOperatore + '%") ';
+            }
+          
+
+            pool.getConnection(function (err, connection) {
+                connection.query(`SELECT count(*) as TotalCount
+                FROM
+                  (SELECT rl.ID_RECESSO_LUCE AS idRecesso,
+                          drl.ID_DETTAGLIO_LUCE AS idDettaglio,
+                          rl.POD AS contatore,
+                          'LUCE' AS tipo,
+                          rl.RAGIONE_SOCIALE AS cliente,
+                          CONCAT(rl.INDIRIZZO_FORN, " ", rl.LOCALITA_FORN) AS indirizzo,
+                          rl.LOCALITA_FORN AS comuneProvincia,
+                          rl.KWH_ANNUI AS consumo,
+                          rl.DATA_VALIDITA_RECESSO AS dataRecesso,
+                          CONCAT(rl.CELLULARE, " ", rl.TELEFONO) AS telefono,
+                          CONCAT(ut.COGNOME, " ", ut.NOME) AS agente,
+                          drl.REFERENTE_RECESSO AS riferimentoDaAgente,
+                          drl.REFERENTE_RECESSO_RECAPITO AS recapitoDaAgente,
+                          drl.NOTE AS noteAgente,
+                          drl.STATO_OPERATORE AS statoOperatore,
+                          drl.STORICO_CHIAMATE AS storicoChiamate,
+                          drl.NOTE_OPERATORE AS noteOperatore 
+                   FROM DB_GESTIONALE_APP.dettaglio_recesso_luce drl
+                   LEFT JOIN DB_GESTIONALE_APP.recessi_luce rl ON rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE
+                   LEFT JOIN DB_GESTIONALE_APP.UTENTI ut ON drl.VENDITORE_ASSEGNATO = ut.ID_UTENTE
+                   WHERE drl.STATO = 'RESPINTO'
+                     AND drl.STATO_OPERATORE IS NULL
+                   UNION SELECT rg.ID_RECESSO_GAS AS idRecesso,
+                                drg.ID_DETTAGLIO_GAS AS idDettaglio,
+                                rg.PDR AS contatore,
+                                'GAS' AS tipo,
+                                rg.DENOMINAZIONE AS cliente,
+                                CONCAT(rg.VIA, " ", rg.LOCALITA, " ", rg.PROVINCIA) AS indirizzo,
+                                rg.LOCALITA AS comuneProvincia,
+                                rg.CONSUMO_CONTRATTUALE AS consumo,
+                                rg.DATA_OUT AS dataRecesso,
+                                rg.RIF_TELEFONICI AS telefono,
+                                CONCAT(ut.COGNOME, " ", ut.NOME) AS agente,
+                                drg.REFERENTE_RECESSO AS riferimentoDaAgente,
+                                drg.REFERENTE_RECESSO_RECAPITO AS recapitoDaAgente,
+                                drg.NOTE AS noteAgente,
+                                drg.STATO_OPERATORE AS statoOperatore,
+                                drg.STORICO_CHIAMATE AS storicoChiamate,
+                                drg.NOTE_OPERATORE AS noteOperatore 
+                   FROM DB_GESTIONALE_APP.dettaglio_recesso_gas drg
+                   LEFT JOIN DB_GESTIONALE_APP.recessi_gas rg ON rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS
+                   LEFT JOIN DB_GESTIONALE_APP.UTENTI ut ON drg.VENDITORE_ASSEGNATO = ut.ID_UTENTE
+                   WHERE drg.STATO = 'RESPINTO'
+                     AND drg.STATO_OPERATORE IS NULL ) AS recessesLuceAndGas
+                     WHERE 1=1  ${Qprovincia} ${Qcomune} ${QstatoOperatore} `,
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL RICERCA COUNT RECESSI per OPERATORI ' + err);
+                            res.sendStatus(500);
+                        } else {
+
+                            data["totaleRecessi"] = rows[0].TotalCount;
+
+                            pool.getConnection(function (err, connection) {
+                                connection.query(`SELECT count(*) as TotalCount
+                                FROM
+                                  (SELECT rl.ID_RECESSO_LUCE AS idRecesso,
+                                          drl.ID_DETTAGLIO_LUCE AS idDettaglio,
+                                          rl.POD AS contatore,
+                                          'LUCE' AS tipo,
+                                          rl.RAGIONE_SOCIALE AS cliente,
+                                          CONCAT(rl.INDIRIZZO_FORN, " ", rl.LOCALITA_FORN) AS indirizzo,
+                                          rl.LOCALITA_FORN AS comuneProvincia,
+                                          rl.KWH_ANNUI AS consumo,
+                                          rl.DATA_VALIDITA_RECESSO AS dataRecesso,
+                                          CONCAT(rl.CELLULARE, " ", rl.TELEFONO) AS telefono,
+                                          CONCAT(ut.COGNOME, " ", ut.NOME) AS agente,
+                                          drl.REFERENTE_RECESSO AS riferimentoDaAgente,
+                                          drl.REFERENTE_RECESSO_RECAPITO AS recapitoDaAgente,
+                                          drl.NOTE AS noteAgente,
+                                          drl.STATO_OPERATORE AS statoOperatore,
+                                          drl.STORICO_CHIAMATE AS storicoChiamate,
+                                          drl.NOTE_OPERATORE AS noteOperatore,
+                                          drl.ULTIMA_MODIFICA as ultimaModifica 
+                                   FROM DB_GESTIONALE_APP.dettaglio_recesso_luce drl
+                                   LEFT JOIN DB_GESTIONALE_APP.recessi_luce rl ON rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE
+                                   LEFT JOIN DB_GESTIONALE_APP.UTENTI ut ON drl.VENDITORE_ASSEGNATO = ut.ID_UTENTE
+                                   WHERE drl.STATO = 'RESPINTO'
+                                     AND drl.STATO_OPERATORE IS NULL
+                                   UNION SELECT rg.ID_RECESSO_GAS AS idRecesso,
+                                                drg.ID_DETTAGLIO_GAS AS idDettaglio,
+                                                rg.PDR AS contatore,
+                                                'GAS' AS tipo,
+                                                rg.DENOMINAZIONE AS cliente,
+                                                CONCAT(rg.VIA, " ", rg.LOCALITA, " ", rg.PROVINCIA) AS indirizzo,
+                                                rg.LOCALITA AS comuneProvincia,
+                                                rg.CONSUMO_CONTRATTUALE AS consumo,
+                                                rg.DATA_OUT AS dataRecesso,
+                                                rg.RIF_TELEFONICI AS telefono,
+                                                CONCAT(ut.COGNOME, " ", ut.NOME) AS agente,
+                                                drg.REFERENTE_RECESSO AS riferimentoDaAgente,
+                                                drg.REFERENTE_RECESSO_RECAPITO AS recapitoDaAgente,
+                                                drg.NOTE AS noteAgente,
+                                                drg.STATO_OPERATORE AS statoOperatore,
+                                                drg.STORICO_CHIAMATE AS storicoChiamate,
+                                                drg.NOTE_OPERATORE AS noteOperatore,
+                                                drg.ULTIMA_MODIFICA as ultimaModifica
+                                   FROM DB_GESTIONALE_APP.dettaglio_recesso_gas drg
+                                   LEFT JOIN DB_GESTIONALE_APP.recessi_gas rg ON rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS
+                                   LEFT JOIN DB_GESTIONALE_APP.UTENTI ut ON drg.VENDITORE_ASSEGNATO = ut.ID_UTENTE
+                                   WHERE drg.STATO = 'RESPINTO'
+                                     AND drg.STATO_OPERATORE IS NULL ) AS recessesLuceAndGas
+                                     WHERE 1=1  ${Qprovincia} ${Qcomune} ${QstatoOperatore} ultimaModifica ASC LIMIT ? OFFSET ?`, [limit, offset],
+                                    function (err, rows, fields) {
+                                        connection.release();
+                                        if (err) {
+                                            log.error('ERRORE SQL RICERCA recessi operatore: --> ' + err);
+                                            res.sendStatus(500);
+                                        } else {
+                                            if (rows.length !== 0) {
+                                                data["recessi"] = rows;
+                                                res.json(data);
+                                            } else {
+                                                data["recessi"] = [];
+                                                res.json(data);
+                                            }
+                                        }
+
+                                    });
+
+                            });
+                        }
+                    });
+            });
+
+
+
+
+        }
+    });
+});
+
+
 //DOWNLOAAD RECESSI GAS
 app.post('/downloadRecessiGas', ensureToken, function (req, res) {
     jwt.verify(req.token, config.secretKey, function (err, data) {

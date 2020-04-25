@@ -154,6 +154,10 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
             templateUrl: '../partials/recessiGas.html',
             controller:'gasRecessesCtrl'
         })
+        .when('/recessiOperatore', {
+            templateUrl: '../partials/recessiOperatore.html',
+            controller:'operatorRecessesCtrl'
+        })
         .when('/editDateVenditore/:id', {
             templateUrl: '../partials/editAppuntamentoVenditore.html',
             controller:'editDateVenditoreCtrl'
