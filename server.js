@@ -2333,6 +2333,224 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
     });
 });
 
+
+//RICERCA APPUNTAMENTI GENERICA
+app.post('/searchDateRicontatto', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var data = {};
+
+            var limit = req.body.limit;
+            //piccolo ANTI HACK
+            if (limit > 200) {
+                limit = 100;
+            }
+
+            var offset = req.body.offset;
+
+            var dateFrom = req.body.dateFROM;
+            var QdateFrom = " ";
+            if (dateFrom !== '' && dateFrom !== undefined && dateFrom != null) {
+                QdateFrom = ' AND APP.DATA_APPUNTAMENTO >= "' + dateFrom + '" ';
+            }
+
+            var dateTo = req.body.dateTO;
+            var QdateTo = " ";
+            if (dateTo !== '' && dateTo !== undefined && dateTo != null) {
+                QdateTo = ' AND APP.DATA_APPUNTAMENTO <= "' + dateTo + '" ';
+            }
+
+            var provincia = req.body.provincia;
+            var Qprovincia = " ";
+            if (provincia !== '' && provincia !== undefined && provincia != null) {
+                Qprovincia = ' AND APP.PROVINCIA = "' + provincia + '" ';
+            }
+
+            var comune = req.body.comune;
+            var Qcomune = " ";
+            if (comune !== '' && comune !== undefined && comune != null) {
+                Qcomune = ' AND APP.COMUNE = "' + comune + '" ';
+            }
+            var ragioneSociale = req.body.ragioneSociale;
+            var QragioneSociale = " ";
+            if (ragioneSociale !== '' && ragioneSociale !== undefined && ragioneSociale != null) {
+                QragioneSociale = ' AND LOWER(APP.NOME_ATTIVITA) LIKE LOWER("%' + ragioneSociale + '%") ';
+            }
+
+            pool.getConnection(function (err, connection) {
+                connection.query(`
+                                    SELECT COUNT(*) AS TotalCount from APPUNTAMENTI as APP WHERE (APP.ESITO = 'KO'
+                                    OR (APP.ESITO = 'VALUTA' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
+                                    OR (APP.ESITO = 'ASSENTE' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
+                                    OR (APP.ESITO = 'NON VISITATO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA)))
+                                    ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
+                                `, function (err, rows, fields) {
+                    connection.release();
+                    if (err) {
+                        log.error('ERRORE SQL RICERCA COUNT APPUNTAMENTI_ricontatto ' + err);
+                        res.sendStatus(500);
+                    } else {
+
+                        data["totaleAppuntamenti"] = rows[0].TotalCount;
+
+                        pool.getConnection(function (err, connection) {
+                            connection.query(
+                                            `SELECT RICONTATTO.*, APP.ID_APPUNTAMENTO, APP.ID_OPERATORE, APP.ID_VENDITORE, APP.DATA_CREAZIONE, APP.DATA_MODIFICA, APP.DATA_APPUNTAMENTO, APP.ORA_APPUNTAMENTO, APP.PROVINCIA, APP.COMUNE, APP.INDIRIZZO, APP.NOME_ATTIVITA, APP.NOTE_OPERATORE, APP.ATTUALE_GESTORE, APP.RECAPITI, APP.ESITO, APP.NOTE_AGENTE
+                                                 FROM DB_GESTIONALE_APP.APPUNTAMENTI AS APP
+                                                
+                                                 LEFT JOIN DB_GESTIONALE_APP.APP_RICONTATTO AS RICONTATTO ON APP.ID_APPUNTAMENTO = RICONTATTO.ID_APPUNTAMENTO_RIC
+                                                 AND RICONTATTO.DATA_MODIFICA_RIC = (SELECT MAX(ar.DATA_MODIFICA_RIC) FROM APP_RICONTATTO ar where ar.ID_APPUNTAMENTO_RIC = RICONTATTO.ID_APPUNTAMENTO_RIC)
+                                                 where (APP.ESITO = 'KO'
+                                                 OR (APP.ESITO = 'VALUTA' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
+                                                 OR (APP.ESITO = 'ASSENTE' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
+                                                 OR (APP.ESITO = 'NON VISITATO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA)))
+                                                 ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
+                                                 ORDER BY RICONTATTO.DATA_MODIFICA_RIC, APP.DATA_MODIFICA ASC LIMIT ? OFFSET ?
+                                            `, [limit, offset],
+                                function (err, rows, fields) {
+                                    connection.release();
+                                    if (err) {
+                                        log.error('ERRORE SQL RICERCA appuntamentiDaRicontattare: --> ' + err);
+                                        res.sendStatus(500);
+                                    } else {
+                                        if (rows.length !== 0) {
+                                            data["appuntamenti"] = rows;
+                                            res.json(data);
+                                        } else {
+                                            data["appuntamenti"] = [];
+                                            res.json(data);
+                                        }
+                                    }
+
+                                });
+
+                        });
+                    }
+                });
+            });
+
+
+
+
+        }
+    });
+});
+
+//Appuntamento
+app.get('/storicoRicontatti/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+
+        } else {
+
+            var data = {};
+
+            var idAppuntamento = req.params.id;
+
+            pool.getConnection(function (err, connection) {
+                connection.query(
+                    `
+                        select ar.*, ut.COGNOME, ut.NOME, ut.ID_UTENTE from APP_RICONTATTO ar
+                        left join UTENTI ut on ut.ID_UTENTE =ar.ID_OPERATORE_RIC 
+                        where ID_APPUNTAMENTO_RIC = ? ORDER BY ar.DATA_MODIFICA_RIC DESC
+                    `, [idAppuntamento],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL GET STORICO RICONTATTI PER APPUNTAMENTO: ' + idAppuntamento + ' --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0) {
+                                data["storicoRicontatti"] = rows;
+                                res.json(data);
+                            } else if (rows.length === 0) {
+                                //Error code 2 = no rows in db.
+                                data["error"] = 2;
+                                data["storicoRicontatti"] = 'Nessuno storico trovato';
+                                res.status(404).json(data);
+                            } else {
+                                data["storicoRicontatti"] = 'Errore in fase di reperimento STORICO RICONTATTI appuntamento';
+                                res.status(500).json(data);
+                                console.log('Errore in fase di reperimento STORICO RICONTATTI appuntamento: ' + err);
+                                log.error('Errore in fase di reperimento STORICO RICONTATTI appuntamento: ' + err);
+                            }
+                        }
+
+                    });
+
+            });
+
+        }
+    });
+});
+
+// NUOVO STORICO
+app.post('/addRicontatto', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            console.log("post :: /addNewDate");
+            log.info('post Request :: /addNewDate');
+
+            var data = {};
+            var idOperatore = req.body.idOperatore;
+            var idAppuntamento = req.body.idAppuntamento;
+            var noteOperatore = req.body.noteOperatore;
+            var esitoRicontatto  = req.body.esitoRicontatto;
+
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
+                    if (errTrans) { //Transaction Error (Rollback and release connection)
+                        connection.rollback(function () {
+                            connection.release();
+                        });
+                        res.sendStatus(500);
+                    } else {
+                        connection.query(`INSERT INTO APP_RICONTATTO
+                        (ID_APPUNTAMENTO_RIC, ESITO_RICONTATTO, ID_OPERATORE_RIC, NOTE_OPERATORE_RIC, DATA_MODIFICA_RIC)
+                        VALUES(?, ?, ?, ?, NULL)`, [idAppuntamento, esitoRicontatto, idOperatore, noteOperatore],
+                            function (err, rows, fields) {
+                                if (err) {
+                                    connection.rollback(function () {
+                                        connection.release();
+                                        //Failure
+                                    });
+                                    log.error('ERRORE SQL INSERT  ricontatto   ' + err);
+                                    res.sendStatus(500);
+
+                                } else {
+                                    connection.commit(function (err) {
+                                        if (err) {
+                                            connection.rollback(function () {
+                                                connection.release();
+                                                //Failure
+                                            });
+                                            res.sendStatus(500);
+                                        } else {
+                                            connection.release();
+                                            data["RESULT"] = "OK";
+                                            res.json(data);
+                                            //Success
+                                        }
+                                    });
+                                }
+
+                            });
+                    }
+                });
+
+
+            });
+        }
+    });
+});
+
+
+
 //VERIFICA APPUNTAMENTI GENERICA
 app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function (req, res) {
     jwt.verify(req.token, config.secretKey, function (err, data) {

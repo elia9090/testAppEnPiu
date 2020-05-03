@@ -1,0 +1,137 @@
+<div class="container" >
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" ng-submit="editRicontatto.editRicontattoSubmit()" name="editRicontattoForm" >
+<div class="row col-12">
+    <div class="col-md-12">
+        <h2>Appuntamento originario: {{editRicontatto.Appuntamento.ID_APPUNTAMENTO}}</h2>
+        <hr>
+    </div>
+     
+</div>
+    <div class="row col-12" >
+        <div class="form-group pb-3   col-xs-12 col-sm-6 col-md-4 mr-2">
+            <label for="dataAppuntamento">Data appuntamento: &nbsp;  </label>
+            <p id="dataAppuntamento" class="input-group datepicker font-weight-bold">
+                {{editRicontatto.Appuntamento.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
+            </p>
+        </div>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="provinceSelect">Provincia: &nbsp;</label>
+        <p id="provinceSelect" class="input-group datepicker font-weight-bold">
+            {{editRicontatto.Appuntamento.PROVINCIA}}
+        </p>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="comuneSelect">Comune: &nbsp;</label>
+        <p id="comuneSelect" class="input-group datepicker font-weight-bold">
+            {{editRicontatto.Appuntamento.COMUNE}}
+        </p>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="comuneSelect">Indirizzo: &nbsp;</label>
+        <p id="comuneSelect" class="input-group datepicker font-weight-bold">
+            {{editRicontatto.Appuntamento.INDIRIZZO}}
+        </p>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="Operatore">Operatore: &nbsp;</label>
+        <p id="Operatore" class="input-group datepicker font-weight-bold">
+            {{editRicontatto.Appuntamento.COGNOME_OPERATORE}} {{editRicontatto.Appuntamento.NOME_OPERATORE}} 
+        </p>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="agente">Agente: &nbsp;</label>
+        <p id="agente" class="input-group datepicker font-weight-bold">
+            {{editRicontatto.Appuntamento.COGNOME_VENDITORE}} {{editRicontatto.Appuntamento.NOME_VENDITORE}} 
+        </p>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="attivita">Nome azienda / Persona fisica: &nbsp;</label>
+        <p id="attivita" class="input-group datepicker font-weight-bold">
+            {{editRicontatto.Appuntamento.NOME_ATTIVITA}} 
+        </p>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="gestore">Gestore attuale: &nbsp;</label>
+        <p id="gestore" class="input-group datepicker font-weight-bold">
+            {{editRicontatto.Appuntamento.ATTUALE_GESTORE}} 
+        </p>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="recapiti">Recapiti: &nbsp;</label>
+        <p id="recapiti" class="input-group datepicker font-weight-bold">
+            {{editRicontatto.Appuntamento.RECAPITI}} 
+        </p>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="noteOperatore">Note operatore: &nbsp;</label>
+        <textarea id="noteOperatore"  rows="4" cols="50" maxlength="480"  type="text" readonly >{{editRicontatto.Appuntamento.NOTE_OPERATORE}}  </textarea> 
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+        <label for="noteAgente">Note agente: &nbsp;</label>
+        <textarea id="noteAgente"  rows="4" cols="50" maxlength="480"  type="text" readonly >{{editRicontatto.Appuntamento.NOTE_AGENTE}}  </textarea> 
+    </div>
+
+<div class=" col-12">
+    <div class="row col-12">
+        <div class="col-md-12">
+            <hr>
+            <h4>Esito Ricontatto & Storico Esiti</h4>
+            <hr>
+        </div>
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 ">
+            <label for="esitoRicontatto">Esito appuntamento: &nbsp;</label>
+            <select ng-required="true"  ng-model="editRicontatto.esito.value" id="esitoRicontatto" name="esitoRicontatto"  class="form-control" ng-options="Esito.Value as Esito.Name  for Esito in editRicontatto.Esiti"></select>      
+    </div>
+    <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-8 col-xl-8">
+        <label for="noteOperatore">Note ricontatto operatore:</label>
+        <br>
+        <i ng-if="editRicontatto.esito.value == 'DA RICHIAMARE' || editRicontatto.esito.value == 'NON INTERESSATO'">Inserire una nota ricontatto</i>
+        <textarea  rows="4" ng-required="editRicontatto.esito.value !== 'APPUNTAMENTO'" cols="50" maxlength="480"  type="text"name="noteRicontattoOperatore" class="form-control w-100" id="noteRicontattoOperatore"  ng-model="editRicontatto.noteRicontattoOperatore" ></textarea>         
+    </div>
+    <div class="pb-3 col-xs-12 col-sm-12 col-md-12 ">
+        <label for="esitoAppuntamento">Storico Esiti ricontatto: &nbsp;</label>
+        <div class="table-responsive">
+            <table class="table  table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Data Ricontatto</th>
+                        <th scope="col">Operatore</th>
+                        <th scope="col">Esito ricontatto</th>
+                        <th scope="col">Note operatore</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr  ng-repeat="x in editRicontatto.storicoRicontatti track by x.ID_RICONTATTO">
+                        <td>
+                            {{x.DATA_MODIFICA_RIC | date:'dd/MM/yyyy HH:mm' }}
+                        </td>
+                        
+                        <td>
+                            {{x.COGNOME}} {{x.NOME}}
+                        </td>
+                        <td>
+                            {{x.ESITO_RICONTATTO}}
+                        </td>
+
+                        <td>
+                            {{x.NOTE_OPERATORE_RIC}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+  
+
+
+
+
+<div class="col-md-12 col-xl-12 mt-3 ">
+    <button ng-disabled="editRicontattoForm.$invalid"  type="submit" class="btn btn-orange ">Salva modifiche</button>
+    <button  ng-click="editRicontatto.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
+</div>
+</form>
+</div>

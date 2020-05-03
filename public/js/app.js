@@ -13,11 +13,12 @@ app.run(['$rootScope', '$location', function($rootScope, $location, ) {
             $rootScope.userEditedPassword = JSON.parse(sessionStorage.user).editPassword === "0" ? true : false;
         }
         //svuoto il local storage dei parametri di ricerca
-        if(prevRoute && currRoute && (currRoute.$$route.controller=="dateSearchCtrl" || currRoute.$$route.controller=="verifyDateCtrl") && 
+        if(prevRoute && currRoute && (currRoute.$$route.controller=="dateSearchCtrl" || currRoute.$$route.controller=="verifyDateCtrl" || currRoute.$$route.controller=="ricontattoAppuntamentiCtrl") && 
                 (prevRoute.$$route.controller != "editDateAdminCtrl") 
                     && prevRoute.$$route.controller != "editDateOperatoreCtrl"
                         && prevRoute.$$route.controller != "editDateVenditoreCtrl"
-                            && prevRoute.$$route.controller != "viewDateCtrl"){
+                            && prevRoute.$$route.controller != "viewDateCtrl"
+                            && prevRoute.$$route.controller != "editRicontattoAppuntamentoCtrl"){
                             //rimuovo il local storage dei parametri di ricerca
                             localStorage.removeItem("searchParam");
 
@@ -129,6 +130,14 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
         .when('/statisticheAppuntamenti', {
             templateUrl: '../partials/statisticheAppuntamenti.html',
             controller:'statisticheAppuntamentiCtrl'
+        })
+        .when('/ricontattoAppuntamenti', {
+            templateUrl: '../partials/ricontattoAppuntamenti.html',
+            controller:'ricontattoAppuntamentiCtrl'
+        })
+        .when('/editRicontattoAppuntamento/:idAppuntamento', {
+            templateUrl: '../partials/editRicontattoAppuntamento.html',
+            controller:'editRicontattoAppuntamentoCtrl'
         })
         .when('/verifyDate', {
             templateUrl: '../partials/verifyDate.html',

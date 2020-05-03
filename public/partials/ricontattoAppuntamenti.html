@@ -1,0 +1,141 @@
+<div class="container">
+
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST"
+        name="ricontattoAppuntamentiForm" ng-submit="ricontattoAppuntamenti.submitRicontattoAppuntamenti('submit')">
+
+        <div class="row col-12">
+            <div class="col-md-12">
+                <h2>Appuntamenti da ricontattare</h2>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row col-12">
+            <div class="form-group pb-3 col-xs-12 col-sm-6 col-md-3 ">
+                <label for="dataAppuntamentoDAL">Data appuntamento DAL</label>
+                <p class="input-group datepicker">
+                    <input type="text" name="dataAppuntamentoDAL" id="dataAppuntamentoDAL" ng-click="openDAL()"
+                        class="form-control " readonly uib-datepicker-popup="{{format}}"
+                        ng-model="ricontattoAppuntamenti.searchParam.dataAppuntamentoDAL" value="" is-open="popupDAL.opened"
+                        datepicker-options="dateOptions" clear-text="Rimuovi" close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="openDAL()"><i
+                                class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
+            </div>
+            <div class="form-group pb-3  col-xs-12 col-sm-6 col-md-3 ">
+                <label for="dataAppuntamentoAL">Data appuntamento AL</label>
+                <p class="input-group datepicker">
+                    <input type="text" name="dataAppuntamentoAL" id="dataAppuntamentoAL" ng-click="openAL()"
+                        class="form-control " readonly uib-datepicker-popup="{{format}}"
+                        ng-model="ricontattoAppuntamenti.searchParam.dataAppuntamentoAL" value="" is-open="popupAL.opened"
+                        datepicker-options="dateOptions" clear-text="Rimuovi" close-text="Chiudi" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-orange" ng-click="openAL()"><i
+                                class="far fa-calendar-alt"></i></button>
+                    </span>
+                </p>
+            </div>
+
+
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="provinceSelect">Provincia</label>
+                <select name="provinceSelect" class="form-control" id="provinceSelect"
+                    ng-change="ricontattoAppuntamenti.showComuni()" ng-model="ricontattoAppuntamenti.searchParam.provinciaSelected">
+
+                    <option ng-repeat="option in ricontattoAppuntamenti.province" value="{{option.nome}}">{{option.nome}}</option>
+                </select>
+            </div>
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="comuniSelect">Comune</label>
+                <select name="comuniSelect" class="form-control" id="comuniSelect"
+                    ng-disabled="ricontattoAppuntamenti.disabledComuni" ng-model="ricontattoAppuntamenti.searchParam.comuneSelected">
+                    <option ng-repeat="option in ricontattoAppuntamenti.comuniPerProvincia" value="{{option.nome}}">{{option.nome}}
+                    </option>
+                </select>
+            </div>
+
+        </div>
+        <div class="row col-12">
+            <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
+                <label for="ragioneSociale">Rag.Sociale/Nome cliente</label>
+                <input type="text" id="ragioneSociale" class="form-control w-100"
+                    ng-model="ricontattoAppuntamenti.searchParam.ragioneSociale">
+            </div>
+         
+        </div>
+
+        <div class="row col-12">
+            <div class="col-md-12 col-xl-12 mt-3 ">
+                <button ng-disabled="ricontattoAppuntamentiForm.$invalid " type="submit" class="btn btn-orange ">Ricerca
+                    appuntamenti</button>
+            </div>
+        </div>
+    </form>
+
+    <div ng-if="ricontattoAppuntamenti.showRisultati"
+        class="form-horizontal rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12 ng-pristine">
+        <div class="col-md-12">
+            <h2>Risultato ricerca appuntamenti</h2>
+            <hr>
+        </div>
+        <div ng-if="ricontattoAppuntamenti.totalItems == 0">
+            <h3>Nessun appuntamento trovato, modificare i parametri di ricerca</h3>
+        </div>
+
+        <div ng-if="ricontattoAppuntamenti.totalItems > 0" class="table-responsive">
+           <!--  <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+                <button class="btn btn-orange float-right mb-3" ng-click="ricontattoAppuntamenti.downloadAppuntamenti()">
+                    <i style="font-size: 18px;" class="far fa-file-excel"></i>
+                </button>
+            </div> -->
+            <table class="table  table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Data primo Appuntamento</th>
+                        <th scope="col">Azienda/cliente</th>
+                        <th scope="col">Luogo</th>
+                        <th scope="col">Esito ultimo ricontatto</th>
+                        <th scope="col">Data ultimo ricontatto</th>
+                        <th scope="col">Modifica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr  ng-repeat="x in ricontattoAppuntamenti.dateList   ">
+                        <td>
+                            {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}}
+                        </td>
+                        
+                        <td>
+                            {{x.NOME_ATTIVITA}}
+                        </td>
+                        <td>
+                            {{x.PROVINCIA}} {{x.COMUNE}} {{x.INDIRIZZO}}
+                        </td>
+
+                        <td>
+                            {{x.ESITO_RICONTATTO}}
+                        </td>
+                        <td>
+                            {{x.DATA_MODIFICA_RIC | date:'dd/MM/yyyy HH:mm' }}
+                        </td>
+                      
+                        <td >
+                            <button  class="btn btn-orange btn-modifyUtente"
+                                ng-click="ricontattoAppuntamenti.modifyDate(x.ID_APPUNTAMENTO)">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ul ng-if="ricontattoAppuntamenti.totalItems > ricontattoAppuntamenti.searchParam.itemsPerPage" uib-pagination
+            items-per-page="ricontattoAppuntamenti.searchParam.itemsPerPage" total-items="ricontattoAppuntamenti.totalItems"
+            ng-model="ricontattoAppuntamenti.searchParam.currentPage" ng-change="pageChanged()" boundary-link-numbers="true"
+            rotate="true" max-size="5"></ul>
+
+    </div>
+</div>
