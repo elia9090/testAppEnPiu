@@ -73,7 +73,7 @@ app.controller('editRicontattoAppuntamentoCtrl',['$scope', '$http', '$location',
     };
 
 
-    $scope.editRicontatto.editRicontattoSubmit = function (){
+    $scope.editRicontatto.editRicontattoSubmit = function (createAppuntamento){
 
     var idOperatore = $scope.user.Id;
     
@@ -85,8 +85,13 @@ app.controller('editRicontattoAppuntamentoCtrl',['$scope', '$http', '$location',
         'esitoRicontatto': $scope.editRicontatto.esito.value
 
      }).then((result) => {
-         alertify.alert('Appuntamento modificato correttamente');
-         $location.path('/ricontattoAppuntamenti');
+         alertify.alert('Esito salvato correttamente');
+         if(createAppuntamento=='CREATE_APPUNTAMENTO'){
+            $location.path('/nuovoAppuntamento/'+$scope.editRicontatto.Appuntamento.ID_APPUNTAMENTO);
+         }else{
+            $location.path('/ricontattoAppuntamenti');
+         }
+         
      }).catch((err) => {
          if(err.status === 500){
              alertify.alert("Errore nella modifica del ricontatto");

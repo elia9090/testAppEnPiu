@@ -5,12 +5,23 @@
         <div class="row col-12">
                 <div class="col-md-12">
                     <h2>Nuovo appuntamento</h2>
-                    <hr>
                     <p class="orangeText">* Campi obbligatori</p>
+                    <hr>
+                    
                 </div>
             </div>
     
     <div class="row col-12">
+        <div class="col-md-12" ng-if="newDate.AppuntamentoRicontatto">
+            <h5>Dati da ricontatto:</h5>
+            <hr>
+            <span><strong>Provincia:</strong></span><span class="noselect"> {{newDate.provinciaSelectedRicontatto}}</span>
+            <br>
+            <span><strong>Comune:</strong></span><span class="noselect"> {{newDate.comuneSelectedRicontatto}}</span>
+            <br>
+            <span><strong>Nome Attività:</strong></span><span class="noselect"> {{newDate.nomeAttivitaRicontatto}}</span>
+            <hr>
+        </div>
         <div class="form-group  col-xs-12 col-sm-6 col-md-4 mr-2">
             <label for="dataAppuntamento">Data appuntamento*</label>
             <p class="input-group datepicker">
@@ -45,7 +56,7 @@
     </div>
     <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4 col-xl-4">
             <label for="indirizzo">Indirizzo*</label>
-            <input ng-required="true" type="text"name="indirizzo" class="form-control w-100" id="indirizzo" ng-disabled="newDate.disabledComuni" ng-model="newDate.indirizzo" />         
+            <input ng-required="true" type="text"name="indirizzo" class="form-control w-100" id="indirizzo" ng-disabled="newDate.disabledComuni && !newDate.AppuntamentoRicontatto" ng-model="newDate.indirizzo" />         
     </div>
     
     <div ng-if="userType === 'OPERATORE'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">

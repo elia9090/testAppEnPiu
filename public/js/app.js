@@ -92,7 +92,7 @@ app.config(['$routeProvider','$locationProvider', 'ChartJsProvider', function ($
 		}).when('/logout', {
             template: '',
             controller:'logoutCtrl'
-        }).when('/nuovoAppuntamento', {
+        }).when('/nuovoAppuntamento/:idAppuntamentoRicontatto?', {
             templateUrl : "../partials/nuovoAppuntamento.html",
             controller:'nuovoAppuntamentoCtrl'
          }).when('/aggiuntiUtente', {

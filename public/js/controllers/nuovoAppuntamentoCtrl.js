@@ -1,5 +1,5 @@
 
-app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$route', 'alertify', function ( $scope, $http, $location,  $route, alertify) {
+app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$routeParams','$route', 'alertify', function ( $scope, $http, $location,$routeParams , $route, alertify) {
     
     $scope.user = JSON.parse(sessionStorage.user);
     // CREO LO SCOPE PER IL CONTROLLER DEL FORM altrimenti con ng-if crea uno scope child e non prende il valore assegnato
@@ -281,7 +281,8 @@ $scope.newDate.submitNewDate = function(){
        'noteOperatore': $scope.newDate.noteOperatore,
     }).then((result) => {
         alertify.alert('Appuntamento creato correttamente');
-        $route.reload();
+        $scope.newDate={};
+        $location.path("/nuovoAppuntamento");
     }).catch((err) => {
         if(err.status === 500){
             alertify.alert("Errore nella registrazione appuntamento");
@@ -290,6 +291,30 @@ $scope.newDate.submitNewDate = function(){
             alertify.alert("Utente non autorizzato");
             $location.path('/logout');
         }
+    });
+}
+
+var idAppuntamentoRicontatto = $routeParams.idAppuntamentoRicontatto;
+if(idAppuntamentoRicontatto){
+    $http.get('/appuntamento/'+idAppuntamentoRicontatto).then((result) => {
+
+        $scope.newDate.AppuntamentoRicontatto =  result.data.appuntamento;
+        $scope.newDate.indirizzo = $scope.newDate.AppuntamentoRicontatto.INDIRIZZO;
+        $scope.newDate.nomeAttivitaRicontatto = $scope.newDate.AppuntamentoRicontatto.NOME_ATTIVITA;
+        $scope.newDate.provinciaSelectedRicontatto = $scope.newDate.AppuntamentoRicontatto.PROVINCIA;
+        $scope.newDate.comuneSelectedRicontatto = $scope.newDate.AppuntamentoRicontatto.COMUNE;
+        $scope.newDate.recapiti = $scope.newDate.AppuntamentoRicontatto.RECAPITI;
+        
+    
+
+    }).catch((err) => {
+        if(err.status === 403){
+            alertify.alert("Utente non autorizzato");
+            $location.path('/logout');
+            return;
+        }
+        console.log(err);
+        alertify.alert("Impossibile reperire l'appuntamento: "+idAppuntamentoRicontatto);
     });
 }
 

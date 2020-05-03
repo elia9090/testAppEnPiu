@@ -2493,8 +2493,8 @@ app.post('/addRicontatto', ensureToken, function (req, res) {
         if (err) {
             res.sendStatus(403);
         } else {
-            console.log("post :: /addNewDate");
-            log.info('post Request :: /addNewDate');
+            console.log("post :: /addRicontatto");
+            log.info('post Request :: /addRicontatto');
 
             var data = {};
             var idOperatore = req.body.idOperatore;

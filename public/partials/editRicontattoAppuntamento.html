@@ -1,5 +1,5 @@
 <div class="container" >
-    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST" ng-submit="editRicontatto.editRicontattoSubmit()" name="editRicontattoForm" >
+    <form role="form" class="form-inline rounded bg-white mx-auto pt-3 pb-5 mt-5 col-md-12" method="POST"  name="editRicontattoForm" >
 <div class="row col-12">
     <div class="col-md-12">
         <h2>Appuntamento originario: {{editRicontatto.Appuntamento.ID_APPUNTAMENTO}}</h2>
@@ -130,7 +130,8 @@
 
 
 <div class="col-md-12 col-xl-12 mt-3 ">
-    <button ng-disabled="editRicontattoForm.$invalid"  type="submit" class="btn btn-orange ">Salva modifiche</button>
+    <button ng-disabled="editRicontattoForm.$invalid" ng-click="editRicontatto.editRicontattoSubmit()"  type="button" class="btn btn-orange ">Salva esito</button>
+    <button ng-disabled="editRicontattoForm.$invalid" ng-click="editRicontatto.editRicontattoSubmit('CREATE_APPUNTAMENTO')"  type="button" class="btn btn-orange " ng-if="editRicontatto.esito.value == 'APPUNTAMENTO'">Salva esito e Crea Appuntamento</button>
     <button  ng-click="editRicontatto.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
 </div>
 </form>
