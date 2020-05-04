@@ -51,23 +51,50 @@ var cron = require('node-cron');
 // SCHEDULE PER RENDERE KO DOPO 6 MESI I VALUTA E 2 MESI I NON VISITATO E GLI ASSENTI
 cron.schedule('0 4 * * *', () => {
     // dump the result straight to a file
+
     pool.getConnection(function (err, connection) {
-        connection.query(
-        ` 
-         UPDATE DB_GESTIONALE_APP.APPUNTAMENTI AS APP
-         SET ESITO='KO'
-         WHERE (APP.ESITO = 'VALUTA' AND (DATE_SUB(CURDATE(), INTERVAL 180 DAY) > APP.DATA_MODIFICA))
-         OR (APP.ESITO = 'ASSENTE' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
-         OR (APP.ESITO = 'NON VISITATO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
-        `, function (err, rows, fields) {
-            connection.release();
-            if (err) {
-                console.log(err)
-            }else{
-                console.log("no err")
+        connection.beginTransaction(function (errTrans) {
+            if (errTrans) { //Transaction Error (Rollback and release connection)
+                connection.rollback(function () {
+                    connection.release();
+                });
+                res.sendStatus(500);
+            } else {
+                connection.query( 
+                ` 
+                 UPDATE DB_GESTIONALE_APP.APPUNTAMENTI AS APP 
+                 SET ESITO='KO' 
+                 WHERE (APP.ESITO = 'VALUTA' AND (DATE_SUB(CURDATE(), INTERVAL 180 DAY) > APP.DATA_MODIFICA)) 
+                 OR (APP.ESITO = 'ASSENTE' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA)) 
+                 OR (APP.ESITO = 'NON VISITATO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA)) 
+               `, function (err, rows, fields) {
+                    if (err) {
+                        connection.rollback(function () {
+                            connection.release();
+                            //Failure
+                        });
+                        log.error('ERRORE SCHEDULER RICONTATTO ' + err);
+                        //errore username duplicato
+
+                        res.sendStatus(500);
+
+                    } else {
+                        connection.commit(function (err) {
+                            if (err) {
+                                connection.rollback(function () {
+                                    connection.release();
+                                    log.error('ERRORE SCHEDULER RICONTATTO COMMITT' + err);
+                                });
+                            } else {
+                                connection.release();
+                                //Success
+                            }
+                        });
+                    }
+
+                });
             }
         });
-
     });
     //console.log('Runing a job at 04:00 at Europe/Rome timezone');
 
