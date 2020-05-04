@@ -47,6 +47,35 @@ const mysqldump = require('mysqldump');
 
 var cron = require('node-cron');
 
+
+// SCHEDULE PER RENDERE KO DOPO 6 MESI I VALUTA E 2 MESI I NON VISITATO E GLI ASSENTI
+cron.schedule('0 4 * * *', () => {
+    // dump the result straight to a file
+    pool.getConnection(function (err, connection) {
+        connection.query(
+        ` 
+         UPDATE DB_GESTIONALE_APP.APPUNTAMENTI AS APP
+         SET ESITO='KO'
+         WHERE (APP.ESITO = 'VALUTA' AND (DATE_SUB(CURDATE(), INTERVAL 180 DAY) > APP.DATA_MODIFICA))
+         OR (APP.ESITO = 'ASSENTE' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
+         OR (APP.ESITO = 'NON VISITATO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
+        `, function (err, rows, fields) {
+            connection.release();
+            if (err) {
+                console.log(err)
+            }else{
+                console.log("no err")
+            }
+        });
+
+    });
+    //console.log('Runing a job at 04:00 at Europe/Rome timezone');
+
+}, {
+    scheduled: true,
+    timezone: "Europe/Rome"
+});
+
 cron.schedule('0 5 * * *', () => {
     // dump the result straight to a file
     mysqldump({
@@ -58,7 +87,7 @@ cron.schedule('0 5 * * *', () => {
         },
         dumpToFile: './BackUpMysqlDbDump.sql',
     });
-    //console.log('Runing a job at 07:00 at Europe/Rome timezone');
+    //console.log('Runing a job at 05:00 at Europe/Rome timezone');
 
 }, {
     scheduled: true,
@@ -2381,11 +2410,8 @@ app.post('/searchDateRicontatto', ensureToken, function (req, res) {
 
             pool.getConnection(function (err, connection) {
                 connection.query(`
-                                    SELECT COUNT(*) AS TotalCount from APPUNTAMENTI as APP WHERE (APP.ESITO = 'KO'
-                                    OR (APP.ESITO = 'VALUTA' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
-                                    OR (APP.ESITO = 'ASSENTE' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
-                                    OR (APP.ESITO = 'NON VISITATO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA)))
-                                    ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
+                                    SELECT COUNT(*) AS TotalCount from APPUNTAMENTI as APP WHERE APP.ESITO = 'KO' 
+                                     ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
                                 `, function (err, rows, fields) {
                     connection.release();
                     if (err) {
@@ -2402,11 +2428,8 @@ app.post('/searchDateRicontatto', ensureToken, function (req, res) {
                                                 
                                                  LEFT JOIN DB_GESTIONALE_APP.APP_RICONTATTO AS RICONTATTO ON APP.ID_APPUNTAMENTO = RICONTATTO.ID_APPUNTAMENTO_RIC
                                                  AND RICONTATTO.DATA_MODIFICA_RIC = (SELECT MAX(ar.DATA_MODIFICA_RIC) FROM APP_RICONTATTO ar where ar.ID_APPUNTAMENTO_RIC = RICONTATTO.ID_APPUNTAMENTO_RIC)
-                                                 where (APP.ESITO = 'KO'
-                                                 OR (APP.ESITO = 'VALUTA' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
-                                                 OR (APP.ESITO = 'ASSENTE' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA))
-                                                 OR (APP.ESITO = 'NON VISITATO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA)))
-                                                 ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
+                                                 where APP.ESITO = 'KO' 
+                                                  ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
                                                  ORDER BY RICONTATTO.DATA_MODIFICA_RIC, APP.DATA_MODIFICA ASC LIMIT ? OFFSET ?
                                             `, [limit, offset],
                                 function (err, rows, fields) {
