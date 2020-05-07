@@ -58,7 +58,6 @@ cron.schedule('0 4 * * *', () => {
                 connection.rollback(function () {
                     connection.release();
                 });
-                res.sendStatus(500);
             } else {
                 connection.query( 
                 ` 
@@ -76,7 +75,6 @@ cron.schedule('0 4 * * *', () => {
                         log.error('ERRORE SCHEDULER RICONTATTO ' + err);
                         //errore username duplicato
 
-                        res.sendStatus(500);
 
                     } else {
                         connection.commit(function (err) {
@@ -2437,7 +2435,12 @@ app.post('/searchDateRicontatto', ensureToken, function (req, res) {
 
             pool.getConnection(function (err, connection) {
                 connection.query(`
-                                    SELECT COUNT(*) AS TotalCount from APPUNTAMENTI as APP WHERE APP.ESITO = 'KO' 
+                 SELECT COUNT(*) AS TotalCount 
+                 FROM DB_GESTIONALE_APP.APPUNTAMENTI AS APP
+               
+                 LEFT JOIN DB_GESTIONALE_APP.APP_RICONTATTO AS RICONTATTO ON APP.ID_APPUNTAMENTO = RICONTATTO.ID_APPUNTAMENTO_RIC 
+                 AND RICONTATTO.DATA_MODIFICA_RIC = (SELECT MAX(ar.DATA_MODIFICA_RIC) FROM APP_RICONTATTO ar where ar.ID_APPUNTAMENTO_RIC = RICONTATTO.ID_APPUNTAMENTO_RIC) 
+                 where APP.ESITO = 'KO' AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)  
                                      ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
                                 `, function (err, rows, fields) {
                     connection.release();
@@ -2455,7 +2458,7 @@ app.post('/searchDateRicontatto', ensureToken, function (req, res) {
                                                 
                                                  LEFT JOIN DB_GESTIONALE_APP.APP_RICONTATTO AS RICONTATTO ON APP.ID_APPUNTAMENTO = RICONTATTO.ID_APPUNTAMENTO_RIC
                                                  AND RICONTATTO.DATA_MODIFICA_RIC = (SELECT MAX(ar.DATA_MODIFICA_RIC) FROM APP_RICONTATTO ar where ar.ID_APPUNTAMENTO_RIC = RICONTATTO.ID_APPUNTAMENTO_RIC)
-                                                 where APP.ESITO = 'KO' 
+                                                 where APP.ESITO = 'KO' AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)
                                                   ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
                                                  ORDER BY RICONTATTO.DATA_MODIFICA_RIC, APP.DATA_MODIFICA ASC LIMIT ? OFFSET ?
                                             `, [limit, offset],
