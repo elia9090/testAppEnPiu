@@ -134,5 +134,8 @@
     <button ng-disabled="editRicontattoForm.$invalid" ng-click="editRicontatto.editRicontattoSubmit('CREATE_APPUNTAMENTO')"  type="button" class="btn btn-orange " ng-if="editRicontatto.esito.value == 'APPUNTAMENTO'">Salva esito e Crea Appuntamento</button>
     <button  ng-click="editRicontatto.cancel()"  type="button" class="btn btn-orange  float-right">Annulla</button>
 </div>
+<div class="col-md-12 col-xl-12 mt-5" ng-show="user.TYPE === 'ADMIN'">
+    <button ng-click="editRicontatto.removeRicontatto()"  type="button" class="btn btn-orange ">Elimina da lista ricontatto</button>
+</div>
 </form>
 </div>

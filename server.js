@@ -2440,7 +2440,7 @@ app.post('/searchDateRicontatto', ensureToken, function (req, res) {
                
                  LEFT JOIN DB_GESTIONALE_APP.APP_RICONTATTO AS RICONTATTO ON APP.ID_APPUNTAMENTO = RICONTATTO.ID_APPUNTAMENTO_RIC 
                  AND RICONTATTO.DATA_MODIFICA_RIC = (SELECT MAX(ar.DATA_MODIFICA_RIC) FROM APP_RICONTATTO ar where ar.ID_APPUNTAMENTO_RIC = RICONTATTO.ID_APPUNTAMENTO_RIC) 
-                 where APP.ESITO = 'KO' AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)  
+                 where APP.NON_RICONTATTARE IS NULL AND APP.ESITO = 'KO' AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)  
                                      ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
                                 `, function (err, rows, fields) {
                     connection.release();
@@ -2458,7 +2458,7 @@ app.post('/searchDateRicontatto', ensureToken, function (req, res) {
                                                 
                                                  LEFT JOIN DB_GESTIONALE_APP.APP_RICONTATTO AS RICONTATTO ON APP.ID_APPUNTAMENTO = RICONTATTO.ID_APPUNTAMENTO_RIC
                                                  AND RICONTATTO.DATA_MODIFICA_RIC = (SELECT MAX(ar.DATA_MODIFICA_RIC) FROM APP_RICONTATTO ar where ar.ID_APPUNTAMENTO_RIC = RICONTATTO.ID_APPUNTAMENTO_RIC)
-                                                 where APP.ESITO = 'KO' AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)
+                                                 where APP.NON_RICONTATTARE IS NULL AND APP.ESITO = 'KO' AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)
                                                   ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
                                                  ORDER BY RICONTATTO.DATA_MODIFICA_RIC, APP.DATA_MODIFICA ASC LIMIT ? OFFSET ?
                                             `, [limit, offset],
@@ -2602,7 +2602,62 @@ app.post('/addRicontatto', ensureToken, function (req, res) {
     });
 });
 
+// RImozione del ricontatto da
+app.post('/removeRicontatto', ensureToken,requireAdmin, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            console.log("post :: /removeRicontatto");
+            log.info('post Request :: /removeRicontatto');
 
+            var data = {};
+            var idAppuntamento = req.body.idAppuntamento;
+
+            pool.getConnection(function (err, connection) {
+                connection.beginTransaction(function (errTrans) {
+                    if (errTrans) { //Transaction Error (Rollback and release connection)
+                        connection.rollback(function () {
+                            connection.release();
+                        });
+                        res.sendStatus(500);
+                    } else {
+                        connection.query(`UPDATE APPUNTAMENTI SET NON_RICONTATTARE=1 WHERE ID_APPUNTAMENTO= ? `, [idAppuntamento],
+                            function (err, rows, fields) {
+                                if (err) {
+                                    connection.rollback(function () {
+                                        connection.release();
+                                        //Failure
+                                    });
+                                    log.error('ERRORE SQL UPDATE APP_DA_RICONTATTATTARE   ' + err);
+                                    res.sendStatus(500);
+
+                                } else {
+                                    connection.commit(function (err) {
+                                        if (err) {
+                                            connection.rollback(function () {
+                                                connection.release();
+                                                //Failure
+                                            });
+                                            res.sendStatus(500);
+                                        } else {
+                                            connection.release();
+                                            data["RESULT"] = "OK";
+                                            res.json(data);
+                                            //Success
+                                        }
+                                    });
+                                }
+
+                            });
+                    }
+                });
+
+
+            });
+        }
+    });
+});
 
 //VERIFICA APPUNTAMENTI GENERICA
 app.post('/verifyDate', ensureToken, requireAdminOrBackOffice, function (req, res) {

@@ -104,4 +104,27 @@ app.controller('editRicontattoAppuntamentoCtrl',['$scope', '$http', '$location',
 
 }
 
+$scope.editRicontatto.removeRicontatto = function (){
+    alertify.confirm("Vuoi eliminare l'appuntamento da quelli da ricontattare?", function(){ 
+        $http.post('/removeRicontatto', {
+            'idAppuntamento' :  $scope.editRicontatto.Appuntamento.ID_APPUNTAMENTO
+    
+         }).then((result) => {
+            alertify.alert('Appuntamento rimosso correttamente');
+            $location.path('/ricontattoAppuntamenti');
+             
+         }).catch((err) => {
+             if(err.status === 500){
+                 alertify.alert("Errore nella modifica del ricontatto");
+             }
+             if(err.status === 403){
+                 alertify.alert("Utente non autorizzato");
+                 $location.path('/logout');
+             }
+         });
+    })
+   
+
+}
+
 }]);
