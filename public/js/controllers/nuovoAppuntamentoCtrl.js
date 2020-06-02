@@ -12,6 +12,23 @@ app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$rout
 
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
 
+
+
+    // PRELOAD STATIC DATA
+    // TODO DA RIVEDERE CON DEFER
+    $http.get('../../utility/province_comuni.json').then((result) => {
+        $scope.newDate.provinciaSelected = "";
+        $scope.newDate.province = result.data.province;
+        //INIT CONTROLLER
+        $scope.init();
+
+    }).catch((err) => {
+        alertify.alert("Impossibile reperire la lista dei comuni");
+    });
+
+    $scope.init = function () {
+        
+
     //DATEPICKER
     $scope.newDate.dateOptions = {
         minDate: new Date(),
@@ -97,12 +114,7 @@ app.controller('nuovoAppuntamentoCtrl',[ '$scope', '$http', '$location',  '$rout
   
 
    
-    $http.get('../../utility/province_comuni.json').then((result) => {
-        $scope.newDate.provinciaSelected = "";
-        $scope.newDate.province = result.data.province;
-    }).catch((err) => {
-        alertify.alert("Impossibile reperire la lista dei comuni");
-    });
+
     $scope.newDate.comuniPerProvincia = "";
     $scope.newDate.disabledComuni = true;
     //CHECK DOPPIO APPUNTAMENTO
@@ -294,6 +306,9 @@ $scope.newDate.submitNewDate = function(){
     });
 }
 
+
+// APPUNTAMENTI PRESI DA RICONTATTO
+
 var idAppuntamentoRicontatto = $routeParams.idAppuntamentoRicontatto;
 if(idAppuntamentoRicontatto){
     $http.get('/appuntamento/'+idAppuntamentoRicontatto).then((result) => {
@@ -304,8 +319,21 @@ if(idAppuntamentoRicontatto){
         $scope.newDate.provinciaSelectedRicontatto = $scope.newDate.AppuntamentoRicontatto.PROVINCIA;
         $scope.newDate.comuneSelectedRicontatto = $scope.newDate.AppuntamentoRicontatto.COMUNE;
         $scope.newDate.recapiti = $scope.newDate.AppuntamentoRicontatto.RECAPITI;
+        $scope.newDate.comuneSelected=$scope.newDate.comuneSelectedRicontatto;
         
-    
+        //vado a prepopolare tutti i campi
+        $scope.newDate.provinciaSelected=$scope.newDate.provinciaSelectedRicontatto;
+
+        var newArray = $scope.newDate.province.filter(function (el) {
+            return el.nome ===  $scope.newDate.provinciaSelected;
+        });
+
+        $scope.newDate.comuniPerProvincia = newArray[0].comuni;
+        $scope.newDate.disabledComuni = false;
+        $scope.newDate.comuneSelected=$scope.newDate.comuneSelectedRicontatto;
+        $scope.newDate.disabledNomeAttivita = false;
+        $scope.newDate.nomeAttivita = $scope.newDate.AppuntamentoRicontatto.NOME_ATTIVITA;
+  
 
     }).catch((err) => {
         if(err.status === 403){
@@ -318,5 +346,11 @@ if(idAppuntamentoRicontatto){
     });
 }
 
+
+//END INIT 
+}
+
+
+    
 
 }]);

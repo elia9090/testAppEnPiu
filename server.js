@@ -1955,6 +1955,56 @@ app.get('/appuntamento/:id', ensureToken, function (req, res) {
     });
 });
 
+//Appuntamento
+app.get('/appuntamentiCorrelati/:id', ensureToken, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+
+        } else {
+
+            var data = {};
+
+            var idAppuntamento = req.params.id;
+
+            pool.getConnection(function (err, connection) {
+                connection.query(
+                `  SELECT OPERATORE.NOME NOME_OPERATORE, OPERATORE.COGNOME COGNOME_OPERATORE, VENDITORE.NOME NOME_VENDITORE, VENDITORE.COGNOME COGNOME_VENDITORE, a2.* 
+                FROM APPUNTAMENTI a2 
+                LEFT JOIN UTENTI OPERATORE ON a2.ID_OPERATORE=OPERATORE.ID_UTENTE 
+                LEFT JOIN UTENTI VENDITORE ON a2.ID_VENDITORE=VENDITORE.ID_UTENTE 
+                WHERE (NOME_ATTIVITA, COMUNE) IN (select NOME_ATTIVITA,COMUNE FROM APPUNTAMENTI a1 where a1.ID_APPUNTAMENTO = ?)
+                and a2.ID_APPUNTAMENTO != ? ORDER BY DATA_APPUNTAMENTO DESC `, [idAppuntamento,idAppuntamento],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL GET appuntamentiCorrelati: ' + idAppuntamento + ' --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0) {
+                                data["appuntamentiCorrelati"] = rows;
+                                res.json(data);
+                            } else if (rows.length === 0) {
+                                //Error code 2 = no rows in db.
+                                data["error"] = 2;
+                                data["appuntamentiCorrelati"] = 'Nessun appuntamento trovato';
+                                res.status(404).json(data);
+                            } else {
+                                data["appuntamentiCorrelati"] = 'Errore in fase di reperimento appuntamento';
+                                res.status(500).json(data);
+                                console.log('Errore in fase di reperimento appuntamento: ' + err);
+                                log.error('Errore in fase di reperimento appuntamento: ' + err);
+                            }
+                        }
+
+                    });
+
+            });
+
+        }
+    });
+});
+
 
 //RICERCA APPUNTAMENTI GENERICA
 app.post('/searchDate', ensureToken, function (req, res) {

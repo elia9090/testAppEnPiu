@@ -8,6 +8,7 @@ app.controller('viewDateCtrl',['$scope', '$http', '$location','$routeParams', 'a
     var idAppuntamento = $routeParams.id;
     
     $scope.viewDate.Appuntamento = {};
+    $scope.viewDate.appuntamentiCorrelati = [];
 
     $http.get('/appuntamento/'+idAppuntamento).then((result) => {
 
@@ -38,6 +39,23 @@ app.controller('viewDateCtrl',['$scope', '$http', '$location','$routeParams', 'a
         }
         alertify.alert("Impossibile reperire l'appuntamento: "+idAppuntamento);
     });
+
+
+    $http.get('/appuntamentiCorrelati/'+idAppuntamento).then((result) => {
+
+        $scope.viewDate.appuntamentiCorrelati =  result.data.appuntamentiCorrelati;
+
+
+    }).catch((err) => {
+        if(err.status === 403){
+            alertify.alert("Utente non autorizzato");
+            $location.path('/logout');
+            return;
+        }
+       // alertify.alert("Impossibile reperire gli appuntamenti correlati all'appuntamento: "+idAppuntamento);
+    });
+
+
 
     $scope.viewDate.cancel = function () {
         window.history.back();

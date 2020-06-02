@@ -76,6 +76,50 @@
             <label for="noteOperatore">Note operatore: &nbsp;</label>
             <textarea id="noteOperatore"  rows="4" cols="50" maxlength="480"  type="text" readonly >{{viewDate.Appuntamento.NOTE_OPERATORE}}  </textarea> 
         </div>
+        
+        <div ng-if="viewDate.appuntamentiCorrelati.length > 0" class="form-group pb-3 col-xs-12 col-sm-12 col-md-12 ">
+            <details>
+                <summary>
+                    <span class="details-title">Appuntamenti Precedenti</span>
+                </summary>
+                <div class="details-content table-responsive">
+                    <table class="table  table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Data Appuntamento</th>
+                                <th scope="col">Operatore</th>
+                                <th scope="col">Note Operatore</th>
+                                <th scope="col">Agente</th>
+                                <th scope="col">Note Agente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr  ng-repeat="x in viewDate.appuntamentiCorrelati track by x.ID_APPUNTAMENTO">
+                                <td>
+                                    {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy HH:mm' }}
+                                </td>
+                                
+                                <td>
+                                    {{x.COGNOME_OPERATORE}} {{x.NOME_OPERATORE}}
+                                </td>
+                                <td>
+                                    {{x.NOTE_OPERATORE}}
+                                </td>
+        
+                                <td>
+                                    {{x.COGNOME_VENDITORE}} {{x.NOME_VENDITORE}}
+                                </td>
+
+                                <td>
+                                    {{x.NOTE_AGENTE}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        </div>
+
 
     <div ng-if="viewDate.hasEsito" class=" col-12">
         <div class="row col-12">
