@@ -1,4 +1,5 @@
 var express = require('express');
+const helmet = require('helmet')
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require("body-parser");
@@ -16,6 +17,8 @@ app.listen(3000,'192.168.1.187' || 'localhost',function() {
   }
   );*/
 
+// security helmet
+app.use(helmet());
 
 const fiveHour = 18000000;
 //STATIC FILES
@@ -2438,7 +2441,8 @@ app.post('/searchDateResponsabile', ensureToken, function (req, res) {
 });
 
 
-//RICERCA APPUNTAMENTI GENERICA
+// vado a pescare i ricontatti dagli scheduler
+// I KO SARANNO VISIBILI SOLO DOPO 2 MESI DALL'ULTIMA MODIFICA
 app.post('/searchDateRicontatto', ensureToken, function (req, res) {
     jwt.verify(req.token, config.secretKey, function (err, data) {
         if (err) {
@@ -2490,7 +2494,7 @@ app.post('/searchDateRicontatto', ensureToken, function (req, res) {
                
                  LEFT JOIN DB_GESTIONALE_APP.APP_RICONTATTO AS RICONTATTO ON APP.ID_APPUNTAMENTO = RICONTATTO.ID_APPUNTAMENTO_RIC 
                  AND RICONTATTO.DATA_MODIFICA_RIC = (SELECT MAX(ar.DATA_MODIFICA_RIC) FROM APP_RICONTATTO ar where ar.ID_APPUNTAMENTO_RIC = RICONTATTO.ID_APPUNTAMENTO_RIC) 
-                 where APP.NON_RICONTATTARE IS NULL AND APP.ESITO = 'KO' AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)  
+                 where APP.NON_RICONTATTARE IS NULL AND (APP.ESITO = 'KO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA)) AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)  
                                      ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
                                 `, function (err, rows, fields) {
                     connection.release();
@@ -2508,7 +2512,7 @@ app.post('/searchDateRicontatto', ensureToken, function (req, res) {
                                                 
                                                  LEFT JOIN DB_GESTIONALE_APP.APP_RICONTATTO AS RICONTATTO ON APP.ID_APPUNTAMENTO = RICONTATTO.ID_APPUNTAMENTO_RIC
                                                  AND RICONTATTO.DATA_MODIFICA_RIC = (SELECT MAX(ar.DATA_MODIFICA_RIC) FROM APP_RICONTATTO ar where ar.ID_APPUNTAMENTO_RIC = RICONTATTO.ID_APPUNTAMENTO_RIC)
-                                                 where APP.NON_RICONTATTARE IS NULL AND APP.ESITO = 'KO' AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)
+                                                 where APP.NON_RICONTATTARE IS NULL AND (APP.ESITO = 'KO' AND (DATE_SUB(CURDATE(), INTERVAL 60 DAY) > APP.DATA_MODIFICA)) AND (RICONTATTO.ESITO_RICONTATTO != 'APPUNTAMENTO' OR RICONTATTO.ESITO_RICONTATTO IS NULL)
                                                   ${QdateFrom} ${QdateTo} ${Qprovincia} ${Qcomune} ${QragioneSociale}
                                                  ORDER BY RICONTATTO.DATA_MODIFICA_RIC, APP.DATA_MODIFICA ASC LIMIT ? OFFSET ?
                                             `, [limit, offset],
