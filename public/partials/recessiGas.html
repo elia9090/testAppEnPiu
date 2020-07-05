@@ -65,7 +65,7 @@
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                 <label for="statoRecesso">Stato recesso</label>
-                <select ng-model="recessesGas.searchParam.stato.value" id="statoRecesso" name="statoRecesso"
+                <select ng-model="recessesGas.searchParam.stato.value" ng-change="recessesGas.checkIfStatusIsNonAssegnato()" id="statoRecesso" name="statoRecesso"
                     class="form-control"
                     ng-options="Stato.Value as Stato.Name  for Stato in recessesGas.Stati"></select>
             </div>
@@ -95,6 +95,17 @@
                     </option>
                 </select>
             </div>
+
+            <div ng-if="recessesGas.searchParam.stato.value === 'NON_ASSOCIATO'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="agenzieNonAssociatiVALUE">Agenzie non associate</label>
+                <select ng-model="recessesGas.searchParam.agenzieNonAssociatiVALUE" id="agenzieNonAssociatiVALUE" name="agenzieNonAssociatiVALUE"
+                class="form-control">
+                    <option ng-repeat="agenzia in recessesGas.agenzieNonAssociati" ng-value="agenzia.AGENTE"
+                            value="{{agenzia.AGENTE}}">{{agenzia.AGENTE}}
+                    </option>
+                </select>
+            </div>
+
         </div>
 
         <div class="row col-12" ng-if="user.TYPE === 'RESPONSABILE_AGENTI'">

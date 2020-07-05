@@ -4450,6 +4450,75 @@ app.post('/insertRecessesGas', ensureToken, requireAdminOrBackOffice, function (
     });
 });
 
+app.get('/listaAgenzieNonAssociatiRecessiGas', ensureToken, requireAdminOrResponsabile, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var data = {};
+            pool.getConnection(function (err, connection) {
+                connection.query(` 
+                select DISTINCT(rg.AGENTE ) from recessi_gas rg 
+                 join dettaglio_recesso_gas drg on rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS  
+                 where drg.STATO = 'NON_ASSOCIATO' 
+                 ORDER BY rg.AGENTE asc `, [],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL RICERCA listaAgenzieNonAssociatiRecessiGas: --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0) {
+                                data["agenzieGas"] = rows;
+                                res.json(data);
+                            } else {
+                                data["agenzieGas"] = [];
+                                res.json(data);
+                            }
+                        }
+
+                    });
+
+            });
+        }
+    })
+})
+
+app.get('/listaAgenzieNonAssociatiRecessiLuce', ensureToken, requireAdminOrResponsabile, function (req, res) {
+    jwt.verify(req.token, config.secretKey, function (err, data) {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            var data = {};
+            pool.getConnection(function (err, connection) {
+                connection.query(`
+                 select DISTINCT(rl.AGENZIA) from recessi_luce rl  
+                 join dettaglio_recesso_luce drl on rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE 
+                 where drl.STATO = 'NON_ASSOCIATO' 
+                 ORDER BY rl.AGENZIA asc `, [],
+                    function (err, rows, fields) {
+                        connection.release();
+                        if (err) {
+                            log.error('ERRORE SQL RICERCA listaAgenzieNonAssociatiRecessiLuce: --> ' + err);
+                            res.sendStatus(500);
+                        } else {
+                            if (rows.length !== 0) {
+                                data["agenzieLuce"] = rows;
+                                res.json(data);
+                            } else {
+                                data["agenzieLuce"] = [];
+                                res.json(data);
+                            }
+                        }
+
+                    });
+
+            });
+        }
+    })
+})
+
+
 //LISTA RECESSI GAS
 app.post('/gasRecessesList', ensureToken, function (req, res) {
     jwt.verify(req.token, config.secretKey, function (err, data) {
@@ -4545,11 +4614,17 @@ app.post('/gasRecessesList', ensureToken, function (req, res) {
                 Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
             }
 
+            var agenziaOriginaria = req.body.agenziaOriginaria;
+            var QagenziaOriginaria = " ";
+            if (agenziaOriginaria !== '' && agenziaOriginaria !== undefined && agenziaOriginaria != null) {
+                QagenziaOriginaria = ' AND AGENTE = "' + agenziaOriginaria + '" ';
+            }
+
 
 
             pool.getConnection(function (err, connection) {
                 connection.query(`SELECT COUNT(*) AS TotalCount from recessi_gas as rg inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS
-                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QmcAnnui} `,
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente} ${QagenziaOriginaria}  ${Qstato} ${QmcAnnui} `,
                     function (err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -4565,7 +4640,7 @@ app.post('/gasRecessesList', ensureToken, function (req, res) {
                                 from recessi_gas as rg 
                                 inner join dettaglio_recesso_gas as drg on rg.ID_RECESSO_GAS = drg.ID_RECESSO_GAS
                                 left join UTENTI VENDITORE ON drg.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
-                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
+                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${QagenziaOriginaria}  ${Qstato}  ${QmcAnnui}  ORDER BY ${Qorder} DATA_OUT DESC LIMIT ? OFFSET ?`, [limit, offset],
                                     function (err, rows, fields) {
                                         connection.release();
                                         if (err) {
@@ -4693,11 +4768,15 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
                 Qagente = ' AND VENDITORE_ASSEGNATO = "' + agente + '" ';
             }
 
-
+            var agenziaOriginaria = req.body.agenziaOriginaria;
+            var QagenziaOriginaria = " ";
+            if (agenziaOriginaria !== '' && agenziaOriginaria !== undefined && agenziaOriginaria != null) {
+                QagenziaOriginaria = ' AND AGENZIA = "' + agenziaOriginaria + '" ';
+            }
 
             pool.getConnection(function (err, connection) {
                 connection.query(`SELECT COUNT(*) AS TotalCount from recessi_luce as rl inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE
-                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui}  `,
+                                    where 1=1  ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale} ${QagenziaOriginaria} ${Qagente}  ${Qstato} ${QkwhAnnui}  `,
                     function (err, rows, fields) {
                         connection.release();
                         if (err) {
@@ -4713,7 +4792,7 @@ app.post('/luceRecessesList', ensureToken, function (req, res) {
                                 from recessi_luce as rl 
                                 inner join dettaglio_recesso_luce as drl on rl.ID_RECESSO_LUCE = drl.ID_RECESSO_LUCE
                                 left join UTENTI VENDITORE ON drl.VENDITORE_ASSEGNATO=VENDITORE.ID_UTENTE 
-                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale}  ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
+                                where 1=1 ${QdateFrom}  ${QdateTo}  ${Qprovincia} ${Qcomune} ${QragioneSociale} ${QagenziaOriginaria} ${Qagente}  ${Qstato} ${QkwhAnnui} ORDER BY  ${Qorder} DATA_VALIDITA_RECESSO DESC LIMIT ? OFFSET ?`, [limit, offset],
                                     function (err, rows, fields) {
                                         connection.release();
                                         if (err) {

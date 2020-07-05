@@ -66,7 +66,7 @@
             </div>
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                 <label for="statoRecesso">Stato recesso</label>
-                <select ng-model="recessesLuce.searchParam.stato.value" id="statoRecesso" name="statoRecesso"
+                <select ng-model="recessesLuce.searchParam.stato.value" ng-change="recessesLuce.checkIfStatusIsNonAssegnato()" id="statoRecesso" name="statoRecesso"
                     class="form-control"
                     ng-options="Stato.Value as Stato.Name  for Stato in recessesLuce.Stati"></select>
             </div>
@@ -93,6 +93,16 @@
                     <option value=""></option>
                     <option ng-repeat="option1 in recessesLuce.agenti" ng-value="option1.ID_UTENTE"
                         value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}
+                    </option>
+                </select>
+            </div>
+
+            <div ng-if="recessesLuce.searchParam.stato.value === 'NON_ASSOCIATO'" class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
+                <label for="agenzieNonAssociatiVALUE">Agenzie non associate</label>
+                <select ng-model="recessesLuce.searchParam.agenzieNonAssociatiVALUE" id="agenzieNonAssociatiVALUE" name="agenzieNonAssociatiVALUE"
+                class="form-control">
+                    <option ng-repeat="agenzia in recessesLuce.agenzieNonAssociati" ng-value="agenzia.AGENZIA"
+                            value="{{agenzia.AGENZIA}}">{{agenzia.AGENZIA}}
                     </option>
                 </select>
             </div>

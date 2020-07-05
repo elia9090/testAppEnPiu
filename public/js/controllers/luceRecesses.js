@@ -252,6 +252,25 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
     }
 
 
+     // SE I RECESSI NON SONO 'ASSOCIATI' VADO A PRENDERE LE AGENZIE PER POTERCI FILTRARE I RECESSI IN RICERCA
+     $scope.recessesLuce.agenzieNonAssociati = [];
+     $scope.recessesLuce.searchParam.agenzieNonAssociatiVALUE = '';
+     $scope.recessesLuce.checkIfStatusIsNonAssegnato = function (){
+         if($scope.recessesLuce.searchParam.stato.value === 'NON_ASSOCIATO' && ($scope.user.TYPE === 'ADMIN' || $scope.user.TYPE === 'BACK_OFFICE')){
+             $http.get('/listaAgenzieNonAssociatiRecessiLuce').then((result) => {
+                 $scope.recessesLuce.agenzieNonAssociati = result.data.agenzieLuce;
+     
+     
+             }).catch((err) => {
+                 if (err.status === 403) {
+                     alertify.alert("Utente non autorizzato");
+                     $location.path('/logout');
+                     return;
+                 }
+                 alertify.alert("Impossibile reperire la lista delle agenzie");
+             });
+         }
+     }
 
 
     $scope.recessesLuce.submitrecessesLuce = function (pageChangedOrSubmit) {
@@ -293,6 +312,7 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
             'ragioneSociale': $scope.recessesLuce.searchParam.ragioneSociale,
             'kwhAnnui': $scope.recessesLuce.searchParam.kwhAnnui,
             'stato': $scope.recessesLuce.searchParam.stato.value,
+            'agenziaOriginaria' : $scope.recessesLuce.searchParam.agenzieNonAssociatiVALUE,
             'agente': agente,
             'userType': $scope.user.TYPE
 

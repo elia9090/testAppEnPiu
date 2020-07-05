@@ -250,6 +250,27 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
     }
 
 
+
+    // SE I RECESSI NON SONO 'ASSOCIATI' VADO A PRENDERE LE AGENZIE PER POTERCI FILTRARE I RECESSI IN RICERCA
+    $scope.recessesGas.agenzieNonAssociati = [];
+    $scope.recessesGas.agenzieNonAssociatiVALUE = '';
+    $scope.recessesGas.checkIfStatusIsNonAssegnato = function (){
+        if($scope.recessesGas.searchParam.stato.value === 'NON_ASSOCIATO' && ($scope.user.TYPE === 'ADMIN' || $scope.user.TYPE === 'BACK_OFFICE')){
+            $http.get('/listaAgenzieNonAssociatiRecessiGas').then((result) => {
+                $scope.recessesGas.agenzieNonAssociati = result.data.agenzieGas;
+    
+    
+            }).catch((err) => {
+                if (err.status === 403) {
+                    alertify.alert("Utente non autorizzato");
+                    $location.path('/logout');
+                    return;
+                }
+                alertify.alert("Impossibile reperire la lista delle agenzie");
+            });
+        }
+    }
+
     $scope.recessesGas.submitRecessesGas = function (pageChangedOrSubmit) {
 
 
@@ -286,6 +307,7 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
             'ragioneSociale': $scope.recessesGas.searchParam.ragioneSociale,
             'mcAnnui': $scope.recessesGas.searchParam.mcAnnui,
             'stato': $scope.recessesGas.searchParam.stato.value,
+            'agenziaOriginaria' : $scope.recessesGas.searchParam.agenzieNonAssociatiVALUE,
             'agente': agente,
             'userType': $scope.user.TYPE
 
@@ -416,6 +438,8 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
         });
 
     }
+
+    
 
     // --------------------- MODALE RECESSO START ---------------------
 
