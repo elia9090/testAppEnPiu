@@ -42,6 +42,8 @@ app.use(
 );
 
 /*MY SQL Connection Info*/
+// se fa casino con le date prova dateStrings:true
+//ritorna una data come stringa senza timezone
 var pool = mysql.createPool({
   connectionLimit: config.connLimit,
   host: config.DbHost,
@@ -49,6 +51,7 @@ var pool = mysql.createPool({
   password: config.DbPassword,
   database: config.DbName,
   port: config.DbPort,
+  timezone: "utc",
 });
 
 const mysqldump = require("mysqldump");
@@ -1158,7 +1161,7 @@ app.get("/edituser/:id", ensureToken, requireAdmin, function (req, res) {
 					FROM UTENTI
 					
 					LEFT JOIN OPERATORI_VENDITORI OV ON TIPO<>"OPERATORE" AND OV.ID_AGENTE=UTENTI.ID_UTENTE AND OV.DATA_FINE_ASS IS NULL 
-					LEFT JOIN RESPONSABILI_AGENTI RA ON TIPO="AGENTE" OR TIPO="AGENTE_JUNIOR" AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL 
+					LEFT JOIN RESPONSABILI_AGENTI RA ON (TIPO = "AGENTE" OR TIPO = "AGENTE_JUNIOR") AND RA.ID_AGENTE=UTENTI.ID_UTENTE AND RA.DATA_FINE_ASS IS NULL 
 					LEFT JOIN SUPERVISORE_RESPONSABILI SR ON TIPO="RESPONSABILE_AGENTI" AND SR.ID_RESPONSABILE=UTENTI.ID_UTENTE AND SR.DATA_FINE_ASS IS NULL  
 					WHERE ID_UTENTE=?`,
           id,
