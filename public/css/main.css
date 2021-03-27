@@ -450,6 +450,11 @@ textarea{
                                   supported by Chrome, Opera and Firefox */
 }
 
+@media (min-width: 1200px){
+.container {
+    max-width: 1240px;
+}
+
 @media screen and (max-width: 450px) {
  .modificaUtenteForm button.btn-white, .editAppuntamentoAdmin button.btn-white{
    max-width: 75px;

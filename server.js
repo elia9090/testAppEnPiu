@@ -3101,14 +3101,14 @@ app.post("/dateStats", ensureToken, function (req, res) {
 
       var agente = req.body.agente;
       var Qagente = " ";
-      if (agente !== "" && agente !== undefined && agente != null) {
-        Qagente = ' AND APPUNTAMENTI.ID_VENDITORE = "' + agente + '" ';
+      if ((agente.length > 0 && agente[0] !== '') && agente !== undefined && agente != null) {
+        Qagente = ' AND APPUNTAMENTI.ID_VENDITORE IN (' + agente.toString() + ') ';
       }
 
       var operatore = req.body.operatore;
       var Qoperatore = " ";
-      if (operatore !== "" && operatore !== undefined && operatore != null) {
-        Qoperatore = ' AND APPUNTAMENTI.ID_OPERATORE = "' + operatore + '" ';
+      if ((operatore.length > 0 && operatore[0] !== '') && operatore !== undefined && operatore != null) {
+        Qoperatore = ' AND APPUNTAMENTI.ID_OPERATORE IN (' + operatore.toString() + ') ';
       }
 
       pool.getConnection(function (err, connection) {
@@ -3260,14 +3260,14 @@ app.post("/verifyDateStats", ensureToken, function (req, res) {
 
       var agente = req.body.agente;
       var Qagente = " ";
-      if (agente !== "" && agente !== undefined && agente != null) {
-        Qagente = ' AND APPUNTAMENTI.ID_VENDITORE = "' + agente + '" ';
+      if ((agente.length > 0 && agente[0] !== '') && agente !== undefined && agente != null) {
+        Qagente = ' AND APPUNTAMENTI.ID_VENDITORE IN (' + agente.toString() + ') ';
       }
 
       var operatore = req.body.operatore;
       var Qoperatore = " ";
-      if (operatore !== "" && operatore !== undefined && operatore != null) {
-        Qoperatore = ' AND APPUNTAMENTI.ID_OPERATORE = "' + operatore + '" ';
+      if ((operatore.length > 0 && operatore[0] !== '') && operatore !== undefined && operatore != null) {
+        Qoperatore = ' AND APPUNTAMENTI.ID_OPERATORE IN (' + operatore.toString() + ') ';
       }
 
       pool.getConnection(function (err, connection) {

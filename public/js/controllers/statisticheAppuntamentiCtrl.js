@@ -3,6 +3,9 @@ app.controller('statisticheAppuntamentiCtrl',[ '$scope', '$http', '$location', '
     $scope.user = JSON.parse(sessionStorage.user);
 
     $scope.statsDate = {};
+    // diventano un array per la possibilità di selezionare uno o più utenti tramite la select multipla
+    $scope.statsDate.operatoriSelected = [];
+    $scope.statsDate.venditoreSelected = [];
 
     $http.defaults.headers.common['Authorization'] = 'Bearer ' +  $scope.user.TOKEN;
     
@@ -112,13 +115,13 @@ app.controller('statisticheAppuntamentiCtrl',[ '$scope', '$http', '$location', '
     else if($scope.user.TYPE == "OPERATORE"){
 
         $scope.statsDate.URL = "/dateStats";
-        $scope.statsDate.operatoriSelected = $scope.user.Id; 
+        $scope.statsDate.operatoriSelected.push($scope.user.Id); 
         
     }
     else if($scope.user.TYPE == "AGENTE" || $scope.user.TYPE == "RESPONSABILE_AGENTI"){
         
         $scope.statsDate.URL = "/dateStats";
-        $scope.statsDate.venditoreSelected = $scope.user.Id; 
+        $scope.statsDate.venditoreSelected.push($scope.user.Id); 
 
     }
 

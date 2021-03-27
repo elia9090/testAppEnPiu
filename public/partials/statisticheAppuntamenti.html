@@ -33,15 +33,15 @@
             <div class="row col-12" ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
                 <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                     <label for="operatoriSelect">Operatore</label>
-                    <select name="operatoriSelect" class="form-control" id="operatoriSelect" ng-model="statsDate.operatoriSelected">
-                        <option value=""></option>
+                    <select name="operatoriSelect" class="form-control" id="operatoriSelect" ng-model="statsDate.operatoriSelected" multiple>
+                        <option value="">Nessun filtro</option>
                         <option ng-repeat="option in statsDate.operatori" ng-value="option.ID_UTENTE" value="{{option.ID_UTENTE}}">{{option.ID_UTENTE}} {{option.COGNOME}} {{option.NOME}}</option>
                     </select>
                 </div>
                 <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-4">
                     <label for="venditoreSelect">Agente</label>
-                    <select name="venditoreSelect" class="form-control" id="venditoreSelect" ng-model="statsDate.venditoreSelected">
-                        <option value=""></option>
+                    <select name="venditoreSelect" class="form-control" id="venditoreSelect" ng-model="statsDate.venditoreSelected" multiple>
+                        <option value="">Nessun filtro</option>
                         <option ng-repeat="option1 in statsDate.agenti" ng-value="option1.ID_UTENTE" value="{{option1.ID_UTENTE}}">{{option1.ID_UTENTE}} {{option1.COGNOME}} {{option1.NOME}}</option>
                     </select>
                 </div>
