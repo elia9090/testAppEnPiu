@@ -3101,13 +3101,13 @@ app.post("/dateStats", ensureToken, function (req, res) {
 
       var agente = req.body.agente;
       var Qagente = " ";
-      if ((agente.length > 0 && agente[0] !== '') && agente !== undefined && agente != null) {
+      if (agente !== undefined && agente != null && (agente.length > 0 && agente[0] !== '')) {
         Qagente = ' AND APPUNTAMENTI.ID_VENDITORE IN (' + agente.toString() + ') ';
       }
 
       var operatore = req.body.operatore;
       var Qoperatore = " ";
-      if ((operatore.length > 0 && operatore[0] !== '') && operatore !== undefined && operatore != null) {
+      if (operatore !== undefined && operatore != null && (operatore.length > 0 && operatore[0] !== '')) {
         Qoperatore = ' AND APPUNTAMENTI.ID_OPERATORE IN (' + operatore.toString() + ') ';
       }
 
@@ -5036,11 +5036,24 @@ app.post("/luceRecessesList", ensureToken, function (req, res) {
         }
       }
 
+      var agente = req.body.agente;
+      var Qagente = " ";
+      if ((agente.length > 0 && agente[0] !== '') && agente !== undefined && agente != null) {
+        Qagente = ' AND APPUNTAMENTI.ID_VENDITORE IN (' + agente.toString() + ') ';
+      }
+
       var provincia = req.body.provincia;
       var Qprovincia = " ";
-      if (provincia !== "" && provincia !== undefined && provincia != null) {
+      if (provincia !== undefined && provincia != null && (provincia.length > 0 && provincia[0] !== '')) {
+        var provinceRegex = '';
+        for (let index = 0; index < provincia.length; index++) {
+          let provinciaTmp = 'LOWER(LOCALITA_FORN) LIKE LOWER("%(' + provincia[index] + ')%") OR ';
+          provinceRegex += provinciaTmp;
+        }
+        
+        var provinciaRegexFinal = provinceRegex.substring(provinceRegex, provinceRegex.length-3)
         Qprovincia =
-          ' AND LOWER(LOCALITA_FORN) LIKE LOWER("%(' + provincia + ')%") ';
+          ' AND (' + provinciaRegexFinal + ') ';
       }
 
       var comune = req.body.comune;

@@ -42,7 +42,7 @@
             <div class="form-group pb-3 col-xs-12 col-sm-12 col-md-3 ">
                 <label for="provinceSelect">Provincia</label>
                 <select name="provinceSelect" class="form-control" id="provinceSelect"
-                    ng-change="recessesLuce.showComuni()" ng-model="recessesLuce.searchParam.provinciaSelected">
+                    ng-change="recessesLuce.showComuni()" multiple ng-model="recessesLuce.searchParam.provinciaSelected">
 
                     <option ng-repeat="option in recessesLuce.province" value="{{option.code}}">{{option.nome}}</option>
                 </select>

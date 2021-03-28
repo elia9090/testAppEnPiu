@@ -35,7 +35,7 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
         // $scope.searchDate.searchParam.provinciaSelected = "";
         $scope.recessesLuce.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
-        $scope.recessesLuce.province.splice(0, 0, ({ code: "", comuni: "", nome: "" }));
+        $scope.recessesLuce.province.splice(0, 0, ({ code: "", comuni: [], nome: "Nessun Filtro" }));
     }).catch((err) => {
         alertify.alert("Impossibile reperire la lista dei comuni");
     });
@@ -45,10 +45,16 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
 
     $scope.recessesLuce.showComuni = function () {
         var newArray = $scope.recessesLuce.province.filter(function (el) {
-            return el.code === $scope.recessesLuce.searchParam.provinciaSelected;
+            return el.code === $scope.recessesLuce.searchParam.provinciaSelected[0];
         });
+        // se seleziono più di una provincia disabilito i comuni
+        if($scope.recessesLuce.searchParam.provinciaSelected.length > 1){
+            $scope.recessesLuce.searchParam.comuneSelected = "";
+            $scope.recessesLuce.disabledComuni = true;
+            return
+        }
         $scope.recessesLuce.comuniPerProvincia = newArray[0].comuni;
-        $scope.recessesLuce.comuniPerProvincia.splice(0, 0, ({ code: "", comuni: "", nome: "" }));
+        $scope.recessesLuce.comuniPerProvincia.splice(0, 0, ({ code: "", comuni: [], nome: "" }));
         $scope.recessesLuce.disabledComuni = false;
     }
 
