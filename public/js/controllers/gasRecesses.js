@@ -4,7 +4,7 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
 
     $scope.recessesGas = {};
     $scope.recessesGas.searchParam = {};
-
+    $scope.recessesGas.venditoreSelected = [];
     $http.defaults.headers.common['Authorization'] = 'Bearer ' + $scope.user.TOKEN;
 
     //DATEPICKER
@@ -34,7 +34,7 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
         // $scope.searchDate.searchParam.provinciaSelected = "";
         $scope.recessesGas.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
-        $scope.recessesGas.province.splice(0, 0, ({ code: "", comuni: "", nome: "" }));
+        $scope.recessesGas.province.splice(0, 0, ({ code: "", comuni: [], nome: "" }));
     }).catch((err) => {
         alertify.alert("Impossibile reperire la lista dei comuni");
     });
@@ -44,10 +44,16 @@ app.controller('gasRecessesCtrl', ['$scope', '$http', '$location', 'alertify', '
 
     $scope.recessesGas.showComuni = function () {
         var newArray = $scope.recessesGas.province.filter(function (el) {
-            return el.code === $scope.recessesGas.searchParam.provinciaSelected;
+            return el.code === $scope.recessesGas.searchParam.provinciaSelected[0];
         });
+        // se seleziono più di una provincia disabilito i comuni
+        if($scope.recessesGas.searchParam.provinciaSelected.length > 1){
+            $scope.recessesGas.searchParam.comuneSelected = "";
+            $scope.recessesGas.disabledComuni = true;
+            return
+        }
         $scope.recessesGas.comuniPerProvincia = newArray[0].comuni;
-        $scope.recessesGas.comuniPerProvincia.splice(0, 0, ({ code: "", comuni: "", nome: "" }));
+        $scope.recessesGas.comuniPerProvincia.splice(0, 0, ({ code: "", comuni: [], nome: "" }));
         $scope.recessesGas.disabledComuni = false;
     }
 

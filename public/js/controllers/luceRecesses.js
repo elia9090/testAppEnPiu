@@ -4,7 +4,7 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
 
     $scope.recessesLuce = {};
     $scope.recessesLuce.searchParam = {};
-
+    $scope.recessesLuce.venditoreSelected = [];
     $http.defaults.headers.common['Authorization'] = 'Bearer ' + $scope.user.TOKEN;
 
     //DATEPICKER
@@ -35,7 +35,7 @@ app.controller('luceRecessesCtrl', ['$scope', '$http', '$location', 'alertify', 
         // $scope.searchDate.searchParam.provinciaSelected = "";
         $scope.recessesLuce.province = result.data.province;
         //INSERISCO UN DATO VUOTO PER PERMETTERE IL BLANK SULLE PROVINCIE
-        $scope.recessesLuce.province.splice(0, 0, ({ code: "", comuni: [], nome: "Nessun Filtro" }));
+        $scope.recessesLuce.province.splice(0, 0, ({ code: "", comuni: [], nome: "" }));
     }).catch((err) => {
         alertify.alert("Impossibile reperire la lista dei comuni");
     });
