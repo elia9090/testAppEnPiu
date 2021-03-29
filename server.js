@@ -4903,6 +4903,10 @@ app.post("/gasRecessesList", ensureToken, function (req, res) {
       }
 
       var agente = req.body.agente;
+      if(Number.isInteger(agente)){
+        agente = []; 
+        agente.push(req.body.agente);
+      }
       var Qagente = " ";
       if (agente !== undefined && agente != null && (agente.length > 0 && agente[0] !== '')) {
         Qagente = ' AND VENDITORE_ASSEGNATO IN (' + agente.toString() + ') ';
@@ -5066,7 +5070,10 @@ app.post("/luceRecessesList", ensureToken, function (req, res) {
       }
 
       var agente = req.body.agente;
-      var Qagente = " ";
+      if(Number.isInteger(agente)){
+        agente = []; 
+        agente.push(req.body.agente);
+      }
       if (agente !== undefined && agente != null && (agente.length > 0 && agente[0] !== '')) {
         Qagente = ' AND VENDITORE_ASSEGNATO IN (' + agente.toString() + ') ';
       }
