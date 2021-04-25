@@ -4,12 +4,14 @@ var app = angular.module('gestionaleApp', ["ngRoute","chart.js",'ui.bootstrap','
 app.run(['$rootScope', '$location', function($rootScope, $location, ) {
     $rootScope.$on('$routeChangeStart', function(event, currRoute, prevRoute){
         $rootScope.userRoot = "";
+        $rootScope.userName = '';
         if(!sessionStorage.user){
             $location.path('/login');
             return;
         }else{
             $rootScope.userRoot = "true";
             $rootScope.userType = JSON.parse(sessionStorage.user).TYPE;
+            $rootScope.userName = JSON.parse(sessionStorage.user).USERNAME ? JSON.parse(sessionStorage.user).USERNAME.toLowerCase() : '';
             $rootScope.userEditedPassword = JSON.parse(sessionStorage.user).editPassword === "0" ? true : false;
         }
         //svuoto il local storage dei parametri di ricerca
