@@ -80,10 +80,7 @@
                                 <li class="nav-item" ng-show="userType !== 'AGENTE_JUNIOR' ">
                                     <a class="nav-link" href="#statisticheAppuntamenti">Statistiche appuntamenti</a>
                                 </li>
-                                <li class="nav-item" ng-show="
-                                      (userType === 'ADMIN' || userType === 'OPERATORE')
-                                      && userName != 'benedetta.rutili@piuenergiaelettrica.it'
-                                ">
+                                <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'BACK_OFFICE'">
                                     <a class="nav-link" href="#ricontattoAppuntamenti">Appuntamenti da ricontattare</a>
                                 </li>
                                 <li class="nav-item" ng-show="userType === 'ADMIN' || userType === 'BACK_OFFICE'">
