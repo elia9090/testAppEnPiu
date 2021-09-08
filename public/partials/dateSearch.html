@@ -158,6 +158,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Data</th>
+                        <th scope="col" ng-if="user.TYPE === 'ADMIN'">Data creazione </th>
                         <th scope="col">Azienda/cliente</th>
                         <th scope="col">Luogo</th>
 
@@ -177,6 +178,10 @@
                         <td ng-if="x.ORA_APPUNTAMENTO == '00:01'">
                             {{x.DATA_APPUNTAMENTO | date:'dd/MM/yyyy'}} - <span style="color: red;"><br> ORARIO DA
                                 DEFINIRE</span>
+                        </td>
+                        <td ng-if="user.TYPE === 'ADMIN'">
+                            
+                            {{x.DATA_CREAZIONE | amUtc | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
                         </td>
                         <td>
                             {{x.NOME_ATTIVITA}}
