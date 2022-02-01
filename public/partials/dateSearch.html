@@ -149,7 +149,7 @@
         </div>
 
         <div ng-if="searchDate.totalItems > 0" class="table-responsive">
-            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE'">
+            <div ng-if="user.TYPE === 'ADMIN' || user.TYPE === 'BACK_OFFICE' || user.USERNAME === 'pietro.giustiniani@piuenergiaelettrica.it'">
                 <button class="btn btn-orange float-right mb-3" ng-click="searchDate.downloadAppuntamenti()">
                     <i style="font-size: 18px;" class="far fa-file-excel"></i>
                 </button>
